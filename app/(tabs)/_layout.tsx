@@ -1,45 +1,59 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { brandYellow, gray, white } from "@/colors";
+import { useLocationContext } from "@/context/LocationContext";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { Stack, Tabs, useRouter } from "expo-router";
+import React from "react";
+import { Platform, useColorScheme } from "react-native";
+import { GestureDetector, Pressable } from "react-native-gesture-handler";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+  const { activeLocation } = useLocationContext();
+  if (!activeLocation) return null;
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+    <>
+      <Tabs
+        screenOptions={{
+          headerTintColor: white,
+          headerStyle: { backgroundColor: gray[800] },
+          tabBarActiveTintColor: brandYellow,
+          tabBarInactiveTintColor: white,
+          tabBarStyle: { backgroundColor: gray[800] },
+          headerRight: () => (
+            <Ionicons
+              name="location-outline"
+              size={24}
+              style={{ paddingInline: 10 }}
+              color={brandYellow}
+              onPress={() => router.push("/location-switcher")}
+            />
+          ),
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: activeLocation.name,
+            tabBarLabel: "Now",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="calendar-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="tides"
+          options={{
+            title: "Tides",
+          }}
+        />
+        <Tabs.Screen
+          name="forecast"
+          options={{
+            title: "Forecast",
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
