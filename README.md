@@ -10,7 +10,7 @@ This project was bootstrapped with `create-expo-app`
 
 Queries/mutations are stored in `graphql/documents`.  The generated types/hooks are in `graphql/generated.tsx`.
 
-`npm run generate`
+`npm run codegen`
 
 ## Expo info
 

@@ -12,48 +12,46 @@ export default function TabLayout() {
   if (!activeLocation) return null;
 
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          headerTintColor: white,
-          headerStyle: { backgroundColor: gray[800] },
-          tabBarActiveTintColor: brandYellow,
-          tabBarInactiveTintColor: white,
-          tabBarStyle: { backgroundColor: gray[800] },
-          headerRight: () => (
-            <Ionicons
-              name="location-outline"
-              size={24}
-              style={{ paddingInline: 10 }}
-              color={brandYellow}
-              onPress={() => router.push("/location-switcher")}
-            />
+    <Tabs
+      screenOptions={{
+        headerTintColor: white,
+        headerStyle: { backgroundColor: gray[800] },
+        tabBarActiveTintColor: brandYellow,
+        tabBarInactiveTintColor: white,
+        tabBarStyle: { backgroundColor: gray[800] },
+        headerRight: () => (
+          <Ionicons
+            name="location-outline"
+            size={24}
+            style={{ paddingInline: 10 }}
+            color={brandYellow}
+            onPress={() => router.push("/location-switcher")}
+          />
+        ),
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: activeLocation.name,
+          tabBarLabel: "Now",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
           ),
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: activeLocation.name,
-            tabBarLabel: "Now",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="calendar-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="tides"
-          options={{
-            title: "Tides",
-          }}
-        />
-        <Tabs.Screen
-          name="forecast"
-          options={{
-            title: "Forecast",
-          }}
-        />
-      </Tabs>
-    </>
+      />
+      <Tabs.Screen
+        name="tides"
+        options={{
+          title: "Tides",
+        }}
+      />
+      <Tabs.Screen
+        name="forecast"
+        options={{
+          title: "Forecast",
+        }}
+      />
+    </Tabs>
   );
 }

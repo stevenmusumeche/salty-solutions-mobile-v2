@@ -620,6 +620,30 @@ export type WindSummary = {
   mostRecent?: Maybe<WindDetail>;
 };
 
+export type CurrentConditionsDataQueryVariables = Exact<{
+  locationId: Scalars['ID']['input'];
+  usgsSiteId?: InputMaybe<Scalars['ID']['input']>;
+  includeUsgs: Scalars['Boolean']['input'];
+  noaaStationId?: InputMaybe<Scalars['ID']['input']>;
+  includeNoaa: Scalars['Boolean']['input'];
+  includeLocationWind?: InputMaybe<Scalars['Boolean']['input']>;
+  startDate: Scalars['String']['input'];
+  endDate: Scalars['String']['input'];
+}>;
+
+
+export type CurrentConditionsDataQuery = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, temperature: { __typename?: 'TemperatureResult', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null }, locationWind?: { __typename?: 'Wind', summary: { __typename?: 'WindSummary', mostRecent?: { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number } | null }, detail?: Array<{ __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number }> | null } | null } | null, usgsSite?: { __typename?: 'UsgsSite', id: string, name: string, salinity?: { __typename?: 'Salinity', summary?: { __typename?: 'SalinitySummary', mostRecent?: { __typename?: 'SalinityDetail', salinity: number } | null } | null, detail?: Array<{ __typename?: 'SalinityDetail', timestamp: string, salinity: number }> | null } | null, waterTemperature?: { __typename?: 'WaterTemperature', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null, wind?: { __typename?: 'Wind', summary: { __typename?: 'WindSummary', mostRecent?: { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number } | null }, detail?: Array<{ __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number }> | null } | null } | null, tidePreditionStation?: { __typename?: 'TidePreditionStation', id: string, name: string, wind?: { __typename?: 'Wind', summary: { __typename?: 'WindSummary', mostRecent?: { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number } | null }, detail?: Array<{ __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number }> | null } | null, temperature?: { __typename?: 'TemperatureResult', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null, waterTemperature?: { __typename?: 'WaterTemperature', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null } | null };
+
+export type TemperatureDetailFieldsFragment = { __typename?: 'TemperatureResult', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null };
+
+export type WaterTemperatureDetailFieldsFragment = { __typename?: 'WaterTemperature', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null };
+
+export type UsgsSiteDetailFieldsFragment = { __typename?: 'UsgsSite', id: string, name: string, salinity?: { __typename?: 'Salinity', summary?: { __typename?: 'SalinitySummary', mostRecent?: { __typename?: 'SalinityDetail', salinity: number } | null } | null, detail?: Array<{ __typename?: 'SalinityDetail', timestamp: string, salinity: number }> | null } | null, waterTemperature?: { __typename?: 'WaterTemperature', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null, wind?: { __typename?: 'Wind', summary: { __typename?: 'WindSummary', mostRecent?: { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number } | null }, detail?: Array<{ __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number }> | null } | null };
+
+export type TidePredictionStationDetailFieldsFragment = { __typename?: 'TidePreditionStation', id: string, name: string, wind?: { __typename?: 'Wind', summary: { __typename?: 'WindSummary', mostRecent?: { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number } | null }, detail?: Array<{ __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number }> | null } | null, temperature?: { __typename?: 'TemperatureResult', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null, waterTemperature?: { __typename?: 'WaterTemperature', summary: { __typename?: 'TemperatureSummary', mostRecent?: { __typename?: 'TemperatureDetail', temperature: { __typename?: 'Temperature', degrees: number } } | null }, detail?: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }> | null } | null };
+
+export type WindDetailFields2Fragment = { __typename?: 'WindDetail', timestamp: string, speed: number, direction: string, directionDegrees: number };
+
 export type LocationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -631,6 +655,103 @@ export type TideStationDetailFragment = { __typename?: 'TidePreditionStation', i
 
 export type UsgsSiteDetailFragment = { __typename?: 'UsgsSite', id: string, name: string, url: string, availableParamsV2: Array<{ __typename?: 'UsgsParamInfo', id: UsgsParam, latestDataDate?: string | null }> };
 
+export const WaterTemperatureDetailFieldsFragmentDoc = gql`
+    fragment WaterTemperatureDetailFields on WaterTemperature {
+  summary {
+    mostRecent {
+      temperature {
+        degrees
+      }
+    }
+  }
+  detail(start: $startDate, end: $endDate) {
+    timestamp
+    temperature {
+      degrees
+    }
+  }
+}
+    `;
+export const WindDetailFields2FragmentDoc = gql`
+    fragment WindDetailFields2 on WindDetail {
+  timestamp
+  speed
+  direction
+  directionDegrees
+}
+    `;
+export const UsgsSiteDetailFieldsFragmentDoc = gql`
+    fragment UsgsSiteDetailFields on UsgsSite {
+  id
+  name
+  salinity {
+    summary {
+      mostRecent {
+        salinity
+      }
+    }
+    detail(start: $startDate, end: $endDate) {
+      timestamp
+      salinity
+    }
+  }
+  waterTemperature {
+    ...WaterTemperatureDetailFields
+  }
+  wind {
+    summary {
+      mostRecent {
+        ...WindDetailFields2
+      }
+    }
+    detail(start: $startDate, end: $endDate) {
+      ...WindDetailFields2
+    }
+  }
+}
+    ${WaterTemperatureDetailFieldsFragmentDoc}
+${WindDetailFields2FragmentDoc}`;
+export const TemperatureDetailFieldsFragmentDoc = gql`
+    fragment TemperatureDetailFields on TemperatureResult {
+  summary {
+    mostRecent {
+      temperature {
+        degrees
+      }
+    }
+  }
+  detail(start: $startDate, end: $endDate) {
+    timestamp
+    temperature {
+      degrees
+    }
+  }
+}
+    `;
+export const TidePredictionStationDetailFieldsFragmentDoc = gql`
+    fragment TidePredictionStationDetailFields on TidePreditionStation {
+  id
+  name
+  wind {
+    summary {
+      mostRecent {
+        ...WindDetailFields2
+      }
+    }
+    detail(start: $startDate, end: $endDate) {
+      ...WindDetailFields2
+    }
+  }
+  temperature {
+    ...TemperatureDetailFields
+  }
+  waterTemperature {
+    ...WaterTemperatureDetailFields
+  }
+}
+    ${WindDetailFields2FragmentDoc}
+${TemperatureDetailFieldsFragmentDoc}
+${WaterTemperatureDetailFieldsFragmentDoc}`;
 export const TideStationDetailFragmentDoc = gql`
     fragment TideStationDetail on TidePreditionStation {
   id
@@ -670,6 +791,75 @@ export const LocationDetailFragmentDoc = gql`
 }
     ${TideStationDetailFragmentDoc}
 ${UsgsSiteDetailFragmentDoc}`;
+export const CurrentConditionsDataDocument = gql`
+    query CurrentConditionsData($locationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $includeLocationWind: Boolean = false, $startDate: String!, $endDate: String!) {
+  location(id: $locationId) {
+    id
+    temperature {
+      ...TemperatureDetailFields
+    }
+    locationWind: wind @include(if: $includeLocationWind) {
+      summary {
+        mostRecent {
+          ...WindDetailFields2
+        }
+      }
+      detail(start: $startDate, end: $endDate) {
+        ...WindDetailFields2
+      }
+    }
+  }
+  usgsSite(siteId: $usgsSiteId) @include(if: $includeUsgs) {
+    ...UsgsSiteDetailFields
+  }
+  tidePreditionStation(stationId: $noaaStationId) @include(if: $includeNoaa) {
+    ...TidePredictionStationDetailFields
+  }
+}
+    ${TemperatureDetailFieldsFragmentDoc}
+${WindDetailFields2FragmentDoc}
+${UsgsSiteDetailFieldsFragmentDoc}
+${TidePredictionStationDetailFieldsFragmentDoc}`;
+
+/**
+ * __useCurrentConditionsDataQuery__
+ *
+ * To run a query within a React component, call `useCurrentConditionsDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentConditionsDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentConditionsDataQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *      usgsSiteId: // value for 'usgsSiteId'
+ *      includeUsgs: // value for 'includeUsgs'
+ *      noaaStationId: // value for 'noaaStationId'
+ *      includeNoaa: // value for 'includeNoaa'
+ *      includeLocationWind: // value for 'includeLocationWind'
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *   },
+ * });
+ */
+export function useCurrentConditionsDataQuery(baseOptions: Apollo.QueryHookOptions<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables> & ({ variables: CurrentConditionsDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>(CurrentConditionsDataDocument, options);
+      }
+export function useCurrentConditionsDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>(CurrentConditionsDataDocument, options);
+        }
+export function useCurrentConditionsDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>(CurrentConditionsDataDocument, options);
+        }
+export type CurrentConditionsDataQueryHookResult = ReturnType<typeof useCurrentConditionsDataQuery>;
+export type CurrentConditionsDataLazyQueryHookResult = ReturnType<typeof useCurrentConditionsDataLazyQuery>;
+export type CurrentConditionsDataSuspenseQueryHookResult = ReturnType<typeof useCurrentConditionsDataSuspenseQuery>;
+export type CurrentConditionsDataQueryResult = Apollo.QueryResult<CurrentConditionsDataQuery, CurrentConditionsDataQueryVariables>;
 export const LocationsDocument = gql`
     query Locations {
   locations {

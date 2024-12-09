@@ -28,6 +28,17 @@ export default function RootLayout() {
                 },
               }}
             />
+            <Stack.Screen
+              name="full-screen-chart"
+              options={{
+                presentation: "modal",
+                title: "Todo",
+                headerTintColor: white,
+                headerStyle: {
+                  backgroundColor: gray[800],
+                },
+              }}
+            />
           </Stack>
           <StatusBar style="light" />
         </GestureHandlerRootView>
