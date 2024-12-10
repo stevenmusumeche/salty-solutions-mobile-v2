@@ -22,6 +22,7 @@ export const ConditionCard: React.FC<Props> = ({ headerText, children }) => {
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: 200,
     padding: 10,
     ...Platform.select({
       ios: {

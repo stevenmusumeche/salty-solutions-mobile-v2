@@ -10,7 +10,9 @@ import LoaderBlock from "./LoaderBlock";
 import BigBlue from "./BigBlue";
 import NoData from "./NoData";
 import { CardChart } from "./CardChart";
-import { Path } from "react-native-svg";
+import UsgsSiteSelect from "./UsgsSiteSelect";
+import { ErrorIcon } from "./FullScreenError";
+import { useRouter } from "expo-router";
 
 interface Props {
   location: LocationDetail;
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export const WindCard: React.FC<Props> = ({ sites, location }) => {
+  const router = useRouter();
   const headerText = "Wind Speed (mph)";
 
   const [selectedSite, setSelectedSite] = useState(() =>
@@ -52,6 +55,16 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
     );
   }
 
+  if (error) {
+    return (
+      <ConditionCard headerText={headerText}>
+        <View style={styles.errorWrapper}>
+          <ErrorIcon />
+        </View>
+      </ConditionCard>
+    );
+  }
+
   return (
     <ConditionCard headerText={headerText}>
       {curValue ? (
@@ -61,13 +74,43 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
             <Text style={styles.directionText}>{curDirectionValue}</Text>
           </View>
           {curDetail && (
-            <CardChart data={curDetail}>
-              {/* <VictoryScatter dataComponent={<ArrowPoint />} /> */}
-            </CardChart>
+            <CardChart
+              data={curDetail}
+              showDirectionArrows
+              onPress={() => {
+                router.push({
+                  pathname: "/full-screen-chart",
+                  params: {
+                    data: JSON.stringify(curDetail),
+                    title: headerText,
+                    siteName: selectedSite?.name,
+                    showDirectionArrows: 1,
+                  },
+                });
+              }}
+            />
           )}
         </>
       ) : (
         <NoData />
+      )}
+      {selectedSite ? (
+        <View style={styles.usgsWrapper}>
+          <UsgsSiteSelect
+            sites={sites}
+            handleChange={(selectedSiteId) => {
+              const match = sites.find((site) => site.id === selectedSiteId);
+              if (!match) {
+                return;
+              }
+
+              setSelectedSite(match);
+            }}
+            selectedId={selectedSite.id}
+          />
+        </View>
+      ) : (
+        <View style={styles.spacer} />
       )}
     </ConditionCard>
   );

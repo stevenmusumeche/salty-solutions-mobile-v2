@@ -1,4 +1,5 @@
 import { gray, white } from "@/colors";
+import AirTempCard from "@/components/AirTempCard";
 import { CardGrid } from "@/components/CardGrid";
 import { WindCard } from "@/components/WindCard";
 import { useLocationContext } from "@/context/LocationContext";
@@ -17,6 +18,7 @@ export default function NowScreen() {
     <View style={styles.container}>
       <CardGrid>
         <WindCard sites={windSites} location={activeLocation} />
+        <AirTempCard location={activeLocation} />
       </CardGrid>
     </View>
   );
