@@ -65,7 +65,8 @@ function extractData(windData?: CurrentConditionsDataQuery) {
     base?.detail
       .map((data) => ({
         y: data.speed,
-        x: data.timestamp,
+        // x: data.timestamp,
+        x: new Date(data.timestamp).getTime(),
         directionDegrees: data.directionDegrees,
         direction: data.direction,
       }))

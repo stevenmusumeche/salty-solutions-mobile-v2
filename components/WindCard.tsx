@@ -9,6 +9,8 @@ import { ConditionCard } from "./ConditionCard";
 import LoaderBlock from "./LoaderBlock";
 import BigBlue from "./BigBlue";
 import NoData from "./NoData";
+import { CardChart } from "./CardChart";
+import { Path } from "react-native-svg";
 
 interface Props {
   location: LocationDetail;
@@ -58,6 +60,11 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
           <View style={styles.directionWrapper}>
             <Text style={styles.directionText}>{curDirectionValue}</Text>
           </View>
+          {curDetail && (
+            <CardChart data={curDetail}>
+              {/* <VictoryScatter dataComponent={<ArrowPoint />} /> */}
+            </CardChart>
+          )}
         </>
       ) : (
         <NoData />
