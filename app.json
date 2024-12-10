@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "salty-solutions-mobile-rewrite",
-    "slug": "salty-solutions-mobile-rewrite",
+    "slug": "salty-solutions-v2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -38,6 +38,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "29c6d436-f00e-4bed-a7e7-6d501cd7df3a"
+      }
+    },
+    "owner": "stevenmusumeche"
   }
 }
