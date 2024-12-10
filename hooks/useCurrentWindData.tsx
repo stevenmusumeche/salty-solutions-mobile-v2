@@ -3,6 +3,7 @@ import {
   useCurrentConditionsDataQuery,
 } from "@/graphql/generated";
 import { noDecimals } from "./util";
+import { NetworkStatus } from "@apollo/client";
 
 interface Input {
   locationId: string;
@@ -22,18 +23,19 @@ export function useCurrentWindData({
   const includeNoaa = !!noaaStationId;
   const includeLocationWind = !includeUsgs && !includeNoaa;
 
-  const { data, refetch, loading, error } = useCurrentConditionsDataQuery({
-    variables: {
-      locationId,
-      usgsSiteId,
-      includeUsgs,
-      includeLocationWind,
-      noaaStationId,
-      includeNoaa,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-    },
-  });
+  const { data, refetch, loading, error, networkStatus } =
+    useCurrentConditionsDataQuery({
+      variables: {
+        locationId,
+        usgsSiteId,
+        includeUsgs,
+        includeLocationWind,
+        noaaStationId,
+        includeNoaa,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+    });
 
   const { curValue, curDirectionValue, curDetail } = extractData(data);
 

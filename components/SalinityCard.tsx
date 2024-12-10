@@ -14,14 +14,15 @@ import { CardChart } from "./CardChart";
 import { useRouter } from "expo-router";
 import { useWaterTemperatureData } from "@/hooks/useWaterTemperatureData";
 import UsgsSiteSelect from "./UsgsSiteSelect";
+import { useSalinityData } from "@/hooks/useSalinityData";
 
 interface Props {
   location: LocationDetail;
   sites: DataSite[];
 }
 
-export const WaterTempCard: React.FC<Props> = ({ location, sites }) => {
-  const headerText = "Water Temperature (F)";
+export const SalinityCard: React.FC<Props> = ({ location, sites }) => {
+  const headerText = "Salinity";
   const router = useRouter();
 
   const [selectedSite, setSelectedSite] = useState(() =>
@@ -33,20 +34,12 @@ export const WaterTempCard: React.FC<Props> = ({ location, sites }) => {
   }, [sites]);
 
   const date = useMemo(() => new Date(), []);
-  const { curValue, curDetail, loading, error, refresh } =
-    useWaterTemperatureData({
-      locationId: location.id,
-      startDate: subHours(date, 48),
-      endDate: date,
-      usgsSiteId:
-        selectedSite && selectedSite.__typename === "UsgsSite"
-          ? selectedSite.id
-          : undefined,
-      noaaStationId:
-        selectedSite && selectedSite.__typename === "TidePreditionStation"
-          ? selectedSite.id
-          : undefined,
-    });
+  const { curValue, curDetail, loading, error, refresh } = useSalinityData(
+    location.id,
+    selectedSite?.id ?? "",
+    subHours(date, 48),
+    date
+  );
 
   if (loading) {
     return (
