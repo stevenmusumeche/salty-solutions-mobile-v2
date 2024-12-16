@@ -2,9 +2,15 @@
   "expo": {
     "name": "salty-solutions-mobile-rewrite",
     "slug": "salty-solutions-v2",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "primaryColor": "#4a5568",
+    "splash": {
+      "image": "./assets/images/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4a5568"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,10 +19,6 @@
       "bundleIdentifier": "com.musumeche.salty.solutions"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "package": "com.musumeche.salty.solutions"
     },
     "web": {

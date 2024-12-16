@@ -17,9 +17,10 @@ import { useRouter } from "expo-router";
 interface Props {
   location: LocationDetail;
   sites: DataSite[];
+  onLoad?: () => void;
 }
 
-export const WindCard: React.FC<Props> = ({ sites, location }) => {
+export const WindCard: React.FC<Props> = ({ sites, location, onLoad }) => {
   const router = useRouter();
   const headerText = "Wind Speed (mph)";
 
@@ -45,6 +46,7 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
         selectedSite && selectedSite.__typename === "TidePreditionStation"
           ? selectedSite.id
           : undefined,
+      onCompleted: onLoad,
     });
 
   if (loading) {

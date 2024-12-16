@@ -31,6 +31,7 @@ export function useWaterTemperatureData({
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   const { curValue, curDetail } = extractData(data);

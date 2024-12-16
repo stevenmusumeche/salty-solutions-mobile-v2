@@ -4,6 +4,12 @@ This project was bootstrapped with `create-expo-app`
 
 ## Local dev
 
+### Run in iOS Simulator
+
+`npm run ios`
+
+### Use Expo Go
+
 `npm run dev`
 
 ## GraphQL Codegen
@@ -11,6 +17,26 @@ This project was bootstrapped with `create-expo-app`
 Queries/mutations are stored in `graphql/documents`.  The generated types/hooks are in `graphql/generated.tsx`.
 
 `npm run codegen`
+
+## Builds
+
+To build remotely with Expo's EAS:
+
+### Standalone development builds
+
+After these are done, you can install them on your phone by using the QR code.  The device that you are installing it on has to have been added to your Apple provisioning profile via Expo with `eas device:create`.
+
+```sh
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform ios --profile development-standalone
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform android --profile development-standalone
+```
+
+### Standalone production builds
+
+```sh
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform ios --profile production
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform android --profile production
+```
 
 ## Expo info
 

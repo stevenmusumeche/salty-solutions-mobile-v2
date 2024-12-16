@@ -19,6 +19,7 @@ export function useSalinityData(
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     },
+    notifyOnNetworkStatusChange: true,
   });
   const { curValue, curDetail, stationName } = extractData(data);
   return {

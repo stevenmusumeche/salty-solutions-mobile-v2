@@ -26,6 +26,7 @@ export function useTemperatureData({
       includeNoaa,
       includeUsgs: false,
     },
+    notifyOnNetworkStatusChange: true,
   });
   const { curValue, curDetail } = extractData(data);
   return { curValue, curDetail, refresh: refetch, loading, error, ...data };
