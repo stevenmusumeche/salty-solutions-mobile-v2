@@ -1,17 +1,17 @@
-import React from 'react';
+import { gray, red, white } from "@/constants/colors";
+import { useUserContext } from "@/context/UserContext";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import React from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
   Linking,
   Platform,
   ScrollView,
-} from 'react-native';
-import { useUserContext } from '@/context/UserContext';
-import { gray, white } from '@/constants/colors';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function AboutScreen() {
   const { actions, user } = useUserContext();
@@ -20,44 +20,28 @@ export default function AboutScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.header}>Your Account</Text>
-        {user.loading ? (
-          <Paragraph>Checking your login status...</Paragraph>
-        ) : !user.isLoggedIn ? (
+        {user.isLoggedIn && (
           <View>
+            <Paragraph>You&apos;re logged in as {user.name}!</Paragraph>
             <Paragraph>
-              Click the "Login" button below to access all features of Salty
-              Solutions.
+              Premium Status: {user.entitledToPremium ? "Active" : "Inactive"}
             </Paragraph>
-            <TouchableOpacity style={styles.loginButton} onPress={actions.login}>
-              <Text style={styles.buttonText}>Login to Salty Solutions</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            <Paragraph>You're logged in as {(user as any).name}!</Paragraph>
-            {(user as any).email && (
-              <Paragraph>Email: {(user as any).email}</Paragraph>
-            )}
-            <Paragraph>
-              Premium Status: {user.entitledToPremium ? 'Active' : 'Inactive'}
-            </Paragraph>
-            <TouchableOpacity style={styles.logoutButton} onPress={actions.logout}>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={actions.logout}
+            >
               <Text style={styles.buttonText}>Logout from Salty Solutions</Text>
             </TouchableOpacity>
           </View>
-        )}
-        
-        {user.isLoggedIn === false && 'error' in user && user.error && (
-          <Text style={styles.errorText}>{user.error}</Text>
         )}
       </View>
 
       <View style={[styles.section, styles.sectionWithBorder]}>
         <Text style={styles.header}>About</Text>
         <Paragraph>
-          Hi, I'm Steven Musumeche, a resident of Lafayette, LA and avid
+          Hi, I&apos;m Steven Musumeche, a resident of Lafayette, LA and avid
           saltwater fisherman. I created Salty Solutions to answer a question
-          that I'm always asking myself:
+          that I&apos;m always asking myself:
         </Paragraph>
         <Text style={[styles.when, styles.paragraph]}>
           WHEN SHOULD I GO FISHING?
@@ -74,10 +58,10 @@ export default function AboutScreen() {
           and easily digested.
         </Paragraph>
         <Paragraph>
-          I'm a software engineer by trade, so I thought, "hey, I can make
-          something decent enough for personal use." After showing it to a few
-          fellow fisherman, I decided to release it publically for everyone to
-          use.
+          I&apos;m a software engineer by trade, so I thought, &quot;hey, I can
+          make something decent enough for personal use.&quot; After showing it
+          to a few fellow fisherman, I decided to release it publically for
+          everyone to use.
         </Paragraph>
         <Paragraph>
           I hope you find it useful - please contact me with any suggestions or
@@ -85,12 +69,12 @@ export default function AboutScreen() {
         </Paragraph>
         <TouchableOpacity
           style={styles.privacyButton}
-          onPress={() => Linking.openURL('https://salty.solutions/privacy')}
+          onPress={() => Linking.openURL("https://salty.solutions/privacy")}
         >
           <Text style={styles.privacyButtonText}>Privacy Policy</Text>
         </TouchableOpacity>
         <Text style={styles.versionText}>
-          App: {Constants.expoConfig?.version || '1.0.0'}, Code: 2.1.0
+          App: {Constants.expoConfig?.version || "1.0.0"}, Code: 2.1.0
         </Text>
       </View>
 
@@ -99,32 +83,32 @@ export default function AboutScreen() {
           onPress={() =>
             Linking.openURL(
               `mailto:steven@musumeche.com?subject=Salty Solutions ${
-                Platform.OS === 'ios' ? 'iOS' : 'Android'
-              } App`,
+                Platform.OS === "ios" ? "iOS" : "Android"
+              } App`
             ).catch()
           }
         >
           <MaterialIcons name="email" size={48} color={white} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => Linking.openURL('https://www.facebook.com/musumeche')}
+          onPress={() => Linking.openURL("https://www.facebook.com/musumeche")}
         >
           <FontAwesome name="facebook-square" size={48} color="#3b5998" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => Linking.openURL('https://twitter.com/smusumeche')}
+          onPress={() => Linking.openURL("https://twitter.com/smusumeche")}
         >
           <FontAwesome name="twitter" size={48} color="#1DA1F2" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
-            Linking.openURL('https://www.linkedin.com/in/smusumeche')
+            Linking.openURL("https://www.linkedin.com/in/smusumeche")
           }
         >
           <FontAwesome name="linkedin-square" size={48} color="#0e76a8" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => Linking.openURL('https://github.com/stevenmusumeche')}
+          onPress={() => Linking.openURL("https://github.com/stevenmusumeche")}
         >
           <FontAwesome name="github" size={48} color={white} />
         </TouchableOpacity>
@@ -140,42 +124,36 @@ const Paragraph: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: gray[900],
+    backgroundColor: white,
+    flexGrow: 1,
   },
   section: {
     padding: 20,
   },
   sectionWithBorder: {
-    backgroundColor: gray[800],
-    borderTopColor: gray[700],
+    backgroundColor: gray[100],
+    borderTopColor: gray[200],
     borderTopWidth: 1,
-    borderBottomColor: gray[700],
+    borderBottomColor: gray[200],
     borderBottomWidth: 1,
   },
   header: {
     fontSize: 24,
     marginBottom: 15,
-    color: white,
-    fontWeight: '600',
+    // color: white,
+    fontWeight: "600",
   },
   when: {
-    fontWeight: '500',
-    color: white,
+    fontWeight: "500",
+    // color: white,
   },
   paragraph: {
     marginBottom: 15,
-    color: gray[300],
-    lineHeight: 20,
-  },
-  loginButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 10,
+    // color: gray[300],
+    // lineHeight: 20,
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: red["700"],
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -184,8 +162,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: white,
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   privacyButton: {
     backgroundColor: gray[700],
@@ -198,21 +176,16 @@ const styles = StyleSheet.create({
   privacyButtonText: {
     color: white,
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   versionText: {
     color: gray[500],
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 12,
   },
-  errorText: {
-    color: '#FF3B30',
-    fontSize: 14,
-    marginTop: 10,
-  },
   socialSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 20,
   },
 });

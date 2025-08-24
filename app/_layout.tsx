@@ -3,21 +3,104 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { gray, white } from "@/constants/colors";
+import { gray, red, white } from "@/constants/colors";
 import { LocationContextProvider } from "@/context/LocationContext";
-import { UserContextProvider } from "@/context/UserContext";
+import { UserContextProvider, useUserContext } from "@/context/UserContext";
 import {
   ApolloClient,
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import LoginScreen from "./login";
 
 if (__DEV__) {
   // Adds messages only in a dev environment
   loadDevMessages();
   loadErrorMessages();
+}
+
+function LoadingScreen() {
+  return (
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color={white} />
+      <Text style={styles.loadingText}>Loading...</Text>
+    </View>
+  );
+}
+
+function ErrorScreen({ error }: { error: string }) {
+  return (
+    <View style={styles.loadingContainer}>
+      <Text style={styles.errorText}>{error}</Text>
+    </View>
+  );
+}
+
+function AuthenticatedApp() {
+  return (
+    <LocationContextProvider>
+      <GestureHandlerRootView>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen
+            name="location-switcher"
+            options={{
+              presentation: "modal",
+              title: "Change Location",
+              headerTintColor: white,
+              headerStyle: {
+                backgroundColor: gray[800],
+              },
+            }}
+          />
+          <Stack.Screen
+            name="about"
+            options={{
+              presentation: "modal",
+              title: "About Salty Solutions",
+              headerTintColor: white,
+              headerStyle: {
+                backgroundColor: gray[800],
+              },
+            }}
+          />
+          <Stack.Screen
+            name="full-screen-chart"
+            options={{
+              presentation: "modal",
+              headerTintColor: white,
+              headerStyle: {
+                backgroundColor: gray[800],
+              },
+            }}
+          />
+        </Stack>
+        <StatusBar style="light" />
+      </GestureHandlerRootView>
+    </LocationContextProvider>
+  );
+}
+
+function AppContent() {
+  const { user } = useUserContext();
+
+  if (user.loading) {
+    return <LoadingScreen />;
+  }
+
+  if ("error" in user && user.error) {
+    return <ErrorScreen error={user.error} />;
+  }
+
+  if (!user.isLoggedIn) {
+    return <LoginScreen />;
+  }
+
+  return <AuthenticatedApp />;
 }
 
 export default function RootLayout() {
@@ -35,48 +118,28 @@ export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
       <UserContextProvider>
-        <LocationContextProvider>
-          <GestureHandlerRootView>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-              <Stack.Screen
-                name="location-switcher"
-                options={{
-                  presentation: "modal",
-                  title: "Change Location",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
-              />
-              <Stack.Screen
-                name="about"
-                options={{
-                  presentation: "modal",
-                  title: "About Salty Solutions",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
-              />
-              <Stack.Screen
-                name="full-screen-chart"
-                options={{
-                  presentation: "modal",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
-              />
-            </Stack>
-            <StatusBar style="light" />
-          </GestureHandlerRootView>
-        </LocationContextProvider>
+        <AppContent />
       </UserContextProvider>
     </ApolloProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: gray[700],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingText: {
+    color: white,
+    fontSize: 16,
+    marginTop: 10,
+  },
+  errorText: {
+    color: red["700"],
+    fontSize: 16,
+    textAlign: "center",
+    paddingHorizontal: 20,
+  },
+});

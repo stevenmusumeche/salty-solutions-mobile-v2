@@ -98,7 +98,9 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setUserCredentials(undefined);
       await SecureStore.deleteItemAsync(savedCredentialsKey).catch(() => {});
-      await auth0.webAuth.clearSession();
+      await auth0.webAuth.clearSession({
+        returnToUrl: "com.musumeche.salty.solutions://dev-nzoppbnb.us.auth0.com/ios/com.musumeche.salty.solutions/callback",
+      });
     } catch (e) {
       console.log("error logging out", e);
     }
