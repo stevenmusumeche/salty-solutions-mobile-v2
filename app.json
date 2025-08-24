@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "salty-solutions-mobile-v2b",
-    "slug": "salty-solutions-mobile-v2b",
+    "slug": "salty-solutions-v2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -11,14 +11,13 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.musumeche.salty.solutions"
+      "bundleIdentifier": "com.musumeche.salty.solutions",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.musumeche.salty.solutions",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "edgeToEdgeEnabled": true
     },
     "web": {
