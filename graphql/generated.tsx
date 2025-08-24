@@ -655,6 +655,22 @@ export type TideStationDetailFragment = { __typename?: 'TidePreditionStation', i
 
 export type UsgsSiteDetailFragment = { __typename?: 'UsgsSite', id: string, name: string, url: string, availableParamsV2: Array<{ __typename?: 'UsgsParamInfo', id: UsgsParam, latestDataDate?: string | null }> };
 
+export type UpsertUserMutationVariables = Exact<{
+  input: UpsertUserInput;
+}>;
+
+
+export type UpsertUserMutation = { __typename?: 'Mutation', upsertUser: { __typename?: 'UpsertUserResponse', user: { __typename?: 'User', id: string, email?: string | null, name: string, picture?: string | null, createdAt: string, entitledToPremium: boolean } } };
+
+export type UserFieldsFragment = { __typename?: 'User', id: string, email?: string | null, name: string, picture?: string | null, createdAt: string, entitledToPremium: boolean };
+
+export type UserLoggedInMutationVariables = Exact<{
+  platform: Platform;
+}>;
+
+
+export type UserLoggedInMutation = { __typename?: 'Mutation', userLoggedIn: { __typename?: 'UserLoggedInResponse', success: boolean } };
+
 export const WaterTemperatureDetailFieldsFragmentDoc = gql`
     fragment WaterTemperatureDetailFields on WaterTemperature {
   summary {
@@ -791,6 +807,16 @@ export const LocationDetailFragmentDoc = gql`
 }
     ${TideStationDetailFragmentDoc}
 ${UsgsSiteDetailFragmentDoc}`;
+export const UserFieldsFragmentDoc = gql`
+    fragment UserFields on User {
+  id
+  email
+  name
+  picture
+  createdAt
+  entitledToPremium
+}
+    `;
 export const CurrentConditionsDataDocument = gql`
     query CurrentConditionsData($locationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $includeLocationWind: Boolean = false, $startDate: String!, $endDate: String!) {
   location(id: $locationId) {
@@ -899,3 +925,71 @@ export type LocationsQueryHookResult = ReturnType<typeof useLocationsQuery>;
 export type LocationsLazyQueryHookResult = ReturnType<typeof useLocationsLazyQuery>;
 export type LocationsSuspenseQueryHookResult = ReturnType<typeof useLocationsSuspenseQuery>;
 export type LocationsQueryResult = Apollo.QueryResult<LocationsQuery, LocationsQueryVariables>;
+export const UpsertUserDocument = gql`
+    mutation UpsertUser($input: UpsertUserInput!) {
+  upsertUser(input: $input) {
+    user {
+      ...UserFields
+    }
+  }
+}
+    ${UserFieldsFragmentDoc}`;
+export type UpsertUserMutationFn = Apollo.MutationFunction<UpsertUserMutation, UpsertUserMutationVariables>;
+
+/**
+ * __useUpsertUserMutation__
+ *
+ * To run a mutation, you first call `useUpsertUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertUserMutation, { data, loading, error }] = useUpsertUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpsertUserMutation(baseOptions?: Apollo.MutationHookOptions<UpsertUserMutation, UpsertUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertUserMutation, UpsertUserMutationVariables>(UpsertUserDocument, options);
+      }
+export type UpsertUserMutationHookResult = ReturnType<typeof useUpsertUserMutation>;
+export type UpsertUserMutationResult = Apollo.MutationResult<UpsertUserMutation>;
+export type UpsertUserMutationOptions = Apollo.BaseMutationOptions<UpsertUserMutation, UpsertUserMutationVariables>;
+export const UserLoggedInDocument = gql`
+    mutation UserLoggedIn($platform: Platform!) {
+  userLoggedIn(input: {platform: $platform}) {
+    success
+  }
+}
+    `;
+export type UserLoggedInMutationFn = Apollo.MutationFunction<UserLoggedInMutation, UserLoggedInMutationVariables>;
+
+/**
+ * __useUserLoggedInMutation__
+ *
+ * To run a mutation, you first call `useUserLoggedInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserLoggedInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userLoggedInMutation, { data, loading, error }] = useUserLoggedInMutation({
+ *   variables: {
+ *      platform: // value for 'platform'
+ *   },
+ * });
+ */
+export function useUserLoggedInMutation(baseOptions?: Apollo.MutationHookOptions<UserLoggedInMutation, UserLoggedInMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UserLoggedInMutation, UserLoggedInMutationVariables>(UserLoggedInDocument, options);
+      }
+export type UserLoggedInMutationHookResult = ReturnType<typeof useUserLoggedInMutation>;
+export type UserLoggedInMutationResult = Apollo.MutationResult<UserLoggedInMutation>;
+export type UserLoggedInMutationOptions = Apollo.BaseMutationOptions<UserLoggedInMutation, UserLoggedInMutationVariables>;

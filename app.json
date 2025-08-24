@@ -35,6 +35,12 @@
           "resizeMode": "contain",
           "backgroundColor": "#4a5568"
         }
+      ],
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-nzoppbnb.us.auth0.com"
+        }
       ]
     ],
     "experiments": {
