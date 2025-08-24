@@ -1,75 +1,89 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { AirTempCard } from "@/components/AirTempCard";
+import { CardGrid } from "@/components/CardGrid";
+import { SalinityCard } from "@/components/SalinityCard";
+import { WaterTempCard } from "@/components/WaterTempCard";
+import { WindCard } from "@/components/WindCard";
+import { gray } from "@/constants/colors";
+import { useLocationContext } from "@/context/LocationContext";
+import { useSalinitySites } from "@/hooks/useSalinitySites";
+import { useWaterTempSites } from "@/hooks/useWaterTempSites";
+import { useWindSites } from "@/hooks/useWindSites";
+import { useApolloClient } from "@apollo/client";
+import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
+import { useInterval } from "usehooks-ts";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function NowScreen() {
+  const [lastUpdated, setLastUpdated] = useState<Date>();
+  const [lastUpdatedText, setLastUpdatedText] = useState<string>();
+  const { activeLocation } = useLocationContext();
+  const apolloClient = useApolloClient();
 
-export default function HomeScreen() {
+  const windSites = useWindSites(activeLocation);
+  const waterTempSites = useWaterTempSites(activeLocation);
+  const salinitySites = useSalinitySites(activeLocation);
+
+  useInterval(() => {
+    if (lastUpdated) {
+      setLastUpdatedText(formatDistanceToNow(lastUpdated, { addSuffix: true }));
+    }
+  }, 60000);
+
+  if (!activeLocation) return null;
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() =>
+              apolloClient.refetchQueries({
+                include: ["CurrentConditionsData"],
+              })
+            }
+          />
+        }
+      >
+        <CardGrid>
+          <WindCard
+            sites={windSites}
+            location={activeLocation}
+            onLoad={() => {
+              const now = new Date();
+              setLastUpdatedText(formatDistanceToNow(now, { addSuffix: true }));
+              setLastUpdated(now);
+            }}
+          />
+          <AirTempCard location={activeLocation} />
+          <WaterTempCard location={activeLocation} sites={waterTempSites} />
+          <SalinityCard location={activeLocation} sites={salinitySites} />
+        </CardGrid>
+        {lastUpdatedText ? (
+          <View style={styles.lastUpdated}>
+            <Text style={styles.lastUpdatedText}>
+              Updated {lastUpdatedText}
+            </Text>
+          </View>
+        ) : null}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    margin: 10,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  lastUpdated: {
+    alignItems: "center",
+    marginBlock: 5,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  lastUpdatedText: {
+    color: gray[600],
+    fontSize: 12,
   },
 });
