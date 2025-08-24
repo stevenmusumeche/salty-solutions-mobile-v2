@@ -14,10 +14,6 @@
       "developmentClient": false,
       "distribution": "internal"
     },
-    "preview": {
-      "node": "22.12.0",
-      "distribution": "internal"
-    },
     "production": {
       "node": "22.12.0",
       "autoIncrement": true
