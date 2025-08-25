@@ -655,6 +655,13 @@ export type TideStationDetailFragment = { __typename?: 'TidePreditionStation', i
 
 export type UsgsSiteDetailFragment = { __typename?: 'UsgsSite', id: string, name: string, url: string, availableParamsV2: Array<{ __typename?: 'UsgsParamInfo', id: UsgsParam, latestDataDate?: string | null }> };
 
+export type SalinityMapQueryVariables = Exact<{
+  locationId: Scalars['ID']['input'];
+}>;
+
+
+export type SalinityMapQuery = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, salinityMap: string } | null };
+
 export type UpsertUserMutationVariables = Exact<{
   input: UpsertUserInput;
 }>;
@@ -925,6 +932,47 @@ export type LocationsQueryHookResult = ReturnType<typeof useLocationsQuery>;
 export type LocationsLazyQueryHookResult = ReturnType<typeof useLocationsLazyQuery>;
 export type LocationsSuspenseQueryHookResult = ReturnType<typeof useLocationsSuspenseQuery>;
 export type LocationsQueryResult = Apollo.QueryResult<LocationsQuery, LocationsQueryVariables>;
+export const SalinityMapDocument = gql`
+    query SalinityMap($locationId: ID!) {
+  location(id: $locationId) {
+    id
+    salinityMap
+  }
+}
+    `;
+
+/**
+ * __useSalinityMapQuery__
+ *
+ * To run a query within a React component, call `useSalinityMapQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSalinityMapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSalinityMapQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *   },
+ * });
+ */
+export function useSalinityMapQuery(baseOptions: Apollo.QueryHookOptions<SalinityMapQuery, SalinityMapQueryVariables> & ({ variables: SalinityMapQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SalinityMapQuery, SalinityMapQueryVariables>(SalinityMapDocument, options);
+      }
+export function useSalinityMapLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalinityMapQuery, SalinityMapQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SalinityMapQuery, SalinityMapQueryVariables>(SalinityMapDocument, options);
+        }
+export function useSalinityMapSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SalinityMapQuery, SalinityMapQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SalinityMapQuery, SalinityMapQueryVariables>(SalinityMapDocument, options);
+        }
+export type SalinityMapQueryHookResult = ReturnType<typeof useSalinityMapQuery>;
+export type SalinityMapLazyQueryHookResult = ReturnType<typeof useSalinityMapLazyQuery>;
+export type SalinityMapSuspenseQueryHookResult = ReturnType<typeof useSalinityMapSuspenseQuery>;
+export type SalinityMapQueryResult = Apollo.QueryResult<SalinityMapQuery, SalinityMapQueryVariables>;
 export const UpsertUserDocument = gql`
     mutation UpsertUser($input: UpsertUserInput!) {
   upsertUser(input: $input) {

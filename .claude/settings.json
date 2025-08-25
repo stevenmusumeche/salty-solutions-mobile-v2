@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run codegen)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(pwd:*)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Search",
+      "Read",
+      "Web Search"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/steven/code/personal/SaltySolutionsMobile",
+      "../SaltySolutionsMobile",
+      "/Users/steven/code/personal/salty-solutions",
+      "../salty-solutions"
+    ]
+  }
+}
