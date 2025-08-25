@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>saltysolutionsmobilev2b</string>
+          <string>com.musumeche.salty.solutions</string>
         </array>
       </dict>
       <dict>

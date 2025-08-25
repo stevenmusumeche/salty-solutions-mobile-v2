@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1A9257B6138C6F78B944B385 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5C29C73F659F0ED4C96254 /* ExpoModulesProvider.swift */; };
-		33517F854B5B9E0961A260DF /* libPods-saltysolutionsmobilev2b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D2770B18558830ED6435FF /* libPods-saltysolutionsmobilev2b.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		48608701D89A9CCA05420AD5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 785BE5CB05F705818B49DBD1 /* PrivacyInfo.xcprivacy */; };
+		A53303962AE81FBD8900914E /* libPods-saltysolutionsmobilev2b.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAB362CA7B372212EB25D47 /* libPods-saltysolutionsmobilev2b.a */; };
+		A61436A536913934C9F43D31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D225790AF46DADB78704F7C8 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C7EE8BA80A12A8868340ED3C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C965EB5B794E3A6F9C651 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		052473C1D8D5E49737F9F196 /* Pods-saltysolutionsmobilev2b.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-saltysolutionsmobilev2b.release.xcconfig"; path = "Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* saltysolutionsmobilev2b.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = saltysolutionsmobilev2b.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = saltysolutionsmobilev2b/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = saltysolutionsmobilev2b/Info.plist; sourceTree = "<group>"; };
-		5D5C29C73F659F0ED4C96254 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-saltysolutionsmobilev2b/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		785BE5CB05F705818B49DBD1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = saltysolutionsmobilev2b/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		78D2770B18558830ED6435FF /* libPods-saltysolutionsmobilev2b.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-saltysolutionsmobilev2b.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6AAB362CA7B372212EB25D47 /* libPods-saltysolutionsmobilev2b.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-saltysolutionsmobilev2b.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = saltysolutionsmobilev2b/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B4148C09A5D2EE37924B1FA9 /* Pods-saltysolutionsmobilev2b.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-saltysolutionsmobilev2b.debug.xcconfig"; path = "Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		D225790AF46DADB78704F7C8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = saltysolutionsmobilev2b/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DCAF3278CEF932B7778650AD /* Pods-saltysolutionsmobilev2b.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-saltysolutionsmobilev2b.debug.xcconfig"; path = "Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b.debug.xcconfig"; sourceTree = "<group>"; };
+		E74C965EB5B794E3A6F9C651 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-saltysolutionsmobilev2b/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = saltysolutionsmobilev2b/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* saltysolutionsmobilev2b-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "saltysolutionsmobilev2b-Bridging-Header.h"; path = "saltysolutionsmobilev2b/saltysolutionsmobilev2b-Bridging-Header.h"; sourceTree = "<group>"; };
+		F9F00A8B0B2F3CEB367B9054 /* Pods-saltysolutionsmobilev2b.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-saltysolutionsmobilev2b.release.xcconfig"; path = "Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,26 +37,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33517F854B5B9E0961A260DF /* libPods-saltysolutionsmobilev2b.a in Frameworks */,
+				A53303962AE81FBD8900914E /* libPods-saltysolutionsmobilev2b.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00EA3EE7C7CFE46E5861A004 /* saltysolutionsmobilev2b */ = {
+		028A3BECCD520F974EF3F829 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5D5C29C73F659F0ED4C96254 /* ExpoModulesProvider.swift */,
-			);
-			name = saltysolutionsmobilev2b;
-			sourceTree = "<group>";
-		};
-		0333AF4202B10760C043CE1B /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B4148C09A5D2EE37924B1FA9 /* Pods-saltysolutionsmobilev2b.debug.xcconfig */,
-				052473C1D8D5E49737F9F196 /* Pods-saltysolutionsmobilev2b.release.xcconfig */,
+				DCAF3278CEF932B7778650AD /* Pods-saltysolutionsmobilev2b.debug.xcconfig */,
+				F9F00A8B0B2F3CEB367B9054 /* Pods-saltysolutionsmobilev2b.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -71,7 +63,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				785BE5CB05F705818B49DBD1 /* PrivacyInfo.xcprivacy */,
+				D225790AF46DADB78704F7C8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = saltysolutionsmobilev2b;
 			sourceTree = "<group>";
@@ -80,17 +72,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				78D2770B18558830ED6435FF /* libPods-saltysolutionsmobilev2b.a */,
+				6AAB362CA7B372212EB25D47 /* libPods-saltysolutionsmobilev2b.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		30E3287BE2335F510635AB9E /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				00EA3EE7C7CFE46E5861A004 /* saltysolutionsmobilev2b */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -107,8 +91,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				0333AF4202B10760C043CE1B /* Pods */,
-				30E3287BE2335F510635AB9E /* ExpoModulesProviders */,
+				028A3BECCD520F974EF3F829 /* Pods */,
+				F50AE6FD98197B56CC30CB1D /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -123,6 +107,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B828B777D762C071B97832CC /* saltysolutionsmobilev2b */ = {
+			isa = PBXGroup;
+			children = (
+				E74C965EB5B794E3A6F9C651 /* ExpoModulesProvider.swift */,
+			);
+			name = saltysolutionsmobilev2b;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +122,14 @@
 			);
 			name = Supporting;
 			path = saltysolutionsmobilev2b/Supporting;
+			sourceTree = "<group>";
+		};
+		F50AE6FD98197B56CC30CB1D /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				B828B777D762C071B97832CC /* saltysolutionsmobilev2b */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "saltysolutionsmobilev2b" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E0E362A9060E088BEE72D04B /* [Expo] Configure project */,
+				F7F3B233C01EBEF2DDE76D92 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				85B765A4DC7D008908ECFFC1 /* [CP] Embed Pods Frameworks */,
+				195104A825D75656151D137C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				48608701D89A9CCA05420AD5 /* PrivacyInfo.xcprivacy in Resources */,
+				A61436A536913934C9F43D31 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +240,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		195104A825D75656151D137C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -280,25 +298,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		85B765A4DC7D008908ECFFC1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-saltysolutionsmobilev2b/Pods-saltysolutionsmobilev2b-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E0E362A9060E088BEE72D04B /* [Expo] Configure project */ = {
+		F7F3B233C01EBEF2DDE76D92 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -325,7 +325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				1A9257B6138C6F78B944B385 /* ExpoModulesProvider.swift in Sources */,
+				C7EE8BA80A12A8868340ED3C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,7 +334,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B4148C09A5D2EE37924B1FA9 /* Pods-saltysolutionsmobilev2b.debug.xcconfig */;
+			baseConfigurationReference = DCAF3278CEF932B7778650AD /* Pods-saltysolutionsmobilev2b.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -359,7 +359,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.musumeche.salty.solutions;
-				PRODUCT_NAME = "saltysolutionsmobilev2b";
+				PRODUCT_NAME = saltysolutionsmobilev2b;
 				SWIFT_OBJC_BRIDGING_HEADER = "saltysolutionsmobilev2b/saltysolutionsmobilev2b-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -370,7 +370,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 052473C1D8D5E49737F9F196 /* Pods-saltysolutionsmobilev2b.release.xcconfig */;
+			baseConfigurationReference = F9F00A8B0B2F3CEB367B9054 /* Pods-saltysolutionsmobilev2b.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -390,7 +390,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.musumeche.salty.solutions;
-				PRODUCT_NAME = "saltysolutionsmobilev2b";
+				PRODUCT_NAME = saltysolutionsmobilev2b;
 				SWIFT_OBJC_BRIDGING_HEADER = "saltysolutionsmobilev2b/saltysolutionsmobilev2b-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

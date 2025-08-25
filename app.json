@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "primaryColor": "#4a5568",
-    "scheme": "saltysolutionsmobilev2b",
+    "scheme": "com.musumeche.salty.solutions",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -78,8 +78,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const auth0Creds = await auth0.webAuth.authorize({
         scope: "openid profile email offline_access",
-        redirectUrl:
-          "com.musumeche.salty.solutions://dev-nzoppbnb.us.auth0.com/ios/com.musumeche.salty.solutions/callback",
       });
       handleNewCreds(auth0Creds);
 
@@ -98,9 +96,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setUserCredentials(undefined);
       await SecureStore.deleteItemAsync(savedCredentialsKey).catch(() => {});
-      await auth0.webAuth.clearSession({
-        returnToUrl: "com.musumeche.salty.solutions://dev-nzoppbnb.us.auth0.com/ios/com.musumeche.salty.solutions/callback",
-      });
+      await auth0.webAuth.clearSession();
     } catch (e) {
       console.log("error logging out", e);
     }
