@@ -152,50 +152,52 @@ export default function SatelliteScreen() {
             />
           </View>
         </View>
-        <ScrollView
-          ref={scrollRef}
-          horizontal={true}
-          pagingEnabled
-          showsHorizontalScrollIndicator={true}
-          onMomentumScrollEnd={(e) => {
-            let newIndex = Math.floor(e.nativeEvent.contentOffset.x / width);
-            if (newIndex < 0) {
-              newIndex = 0;
-            }
-            if (newIndex > maps.length - 1) {
-              newIndex = maps.length - 1;
-            }
-            setCurIndex(newIndex);
-          }}
-          style={styles.swiperView}
-        >
-          {maps.map((map, i) => {
-            const smallImageDisplayWidth = width - 40;
-            const smallImageDisplayHeight =
-              (map.small.height * smallImageDisplayWidth) / map.small.width;
+        <View style={styles.imageContainer}>
+          <ScrollView
+            ref={scrollRef}
+            horizontal={true}
+            pagingEnabled
+            showsHorizontalScrollIndicator={true}
+            onMomentumScrollEnd={(e) => {
+              let newIndex = Math.floor(e.nativeEvent.contentOffset.x / width);
+              if (newIndex < 0) {
+                newIndex = 0;
+              }
+              if (newIndex > maps.length - 1) {
+                newIndex = maps.length - 1;
+              }
+              setCurIndex(newIndex);
+            }}
+            style={styles.swiperView}
+          >
+            {maps.map((map, i) => {
+              const smallImageDisplayWidth = width - 40;
+              const smallImageDisplayHeight =
+                (map.small.height * smallImageDisplayWidth) / map.small.width;
 
-            return (
-              <View key={i} style={[styles.scrollContainer]}>
-                <TouchableWithoutFeedback {...touchableProps}>
-                  <Image
-                    source={{
-                      uri: map.small.url,
-                    }}
-                    style={{
-                      width: smallImageDisplayWidth,
-                      height: smallImageDisplayHeight,
-                    }}
-                    resizeMode="contain"
-                  />
-                </TouchableWithoutFeedback>
-              </View>
-            );
-          })}
-        </ScrollView>
-        <View style={styles.swipeCopyContainer}>
-          <Text style={styles.instructionText}>
-            Swipe to change days • {pressText} image to zoom
-          </Text>
+              return (
+                <View key={i} style={[styles.scrollContainer]}>
+                  <TouchableWithoutFeedback {...touchableProps}>
+                    <Image
+                      source={{
+                        uri: map.small.url,
+                      }}
+                      style={{
+                        width: smallImageDisplayWidth,
+                        height: smallImageDisplayHeight,
+                      }}
+                      resizeMode="contain"
+                    />
+                  </TouchableWithoutFeedback>
+                </View>
+              );
+            })}
+          </ScrollView>
+          <View style={styles.swipeCopyOverlay}>
+            <Text style={styles.overlayInstructionText}>
+              Swipe to change days • {pressText} image to zoom
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -235,8 +237,25 @@ const styles = StyleSheet.create({
   topSection: {
     padding: 20,
   },
-  swipeCopyContainer: {
-    marginTop: 10,
+  imageContainer: {
+    position: "relative",
+  },
+  swipeCopyOverlay: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  overlayInstructionText: {
+    fontSize: 14,
+    textAlign: "center",
+    color: white,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    overflow: "hidden",
   },
   bottomSection: {
     margin: 0,
