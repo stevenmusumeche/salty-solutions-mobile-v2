@@ -2,7 +2,7 @@
   "expo": {
     "name": "salty-solutions-mobile-v2b",
     "slug": "salty-solutions-v2",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "primaryColor": "#4a5568",

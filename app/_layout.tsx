@@ -88,6 +88,16 @@ function AuthenticatedApp() {
               },
             }}
           />
+          <Stack.Screen
+            name="satellite-detail"
+            options={{
+              presentation: "modal",
+              headerTintColor: white,
+              headerStyle: {
+                backgroundColor: gray[800],
+              },
+            }}
+          />
         </Stack>
         <StatusBar style="light" />
       </GestureHandlerRootView>

@@ -74,7 +74,7 @@ export default function AboutScreen() {
           <Text style={styles.privacyButtonText}>Privacy Policy</Text>
         </TouchableOpacity>
         <Text style={styles.versionText}>
-          App: {Constants.expoConfig?.version || "1.0.0"}, Code: 2.1.0
+          App: {Constants.expoConfig?.version || "0"}, Code: 3.0.0
         </Text>
       </View>
 

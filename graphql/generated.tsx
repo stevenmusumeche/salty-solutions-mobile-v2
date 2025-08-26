@@ -655,6 +655,13 @@ export type TideStationDetailFragment = { __typename?: 'TidePreditionStation', i
 
 export type UsgsSiteDetailFragment = { __typename?: 'UsgsSite', id: string, name: string, url: string, availableParamsV2: Array<{ __typename?: 'UsgsParamInfo', id: UsgsParam, latestDataDate?: string | null }> };
 
+export type ModisMapQueryVariables = Exact<{
+  locationId: Scalars['ID']['input'];
+}>;
+
+
+export type ModisMapQuery = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, modisMaps: Array<{ __typename?: 'ModisMap', date: string, satellite: ModisSatellite, small: { __typename?: 'ModisMapEntry', url: string, width: number, height: number }, large: { __typename?: 'ModisMapEntry', url: string, width: number, height: number } }> } | null };
+
 export type SalinityMapQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
 }>;
@@ -932,6 +939,60 @@ export type LocationsQueryHookResult = ReturnType<typeof useLocationsQuery>;
 export type LocationsLazyQueryHookResult = ReturnType<typeof useLocationsLazyQuery>;
 export type LocationsSuspenseQueryHookResult = ReturnType<typeof useLocationsSuspenseQuery>;
 export type LocationsQueryResult = Apollo.QueryResult<LocationsQuery, LocationsQueryVariables>;
+export const ModisMapDocument = gql`
+    query ModisMap($locationId: ID!) {
+  location(id: $locationId) {
+    id
+    modisMaps(numDays: 8) {
+      date
+      satellite
+      small {
+        url
+        width
+        height
+      }
+      large {
+        url
+        width
+        height
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useModisMapQuery__
+ *
+ * To run a query within a React component, call `useModisMapQuery` and pass it any options that fit your needs.
+ * When your component renders, `useModisMapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useModisMapQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *   },
+ * });
+ */
+export function useModisMapQuery(baseOptions: Apollo.QueryHookOptions<ModisMapQuery, ModisMapQueryVariables> & ({ variables: ModisMapQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ModisMapQuery, ModisMapQueryVariables>(ModisMapDocument, options);
+      }
+export function useModisMapLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ModisMapQuery, ModisMapQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ModisMapQuery, ModisMapQueryVariables>(ModisMapDocument, options);
+        }
+export function useModisMapSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ModisMapQuery, ModisMapQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ModisMapQuery, ModisMapQueryVariables>(ModisMapDocument, options);
+        }
+export type ModisMapQueryHookResult = ReturnType<typeof useModisMapQuery>;
+export type ModisMapLazyQueryHookResult = ReturnType<typeof useModisMapLazyQuery>;
+export type ModisMapSuspenseQueryHookResult = ReturnType<typeof useModisMapSuspenseQuery>;
+export type ModisMapQueryResult = Apollo.QueryResult<ModisMapQuery, ModisMapQueryVariables>;
 export const SalinityMapDocument = gql`
     query SalinityMap($locationId: ID!) {
   location(id: $locationId) {
