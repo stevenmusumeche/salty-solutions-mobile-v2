@@ -65,12 +65,11 @@ export default function SatelliteScreen() {
     }
   }, [maps]);
 
-  // todo test this
   if (!user.entitledToPremium) {
     return (
       <Teaser
         title="Find clean water with real-time satellite imagery"
-        description="Salty Solutions Premium gives you access to the last 7 days of high-res imagery from both MODIS satellites - so you can find clean water."
+        description="Salty Solutions Premium gives you access to the last 7 days of high-res imagery from MODIS satellites - so you can find clean water."
         buttonTitle="Get Premium Access"
       >
         <Image

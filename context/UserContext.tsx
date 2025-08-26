@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAfter } from "date-fns";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
@@ -18,12 +19,14 @@ import {
   useUserLoggedInMutation,
 } from "../graphql/generated";
 
-interface UserContext {
+interface UserContextType {
   user: User;
+  premiumOverride: boolean | null;
   actions: {
     login: () => void;
     logout: () => void;
     purchaseComplete: (userFields: UserFieldsFragment) => void;
+    setPremiumOverride: (override: boolean | null) => void;
   };
 }
 
@@ -32,14 +35,24 @@ const auth0 = new Auth0({
   clientId: "Ox02XdfLPCDeAyq0zmMbyKmhDd6zyIjQ",
 });
 
-export const UserContext = createContext({} as UserContext);
+export const UserContext = createContext({} as UserContextType);
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const platform = RNPlatform.OS === "ios" ? Platform.Ios : Platform.Android;
   const savedCredentialsKey = "auth0Creds";
+  const premiumOverrideKey = "premiumOverride";
   const [userCredentials, setUserCredentials] = useState<UserCredentials>();
+
+  // Premium Override State (Development Only)
+  // This state allows developers to force premium/non-premium experiences for testing
+  // Values: null = use server value, true = force premium, false = force non-premium
+  // Only active when __DEV__ is true, persisted in AsyncStorage
+  const [premiumOverride, setPremiumOverrideState] = useState<boolean | null>(
+    null
+  );
+
   const [user, setUser] = useState<User>({
     isLoggedIn: false,
     loading: false,
@@ -50,16 +63,24 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const makeLoadedUser = useCallback(
     (user: UserFieldsFragment): LoadedUser => {
+      // Premium Entitlement Logic:
+      // In development mode, if an override is set, use that value
+      // Otherwise, always use the server's entitlement value
+      const finalEntitlement =
+        __DEV__ && premiumOverride !== null
+          ? premiumOverride
+          : user.entitledToPremium;
+
       return {
         isLoggedIn: true,
         loading: false,
         ...user,
-        serverEntitledToPremium: user.entitledToPremium,
-        entitledToPremium: user.entitledToPremium,
+        serverEntitledToPremium: user.entitledToPremium, // Always preserve original server value
+        entitledToPremium: finalEntitlement, // Use override in dev, server value in prod
         idToken: userCredentials?.credentials.idToken ?? "",
       };
     },
-    [userCredentials]
+    [userCredentials, premiumOverride]
   );
 
   const handleNewCreds = useCallback(async (auth0Creds: Credentials) => {
@@ -109,6 +130,37 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     [makeLoadedUser]
   );
 
+  /**
+   * Development-only function to override premium entitlement for testing
+   * @param override - null: use server value, true: force premium, false: force non-premium
+   *
+   * This function allows developers to test both premium and non-premium experiences
+   * without needing actual premium subscriptions. The override value is persisted
+   * in AsyncStorage and survives app restarts.
+   *
+   * In production builds (__DEV__ === false), this function does nothing.
+   */
+  const setPremiumOverride = useCallback(
+    async (override: boolean | null) => {
+      if (!__DEV__) return; // Safety check: only works in development
+
+      setPremiumOverrideState(override);
+      try {
+        if (override === null) {
+          await AsyncStorage.removeItem(premiumOverrideKey);
+        } else {
+          await AsyncStorage.setItem(
+            premiumOverrideKey,
+            JSON.stringify(override)
+          );
+        }
+      } catch (error) {
+        console.error("Failed to save premium override:", error);
+      }
+    },
+    [premiumOverrideKey]
+  );
+
   // create/update user in the database
   useEffect(() => {
     const idToken = userCredentials?.credentials.idToken;
@@ -130,7 +182,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [executeUpsertUser, userCredentials]);
 
-  // restore credentials from SecureStore when the app starts up
+  // Restore credentials and premium override from storage when the app starts up
   useEffect(() => {
     const restoreCredentials = async () => {
       const savedCredentials = await SecureStore.getItemAsync(
@@ -143,7 +195,28 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
+    /**
+     * Restore Premium Override (Development Only)
+     *
+     * This function restores any previously set premium override from AsyncStorage.
+     * This allows the developer's testing preference to persist across app restarts.
+     * Only runs in development builds for security.
+     */
+    const restorePremiumOverride = async () => {
+      if (!__DEV__) return; // Only restore overrides in development
+
+      try {
+        const savedOverride = await AsyncStorage.getItem(premiumOverrideKey);
+        if (savedOverride !== null) {
+          setPremiumOverrideState(JSON.parse(savedOverride));
+        }
+      } catch (error) {
+        console.error("Failed to restore premium override:", error);
+      }
+    };
+
     restoreCredentials();
+    restorePremiumOverride();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -163,7 +236,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const newCreds = { ...userCredentials.credentials, ...auth0Creds };
 
-        console.log("Successfully refreshed token");
         handleNewCreds(newCreds);
       } catch (error) {
         if (tokenIsExpired(userCredentials.token)) {
@@ -199,28 +271,24 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [handleNewCreds, logout, userCredentials]);
 
-  // update user as creds change
+  // Update user state as credentials change
   useEffect(() => {
     if (!userCredentials) {
-      console.log("UserContext: No credentials, setting logged out state");
       setUser({
         isLoggedIn: false,
         loading: false,
         entitledToPremium: false,
       });
     } else {
-      console.log("UserContext: Have credentials, checking upsert result:", {
-        loading: upsertUserResult.loading,
-        hasData: !!upsertUserResult.data,
-        hasUser: !!upsertUserResult.data?.upsertUser.user,
-      });
       if (upsertUserResult.loading && !upsertUserResult.data?.upsertUser.user) {
+        // Loading state - user not fully loaded yet, so no premium
         setUser({
           isLoggedIn: false,
           loading: true,
           entitledToPremium: false,
         });
       } else if (!upsertUserResult.data?.upsertUser.user) {
+        // Error state - failed to create/load user, so no premium
         setUser({
           isLoggedIn: false,
           loading: false,
@@ -228,8 +296,8 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
           error: "Unable to create user",
         });
       } else {
+        // Successfully loaded user - makeLoadedUser handles the premium override logic
         const userData = upsertUserResult.data.upsertUser.user;
-        console.log("UserContext: Setting logged in user:", userData);
         setUser(makeLoadedUser(userData));
       }
     }
@@ -238,18 +306,21 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     upsertUserResult.data,
     upsertUserResult.loading,
     userCredentials,
+    premiumOverride, // Re-evaluate user state when premium override changes
   ]);
 
-  const providerValue: UserContext = useMemo(() => {
+  const providerValue: UserContextType = useMemo(() => {
     return {
       user,
+      premiumOverride,
       actions: {
         login,
         logout,
         purchaseComplete,
+        setPremiumOverride,
       },
     };
-  }, [user, login, logout, purchaseComplete]);
+  }, [user, premiumOverride, login, logout, purchaseComplete, setPremiumOverride]);
 
   return (
     <UserContext.Provider value={providerValue}>

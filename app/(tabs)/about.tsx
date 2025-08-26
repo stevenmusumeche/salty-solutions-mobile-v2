@@ -1,3 +1,4 @@
+import DevSettings from "@/components/DevSettings";
 import { gray, red, white } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -35,6 +36,8 @@ export default function AboutScreen() {
           </View>
         )}
       </View>
+      {/* Development settings - only shows in dev builds */}
+      <DevSettings />
 
       <View style={[styles.section, styles.sectionWithBorder]}>
         <Text style={styles.header}>About</Text>
