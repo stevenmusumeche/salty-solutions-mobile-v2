@@ -98,6 +98,17 @@ function AuthenticatedApp() {
               },
             }}
           />
+          <Stack.Screen
+            name="modis-info"
+            options={{
+              presentation: "modal",
+              title: "About MODIS Satellite Imagery",
+              headerTintColor: white,
+              headerStyle: {
+                backgroundColor: gray[800],
+              },
+            }}
+          />
         </Stack>
         <StatusBar style="light" />
       </GestureHandlerRootView>

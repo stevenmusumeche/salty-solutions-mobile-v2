@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
@@ -15,7 +16,7 @@ import {
 
 import LoaderBlock from "@/components/LoaderBlock";
 import Teaser from "@/components/Teaser";
-import { gray } from "@/constants/colors";
+import { blue, gray, white } from "@/constants/colors";
 import { useLocationContext } from "@/context/LocationContext";
 import { useUserContext } from "@/context/UserContext";
 import { useModisMapQuery } from "@/graphql/generated";
@@ -47,6 +48,10 @@ export default function SatelliteScreen() {
     });
   };
 
+  const handleModisInfoPress = () => {
+    router.push("/modis-info");
+  };
+
   const maps = useMemo(() => {
     return modisMapData?.location?.modisMaps
       ? [...modisMapData.location.modisMaps].reverse()
@@ -67,22 +72,24 @@ export default function SatelliteScreen() {
 
   if (!user.entitledToPremium) {
     return (
-      <Teaser
-        title="Find clean water with real-time satellite imagery"
-        description="Salty Solutions Premium gives you access to the last 7 days of high-res imagery from MODIS satellites - so you can find clean water."
-        buttonTitle="Get Premium Access"
-      >
-        <Image
-          source={require("../../assets/images/satellite-sample.jpg")}
-          style={{
-            width: width - 40,
-            height: (width - 40) / 1.4,
-            marginTop: 10,
-            marginBottom: 20,
-          }}
-          resizeMode="stretch"
-        />
-      </Teaser>
+      <View style={styles.container}>
+        <Teaser
+          title="Find productive fishing spots from space"
+          description="NASA's MODIS satellites capture daily images showing water clarity and conditions. Premium members get access to 7 days of high-resolution imagery to locate the cleanest, most productive fishing areas."
+          buttonTitle="Get Premium Access"
+        >
+          <Image
+            source={require("../../assets/images/satellite-sample.jpg")}
+            style={{
+              width: width - 40,
+              height: (width - 40) / 1.4,
+              marginTop: 10,
+              marginBottom: 15,
+            }}
+            resizeMode="stretch"
+          />
+        </Teaser>
+      </View>
     );
   }
 
@@ -114,102 +121,176 @@ export default function SatelliteScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tileHeader}>
-        <View>
-          <MaterialCommunityIcons
-            name="gesture-swipe-right"
-            size={20}
-            color={curIndex > 0 ? "rgba(0,0,0,.5)" : "transparent"}
-          />
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.topSection}>
+        <View style={styles.tileHeader}>
+          <View>
+            <MaterialCommunityIcons
+              name="gesture-swipe-right"
+              size={20}
+              color={curIndex > 0 ? "rgba(0,0,0,.5)" : "transparent"}
+            />
+          </View>
+          <View>
+            <Text style={styles.tileText}>
+              {format(curDate, "EEEE, LLLL d")}
+            </Text>
+            <Text style={styles.tileDiffText}>
+              {dayDiff === 0
+                ? "Today "
+                : `${dayDiff} day${dayDiff > 1 ? "s" : ""} ago `}
+              ({curImage.satellite.toLowerCase()} satellite)
+            </Text>
+          </View>
+          <View>
+            <MaterialCommunityIcons
+              name="gesture-swipe-left"
+              size={20}
+              color={
+                curIndex < maps.length - 1 ? "rgba(0,0,0,.5)" : "transparent"
+              }
+            />
+          </View>
         </View>
-        <View>
-          <Text style={styles.tileText}>{format(curDate, "EEEE, LLLL d")}</Text>
-          <Text style={styles.tileDiffText}>
-            {dayDiff === 0
-              ? "Today "
-              : `${dayDiff} day${dayDiff > 1 ? "s" : ""} ago `}
-            ({curImage.satellite.toLowerCase()} satellite)
-          </Text>
-        </View>
-        <View>
-          <MaterialCommunityIcons
-            name="gesture-swipe-left"
-            size={20}
-            color={
-              curIndex < maps.length - 1 ? "rgba(0,0,0,.5)" : "transparent"
+        <ScrollView
+          ref={scrollRef}
+          horizontal={true}
+          pagingEnabled
+          showsHorizontalScrollIndicator={true}
+          onMomentumScrollEnd={(e) => {
+            let newIndex = Math.floor(e.nativeEvent.contentOffset.x / width);
+            if (newIndex < 0) {
+              newIndex = 0;
             }
-          />
+            if (newIndex > maps.length - 1) {
+              newIndex = maps.length - 1;
+            }
+            setCurIndex(newIndex);
+          }}
+          style={styles.swiperView}
+        >
+          {maps.map((map, i) => {
+            const smallImageDisplayWidth = width - 40;
+            const smallImageDisplayHeight =
+              (map.small.height * smallImageDisplayWidth) / map.small.width;
+
+            return (
+              <View key={i} style={[styles.scrollContainer]}>
+                <TouchableWithoutFeedback {...touchableProps}>
+                  <Image
+                    source={{
+                      uri: map.small.url,
+                    }}
+                    style={{
+                      width: smallImageDisplayWidth,
+                      height: smallImageDisplayHeight,
+                    }}
+                    resizeMode="contain"
+                  />
+                </TouchableWithoutFeedback>
+              </View>
+            );
+          })}
+        </ScrollView>
+        <View style={styles.swipeCopyContainer}>
+          <Text style={styles.instructionText}>
+            Swipe to change days • {pressText} image to zoom
+          </Text>
         </View>
       </View>
 
-      <ScrollView
-        ref={scrollRef}
-        horizontal={true}
-        pagingEnabled
-        showsHorizontalScrollIndicator={true}
-        onMomentumScrollEnd={(e) => {
-          let newIndex = Math.floor(e.nativeEvent.contentOffset.x / width);
-          if (newIndex < 0) {
-            newIndex = 0;
-          }
-          if (newIndex > maps.length - 1) {
-            newIndex = maps.length - 1;
-          }
-          setCurIndex(newIndex);
-        }}
-        style={styles.swiperView}
-      >
-        {maps.map((map, i) => {
-          const smallImageDisplayWidth = width - 40;
-          const smallImageDisplayHeight =
-            (map.small.height * smallImageDisplayWidth) / map.small.width;
-
-          return (
-            <View key={i} style={[styles.scrollContainer]}>
-              <TouchableWithoutFeedback {...touchableProps}>
-                <Image
-                  source={{
-                    uri: map.small.url,
-                  }}
-                  style={{
-                    width: smallImageDisplayWidth,
-                    height: smallImageDisplayHeight,
-                  }}
-                  resizeMode="contain"
-                />
-              </TouchableWithoutFeedback>
+      <View style={styles.bottomSection}>
+        <View style={styles.colorGuide}>
+          <Text style={styles.colorGuideTitle}>Water Color Guide</Text>
+          <View style={styles.colorRow}>
+            <View style={styles.colorItem}>
+              <View style={[styles.colorDot, { backgroundColor: "#495468" }]} />
+              <Text style={styles.colorLabel}>Clear</Text>
             </View>
-          );
-        })}
-      </ScrollView>
-
-      <Text style={styles.zoomText}>
-        {pressText} image to open zoomable view.
-      </Text>
-      <Text style={styles.instructionText}>
-        Swipe left and right to view different days, and{" "}
-        {pressText.toLowerCase()} any image to open a zoomable view.
-      </Text>
-      <Text style={styles.introText}>
-        MODIS is an extensive program with two satellites (Aqua and Terra) that
-        pass over the United States and take a giant photo each day. Most
-        importantly for fishermen,{" "}
-        <Text style={styles.bold}>
-          you can use the imagery to find clean water.
-        </Text>
-      </Text>
-    </View>
+            <View style={styles.colorItem}>
+              <View style={[styles.colorDot, { backgroundColor: "#F6F6F6" }]} />
+              <Text style={styles.colorLabel}>Cloudy</Text>
+            </View>
+            <View style={styles.colorItem}>
+              <View style={[styles.colorDot, { backgroundColor: "#6B5E32" }]} />
+              <Text style={styles.colorLabel}>Muddy</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={styles.learnMoreButton}
+        onPress={handleModisInfoPress}
+      >
+        <Text style={styles.learnMoreText}>Learn about MODIS satellites</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  topSection: {
     padding: 20,
   },
-  introText: {
-    marginTop: 20,
+  swipeCopyContainer: {
+    marginTop: 10,
+  },
+  bottomSection: {
+    margin: 0,
+    paddingInline: 20,
+  },
+  colorGuide: {
+    backgroundColor: white,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: gray[200],
+  },
+  colorGuideTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: gray[800],
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  colorRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  colorItem: {
+    alignItems: "center",
+    flex: 1,
+  },
+  colorDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 32,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: gray[300],
+  },
+  colorLabel: {
+    fontSize: 13,
+    color: gray[700],
+    fontWeight: "500",
+    textAlign: "center",
+  },
+  learnMoreButton: {
+    backgroundColor: blue[600],
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    margin: 20,
+    borderTopWidth: 1,
+    borderTopColor: gray[100],
+  },
+  learnMoreText: {
+    color: white,
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
   tileHeader: {
     flexDirection: "row",
@@ -234,16 +315,10 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 20,
   },
-  zoomText: {
-    textAlign: "center",
-    marginTop: 10,
-    marginBottom: 20,
-    color: gray[700],
-    fontSize: 14,
-  },
   instructionText: {
     fontSize: 14,
-    lineHeight: 20,
+    textAlign: "center",
+    color: gray[600],
   },
   swiperView: {
     flexGrow: 0,

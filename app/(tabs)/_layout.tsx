@@ -20,7 +20,7 @@ export default function TabLayout() {
         headerTintColor: white,
         headerStyle: { backgroundColor: gray[800] },
         tabBarActiveTintColor: brandYellow,
-        tabBarInactiveTintColor: white,
+        tabBarInactiveTintColor: gray["200"],
         tabBarStyle: { backgroundColor: gray[800] },
         headerRight: () => (
           <Ionicons

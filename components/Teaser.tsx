@@ -1,13 +1,13 @@
+import { white } from "@/constants/colors";
 import React from "react";
 import {
-  Text,
-  StyleSheet,
+  Alert,
   Button,
   ScrollView,
+  StyleSheet,
+  Text,
   View,
-  Alert,
 } from "react-native";
-import { white, gray } from "@/constants/colors";
 
 interface Props {
   title: string;
@@ -22,7 +22,6 @@ const Teaser: React.FC<Props> = ({
   buttonTitle = "Get Premium Access",
   children,
 }) => {
-
   // TODO: IAP - Implement actual purchase flow when IAP is ready
   const handlePurchasePress = () => {
     Alert.alert(
@@ -40,9 +39,6 @@ const Teaser: React.FC<Props> = ({
       <View style={styles.buttonContainer}>
         <Button onPress={handlePurchasePress} title={buttonTitle} />
       </View>
-      <Text style={styles.subtitle}>
-        Premium subscription coming soon. Enjoy unlimited access to all features.
-      </Text>
     </ScrollView>
   );
 };
@@ -68,11 +64,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
     marginBottom: 10,
-  },
-  subtitle: {
-    color: gray[700],
-    textAlign: "center",
-    marginTop: 10,
-    fontSize: 14,
   },
 });
