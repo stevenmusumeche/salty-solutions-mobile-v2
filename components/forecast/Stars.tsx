@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { gray, yellow } from '../constants/colors';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
+import React, { FC } from "react";
+import { StyleSheet, View } from "react-native";
+import { gray, yellow } from "../../constants/colors";
 
 const Stars: FC<{ score: number; size?: number }> = ({ score, size = 24 }) => (
   <View style={styles.container}>
@@ -20,8 +20,8 @@ export default Stars;
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
 });

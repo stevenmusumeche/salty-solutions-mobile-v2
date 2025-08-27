@@ -8,18 +8,18 @@ import {
   View,
 } from "react-native";
 import { white } from "../../constants/colors";
-import { 
-  CombinedForecastV2DetailFragment, 
-  TideDetailFieldsFragment, 
-  SunDetailFieldsFragment, 
-  SolunarDetailFieldsFragment 
+import {
+  CombinedForecastV2DetailFragment,
+  SolunarDetailFieldsFragment,
+  SunDetailFieldsFragment,
+  TideDetailFieldsFragment,
 } from "../../graphql/generated";
+import Teaser from "../Teaser";
 import ForecastChart from "./ForecastChart";
 import ForecastSun from "./ForecastSun";
 import ForecastText from "./ForecastText";
 import ForecastTide from "./ForecastTide";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
-import Teaser from "../Teaser";
 
 interface Props {
   datum: CombinedForecastV2DetailFragment;
@@ -94,7 +94,7 @@ export const TeaserForecastCard = () => {
           }
         >
           <Image
-            source={require("../assets/images/forecast.jpg")}
+            source={require("../../assets/images/forecast.jpg")}
             style={{
               width: width - 40,
               height: (width - 40) / 1.4,
