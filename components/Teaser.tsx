@@ -1,25 +1,27 @@
-import { white } from "@/constants/colors";
+import { gray, white } from "@/constants/colors";
 import React from "react";
 import {
   Alert,
-  Button,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import BrandButton from "./BrandButton";
 
 interface Props {
   title: string;
   description: string;
   buttonTitle?: string;
+  buttonSubtitle?: string;
   children?: React.ReactNode;
 }
 
 const Teaser: React.FC<Props> = ({
   title,
   description,
-  buttonTitle = "Get Premium Access",
+  buttonTitle = "Upgrade to Premium",
+  buttonSubtitle = "Only $1.99/month. Cancel anytime.", // TODO: IAP - Replace with dynamic pricing from app store
   children,
 }) => {
   // TODO: IAP - Implement actual purchase flow when IAP is ready
@@ -37,7 +39,10 @@ const Teaser: React.FC<Props> = ({
       <Text style={styles.description}>{description}</Text>
       {children}
       <View style={styles.buttonContainer}>
-        <Button onPress={handlePurchasePress} title={buttonTitle} />
+        <BrandButton title={buttonTitle} onPress={handlePurchasePress} />
+        {buttonSubtitle && (
+          <Text style={styles.buttonSubtitle}>{buttonSubtitle}</Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -64,5 +69,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
     marginBottom: 10,
+  },
+  buttonSubtitle: {
+    color: gray[700],
+    textAlign: "center",
+    marginTop: 8,
+    fontSize: 14,
   },
 });

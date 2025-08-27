@@ -8,15 +8,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
 } from "react-native";
 
+import BrandButton from "@/components/BrandButton";
 import LoaderBlock from "@/components/LoaderBlock";
 import Teaser from "@/components/Teaser";
-import { blue, gray, white } from "@/constants/colors";
+import { gray, white } from "@/constants/colors";
 import { useLocationContext } from "@/context/LocationContext";
 import { useUserContext } from "@/context/UserContext";
 import { useModisMapQuery } from "@/graphql/generated";
@@ -76,7 +76,6 @@ export default function SatelliteScreen() {
         <Teaser
           title="Find productive fishing spots from space"
           description="NASA's MODIS satellites capture daily images showing water clarity and conditions. Premium members get access to 7 days of high-resolution imagery to locate the cleanest, most productive fishing areas."
-          buttonTitle="Get Premium Access"
         >
           <Image
             source={require("../../assets/images/satellite-sample.jpg")}
@@ -220,12 +219,11 @@ export default function SatelliteScreen() {
           </View>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.learnMoreButton}
+      <BrandButton
+        title="Learn about MODIS satellites"
         onPress={handleModisInfoPress}
-      >
-        <Text style={styles.learnMoreText}>Learn about MODIS satellites</Text>
-      </TouchableOpacity>
+        style={{ margin: 20, borderTopWidth: 1, borderTopColor: gray[100] }}
+      />
     </ScrollView>
   );
 }
@@ -294,21 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: gray[700],
     fontWeight: "500",
-    textAlign: "center",
-  },
-  learnMoreButton: {
-    backgroundColor: blue[600],
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    margin: 20,
-    borderTopWidth: 1,
-    borderTopColor: gray[100],
-  },
-  learnMoreText: {
-    color: white,
-    fontSize: 16,
-    fontWeight: "600",
     textAlign: "center",
   },
   tileHeader: {

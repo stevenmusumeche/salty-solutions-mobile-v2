@@ -620,6 +620,25 @@ export type WindSummary = {
   mostRecent?: Maybe<WindDetail>;
 };
 
+export type CombinedForecastV2QueryVariables = Exact<{
+  locationId: Scalars['ID']['input'];
+  startDate: Scalars['String']['input'];
+  endDate: Scalars['String']['input'];
+}>;
+
+
+export type CombinedForecastV2Query = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, combinedForecastV2?: Array<{ __typename?: 'CombinedForecastV2', name: string, date: string, wind: Array<{ __typename?: 'ForecastWindDetailV2', timestamp: string, base: number, gusts: number, direction: { __typename?: 'WindDirection', text: string, degrees: number } }>, day: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, night: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, temperature: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }>, rain: Array<{ __typename?: 'RainDetail', timestamp: string, mmPerHour: number }> }> | null, tidePreditionStations: Array<{ __typename?: 'TidePreditionStation', id: string, name: string, tides?: Array<{ __typename?: 'TideDetail', time: string, height: number, type: string }> | null }>, sun?: Array<{ __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string }> | null, solunar?: Array<{ __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> }> | null } | null };
+
+export type CombinedForecastV2DetailFragment = { __typename?: 'CombinedForecastV2', name: string, date: string, wind: Array<{ __typename?: 'ForecastWindDetailV2', timestamp: string, base: number, gusts: number, direction: { __typename?: 'WindDirection', text: string, degrees: number } }>, day: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, night: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, temperature: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }>, rain: Array<{ __typename?: 'RainDetail', timestamp: string, mmPerHour: number }> };
+
+export type TideDetailFieldsFragment = { __typename?: 'TideDetail', time: string, height: number, type: string };
+
+export type SunDetailFieldsFragment = { __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string };
+
+export type SolunarDetailFieldsFragment = { __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> };
+
+export type SolunarPeriodFieldsFragment = { __typename?: 'SolunarPeriod', start: string, end: string, weight: number };
+
 export type CurrentConditionsDataQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
   usgsSiteId?: InputMaybe<Scalars['ID']['input']>;
@@ -685,6 +704,77 @@ export type UserLoggedInMutationVariables = Exact<{
 
 export type UserLoggedInMutation = { __typename?: 'Mutation', userLoggedIn: { __typename?: 'UserLoggedInResponse', success: boolean } };
 
+export const CombinedForecastV2DetailFragmentDoc = gql`
+    fragment CombinedForecastV2Detail on CombinedForecastV2 {
+  name
+  date
+  wind {
+    timestamp
+    base
+    gusts
+    direction {
+      text
+      degrees
+    }
+  }
+  day {
+    short
+    detailed
+    marine
+  }
+  night {
+    short
+    detailed
+    marine
+  }
+  temperature {
+    timestamp
+    temperature {
+      degrees
+    }
+  }
+  rain {
+    timestamp
+    mmPerHour
+  }
+}
+    `;
+export const TideDetailFieldsFragmentDoc = gql`
+    fragment TideDetailFields on TideDetail {
+  time
+  height
+  type
+}
+    `;
+export const SunDetailFieldsFragmentDoc = gql`
+    fragment SunDetailFields on SunDetail {
+  sunrise
+  sunset
+  dawn
+  dusk
+  nauticalDawn
+  nauticalDusk
+}
+    `;
+export const SolunarPeriodFieldsFragmentDoc = gql`
+    fragment SolunarPeriodFields on SolunarPeriod {
+  start
+  end
+  weight
+}
+    `;
+export const SolunarDetailFieldsFragmentDoc = gql`
+    fragment SolunarDetailFields on SolunarDetail {
+  date
+  score
+  majorPeriods {
+    ...SolunarPeriodFields
+  }
+  minorPeriods {
+    ...SolunarPeriodFields
+  }
+}
+    ${SolunarPeriodFieldsFragmentDoc}`;
 export const WaterTemperatureDetailFieldsFragmentDoc = gql`
     fragment WaterTemperatureDetailFields on WaterTemperature {
   summary {
@@ -831,6 +921,67 @@ export const UserFieldsFragmentDoc = gql`
   entitledToPremium
 }
     `;
+export const CombinedForecastV2Document = gql`
+    query CombinedForecastV2($locationId: ID!, $startDate: String!, $endDate: String!) {
+  location(id: $locationId) {
+    id
+    combinedForecastV2(start: $startDate, end: $endDate) {
+      ...CombinedForecastV2Detail
+    }
+    tidePreditionStations(limit: 1) {
+      id
+      name
+      tides(start: $startDate, end: $endDate) {
+        ...TideDetailFields
+      }
+    }
+    sun(start: $startDate, end: $endDate) {
+      ...SunDetailFields
+    }
+    solunar(start: $startDate, end: $endDate) {
+      ...SolunarDetailFields
+    }
+  }
+}
+    ${CombinedForecastV2DetailFragmentDoc}
+${TideDetailFieldsFragmentDoc}
+${SunDetailFieldsFragmentDoc}
+${SolunarDetailFieldsFragmentDoc}`;
+
+/**
+ * __useCombinedForecastV2Query__
+ *
+ * To run a query within a React component, call `useCombinedForecastV2Query` and pass it any options that fit your needs.
+ * When your component renders, `useCombinedForecastV2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCombinedForecastV2Query({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *   },
+ * });
+ */
+export function useCombinedForecastV2Query(baseOptions: Apollo.QueryHookOptions<CombinedForecastV2Query, CombinedForecastV2QueryVariables> & ({ variables: CombinedForecastV2QueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CombinedForecastV2Query, CombinedForecastV2QueryVariables>(CombinedForecastV2Document, options);
+      }
+export function useCombinedForecastV2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CombinedForecastV2Query, CombinedForecastV2QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CombinedForecastV2Query, CombinedForecastV2QueryVariables>(CombinedForecastV2Document, options);
+        }
+export function useCombinedForecastV2SuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CombinedForecastV2Query, CombinedForecastV2QueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CombinedForecastV2Query, CombinedForecastV2QueryVariables>(CombinedForecastV2Document, options);
+        }
+export type CombinedForecastV2QueryHookResult = ReturnType<typeof useCombinedForecastV2Query>;
+export type CombinedForecastV2LazyQueryHookResult = ReturnType<typeof useCombinedForecastV2LazyQuery>;
+export type CombinedForecastV2SuspenseQueryHookResult = ReturnType<typeof useCombinedForecastV2SuspenseQuery>;
+export type CombinedForecastV2QueryResult = Apollo.QueryResult<CombinedForecastV2Query, CombinedForecastV2QueryVariables>;
 export const CurrentConditionsDataDocument = gql`
     query CurrentConditionsData($locationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $includeLocationWind: Boolean = false, $startDate: String!, $endDate: String!) {
   location(id: $locationId) {
