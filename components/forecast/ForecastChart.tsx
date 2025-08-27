@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { gray } from "../constants/colors";
-import { CombinedForecastV2DetailFragment } from "../graphql/generated";
+import { gray } from "../../constants/colors";
+import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
 
 interface Props {
   data: CombinedForecastV2DetailFragment;

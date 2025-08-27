@@ -7,19 +7,19 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { white } from "../constants/colors";
+import { white } from "../../constants/colors";
 import { 
   CombinedForecastV2DetailFragment, 
   TideDetailFieldsFragment, 
   SunDetailFieldsFragment, 
   SolunarDetailFieldsFragment 
-} from "../graphql/generated";
+} from "../../graphql/generated";
 import ForecastChart from "./ForecastChart";
 import ForecastSun from "./ForecastSun";
 import ForecastText from "./ForecastText";
 import ForecastTide from "./ForecastTide";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
-import Teaser from "./Teaser";
+import Teaser from "../Teaser";
 
 interface Props {
   datum: CombinedForecastV2DetailFragment;

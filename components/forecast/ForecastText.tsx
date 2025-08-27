@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { gray, blue } from '../constants/colors';
-import { ForecastDescription } from '../graphql/generated';
+import { gray, blue } from '../../constants/colors';
+import { ForecastDescription } from '../../graphql/generated';
 
 interface Props {
   day?: ForecastDescription;

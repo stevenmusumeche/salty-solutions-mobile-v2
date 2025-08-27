@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { format } from "date-fns";
-import { gray, white } from "../constants/colors";
-import { CombinedForecastV2DetailFragment } from "../graphql/generated";
+import { gray, white } from "../../constants/colors";
+import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
 
 interface ForecastHeaderProps {
   currentIndex: number;

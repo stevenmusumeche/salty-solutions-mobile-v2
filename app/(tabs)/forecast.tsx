@@ -8,8 +8,8 @@ import PagerView, {
 import ForecastCard, {
   styles as cardStyles,
   TeaserForecastCard,
-} from "../../components/ForecastCard";
-import ForecastHeader from "../../components/ForecastHeader";
+} from "../../components/forecast/ForecastCard";
+import ForecastHeader from "../../components/forecast/ForecastHeader";
 import LoaderBlock from "../../components/LoaderBlock";
 import { gray } from "../../constants/colors";
 import { useLocationContext } from "../../context/LocationContext";

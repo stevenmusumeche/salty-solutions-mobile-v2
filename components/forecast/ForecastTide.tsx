@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { gray } from '../constants/colors';
+import { gray } from '../../constants/colors';
 import { 
   TideDetailFieldsFragment, 
   SunDetailFieldsFragment, 
   SolunarDetailFieldsFragment 
-} from '../graphql/generated';
+} from '../../graphql/generated';
 
 interface Props {
   tideData: TideDetailFieldsFragment[];

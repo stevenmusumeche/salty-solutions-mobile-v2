@@ -1,20 +1,16 @@
-import { useNavigation } from "@react-navigation/native";
+import { useSalinityData } from "@/hooks/useSalinityData";
+import { DataSite, LocationDetail } from "@/types";
 import { subHours } from "date-fns";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import BigBlue from "./BigBlue";
-import LoaderBlock from "./LoaderBlock";
-import NoData from "./NoData";
-import { useLocationContext } from "@/context/LocationContext";
-import { useTemperatureData } from "@/hooks/useTemperatureData";
-import { DataSite, LocationDetail } from "@/types";
+import { CardChart } from "./CardChart";
 import { ConditionCard } from "./ConditionCard";
 import { ErrorIcon } from "./FullScreenError";
-import { CardChart } from "./CardChart";
-import { useRouter } from "expo-router";
-import { useWaterTemperatureData } from "@/hooks/useWaterTemperatureData";
+import LoaderBlock from "./LoaderBlock";
+import NoData from "./NoData";
 import UsgsSiteSelect from "./UsgsSiteSelect";
-import { useSalinityData } from "@/hooks/useSalinityData";
 
 interface Props {
   location: LocationDetail;
@@ -69,7 +65,7 @@ export const SalinityCard: React.FC<Props> = ({ location, sites }) => {
               data={curDetail}
               onPress={() => {
                 router.push({
-                  pathname: "/full-screen-chart", // This should match your file structure
+                  pathname: "/full-screen-chart",
                   params: {
                     data: JSON.stringify(curDetail),
                     title: headerText,
