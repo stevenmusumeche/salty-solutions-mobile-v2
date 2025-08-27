@@ -24,10 +24,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
   },
-  icon: {
-    width: 100,
-    height: 100,
-  },
   text: {
     fontSize: 12,
     color: gray[700],

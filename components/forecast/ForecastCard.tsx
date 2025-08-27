@@ -124,15 +124,4 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexGrow: 1,
   },
-  teaserImagePlaceholder: {
-    marginTop: 10,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  imagePlaceholder: {
-    width: 300,
-    height: 200,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-  },
 });

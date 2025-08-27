@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { gray, blue } from '../../constants/colors';
+import { gray } from '../../constants/colors';
 import { ForecastDescription } from '../../graphql/generated';
 
 interface Props {
@@ -62,8 +62,5 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     color: gray[700],
-  },
-  toggleButton: {
-    color: blue[600],
   },
 });

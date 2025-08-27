@@ -79,10 +79,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
   },
-  usgsWrapper: {
-    marginTop: 10,
-    width: "100%",
-  },
   spacer: {
     height: 19.3,
     width: 50,
