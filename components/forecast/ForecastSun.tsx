@@ -7,7 +7,7 @@ import {
   SolunarPeriodFieldsFragment,
   SunDetailFieldsFragment,
 } from "../../graphql/generated";
-import Stars from "../Stars";
+import Stars from "./Stars";
 
 interface Props {
   /** Array of sun data for multiple days */
