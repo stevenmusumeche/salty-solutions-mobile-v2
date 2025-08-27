@@ -30,7 +30,7 @@ export const SalinityCard: React.FC<Props> = ({ location, sites }) => {
   }, [sites]);
 
   const date = useMemo(() => new Date(), []);
-  const { curValue, curDetail, loading, error, refresh } = useSalinityData(
+  const { curValue, curDetail, loading, error } = useSalinityData(
     location.id,
     selectedSite?.id ?? "",
     subHours(date, 48),
