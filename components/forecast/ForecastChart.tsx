@@ -1,4 +1,4 @@
-import { useFont } from "@shopify/react-native-skia";
+import { Group, Path, useFont } from "@shopify/react-native-skia";
 import { addHours, format } from "date-fns";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
@@ -33,7 +33,7 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
     [date]
   );
 
-  if (hasAnyData) {
+  if (!hasAnyData) {
     return <EmptyChart />;
   }
 
@@ -58,9 +58,9 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
         <CartesianChart
           data={transformedData}
           xKey="x"
-          yKeys={["windBase", "windGusts"]}
+          yKeys={["windBase", "windGusts", "directionDegrees"]}
           padding={{ left: 0, top: 0, right: 17, bottom: 0 }}
-          domainPadding={{ left: 7, right: 7, top: 10, bottom: 0 }}
+          domainPadding={{ left: 6, right: 6, top: 10, bottom: 0 }}
           domain={{
             x: [date.getTime(), addHours(date, 23).getTime()],
             y: [0, Math.max(maxWindSpeedForDay, MIN_CHART_SCALE)],
@@ -98,34 +98,11 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
                   colors={[blue[700], `${blue[700]}4D`]}
                   innerPadding={0.2}
                 />
+                <CompassArrows
+                  windBasePoints={points.windBase}
+                  directionPoints={points["directionDegrees"]}
+                />
                 {/* <Group>
-                  {points.windBase.flatMap((point, index) => {
-                    if (index % 2 !== 1) {
-                      return [];
-                    }
-
-                    const transformAngle =
-                      transformedData[index]?.directionDegrees ?? 0;
-
-                    return [
-                      <Path
-                        key={index}
-                        path="m0.475,11.94427l4.525,-11.49427l4.5,11.55l-4.5,-2.5l-4.525,2.45z"
-                        color={gray[800]}
-                        transform={[
-                          { translateX: point.x - 5 },
-                          { translateY: 10 },
-                          { translateX: 5.5 },
-                          { translateY: 6.25 },
-                          { rotate: transformAngle * (Math.PI / 180) },
-                          { translateX: -5.5 },
-                          { translateY: -6.25 },
-                        ]}
-                      />,
-                    ];
-                  })}
-                </Group>
-                <Group>
                   {points.windBase.flatMap((point, index) => {
                     const rainAmount = transformedData[index]?.rain ?? 0;
                     if (rainAmount === 0) {
@@ -212,6 +189,46 @@ const EmptyChart: React.FC = () => (
     <Text style={styles.placeholderText}>No wind data available</Text>
   </View>
 );
+
+interface CompassArrowsProps {
+  windBasePoints: any[];
+  directionPoints: any[];
+}
+
+const CompassArrows: React.FC<CompassArrowsProps> = ({
+  windBasePoints,
+  directionPoints,
+}) => {
+  return (
+    <Group>
+      {windBasePoints.flatMap((point, index) => {
+        if (index % 2 !== 1) {
+          return [];
+        }
+
+        const direction = directionPoints[index]?.yValue ?? 0;
+        const transformAngle = Math.abs(direction + 180);
+
+        return [
+          <Path
+            key={index}
+            path="m0.475,11.94427l4.525,-11.49427l4.5,11.55l-4.5,-2.5l-4.525,2.45z"
+            color={gray[800]}
+            transform={[
+              { translateX: point.x - 5 },
+              { translateY: 0 },
+              { translateX: 5.5 },
+              { translateY: 6.25 },
+              { rotate: transformAngle * (Math.PI / 180) },
+              { translateX: -5.5 },
+              { translateY: -6.25 },
+            ]}
+          />,
+        ];
+      })}
+    </Group>
+  );
+};
 
 const ChartLegend: React.FC = () => {
   return (
