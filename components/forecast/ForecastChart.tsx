@@ -15,7 +15,7 @@ interface Props {
   date: Date;
 }
 
-const MIN_CHART_SCALE = 25;
+const MIN_CHART_SCALE = 22;
 
 const ForecastChart: React.FC<Props> = ({ data, date }) => {
   const font = useFont(inter, 12);
@@ -90,6 +90,11 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
           }}
         >
           {({ points, chartBounds }) => {
+            // Debug logging
+            console.log("=== NEW DEBUG SESSION ===");
+            console.log("Total data points:", points.windBase.length);
+            console.log("chartBounds:", chartBounds);
+
             return (
               <>
                 <StackedBar
@@ -102,76 +107,12 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
                   windBasePoints={points.windBase}
                   directionPoints={points["directionDegrees"]}
                 />
-                {/* <Group>
-                  {points.windBase.flatMap((point, index) => {
-                    const rainAmount = transformedData[index]?.rain ?? 0;
-                    if (rainAmount === 0) {
-                      return [];
-                    }
-
-                    let numDrops = 1;
-                    if (rainAmount >= 6) {
-                      numDrops = 3;
-                    } else if (rainAmount >= 3) {
-                      numDrops = 2;
-                    }
-
-                    const drops = [];
-                    const dropPath =
-                      "m80.5,7.11458c-3.14918,-0.14918 -152,228 -1,228c151,0 4.14918,-227.85081 1,-228z";
-
-                    // Calculate total bar height (base + gusts)
-                    const gustPoint = points.windGusts[index];
-                    const totalBarTop = gustPoint?.y ?? point.y ?? 0;
-
-                    if (numDrops >= 1) {
-                      drops.push(
-                        <Path
-                          key={`${index}-drop-1`}
-                          path={dropPath}
-                          color={blue[500]}
-                          transform={[
-                            { scale: 0.05 },
-                            { translateX: point.x - 4 },
-                            { translateY: totalBarTop - 15 },
-                          ]}
-                        />
-                      );
-                    }
-
-                    if (numDrops >= 2) {
-                      drops.push(
-                        <Path
-                          key={`${index}-drop-2`}
-                          path={dropPath}
-                          color={blue[500]}
-                          transform={[
-                            { scale: 0.028 },
-                            { translateX: point.x + 1 },
-                            { translateY: totalBarTop - 17 },
-                          ]}
-                        />
-                      );
-                    }
-
-                    if (numDrops >= 3) {
-                      drops.push(
-                        <Path
-                          key={`${index}-drop-3`}
-                          path={dropPath}
-                          color={blue[500]}
-                          transform={[
-                            { scale: 0.02 },
-                            { translateX: point.x - 1.2 },
-                            { translateY: totalBarTop - 20 },
-                          ]}
-                        />
-                      );
-                    }
-
-                    return drops;
-                  })}
-                </Group> */}
+                <RainDrops
+                  windBasePoints={points.windBase}
+                  transformedData={transformedData}
+                  chartBounds={chartBounds}
+                  maxWindSpeedForDay={maxWindSpeedForDay}
+                />
               </>
             );
           }}
@@ -222,6 +163,67 @@ const CompassArrows: React.FC<CompassArrowsProps> = ({
               { rotate: transformAngle * (Math.PI / 180) },
               { translateX: -5.5 },
               { translateY: -6.25 },
+            ]}
+          />,
+        ];
+      })}
+    </Group>
+  );
+};
+
+interface RainDropsProps {
+  windBasePoints: any[];
+  transformedData: any[];
+  chartBounds: any;
+  maxWindSpeedForDay: number;
+}
+
+const RainDrops: React.FC<RainDropsProps> = ({
+  windBasePoints,
+  transformedData,
+  chartBounds,
+  maxWindSpeedForDay,
+}) => {
+  return (
+    <Group>
+      {windBasePoints.flatMap((point, index) => {
+        const rainAmount = transformedData[index]?.rain ?? 0;
+
+        if (rainAmount === 0) {
+          return [];
+        }
+
+        const dropPath =
+          "m80.5,7.11458c-3.14918,-0.14918 -152,228 -1,228c151,0 4.14918,-227.85081 1,-228z";
+
+        // Calculate the top of the stack
+        const gustWindValue = transformedData[index]?.windGusts ?? 0;
+        const basePointY = point.y ?? 0;
+        const chartHeight = chartBounds.bottom - chartBounds.top;
+        const maxValue = Math.max(maxWindSpeedForDay, MIN_CHART_SCALE);
+        const gustBarHeightPixels = (gustWindValue / maxValue) * chartHeight;
+        const barTopY = basePointY - gustBarHeightPixels;
+        const dropBaseY = barTopY - 15;
+
+        // Calculate opacity based on rain amount - single blue color
+        let dropOpacity = 0.3; // light rain
+
+        if (rainAmount >= 5) {
+          dropOpacity = 1.0; // heavy rain
+        } else if (rainAmount >= 2) {
+          dropOpacity = 0.6; // medium rain
+        }
+
+        return [
+          <Path
+            key={`${index}-drop`}
+            path={dropPath}
+            color={blue[700]}
+            opacity={dropOpacity}
+            transform={[
+              { translateX: point.x - 4 },
+              { translateY: dropBaseY },
+              { scale: 0.05 },
             ]}
           />,
         ];
