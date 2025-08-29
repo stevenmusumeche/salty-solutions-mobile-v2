@@ -18,7 +18,7 @@ interface Props {
 const MIN_CHART_SCALE = 22;
 
 const ForecastChart: React.FC<Props> = ({ data, date }) => {
-  const font = useFont(inter, 12);
+  const font = useFont(inter, 10);
   const { width } = useWindowDimensions();
   const { chartData } = useMemo(
     () => prepareForecastData(data, date),

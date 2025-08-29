@@ -1,4 +1,4 @@
-import { Rect, useFont } from "@shopify/react-native-skia";
+import { Path, Rect, useFont } from "@shopify/react-native-skia";
 import {
   addDays,
   addHours,
@@ -36,7 +36,7 @@ const ForecastTide: React.FC<Props> = ({
   stationName,
   solunarData,
 }) => {
-  const font = useFont(inter, 12);
+  const font = useFont(inter, 10);
   const { width } = useWindowDimensions();
 
   const curDayTideData = useMemo(
@@ -86,9 +86,24 @@ const ForecastTide: React.FC<Props> = ({
     () => buildDatasets(curDaySunData, curDayTideData, curDaySolunarData),
     [curDaySunData, curDayTideData, curDaySolunarData]
   );
+
+  // Helper to determine if a solunar period is major or minor
+  const isMajorPeriod = useMemo(() => {
+    if (!curDaySolunarData.majorPeriods || !curDaySolunarData.minorPeriods) {
+      return tidesWithinSolunarPeriod.map(() => false);
+    }
+    
+    // The buildDatasets function creates the array as [...majorPeriods, ...minorPeriods]
+    const majorCount = curDaySolunarData.majorPeriods.length;
+    
+    return tidesWithinSolunarPeriod.map((_, index) => {
+      // If index is less than majorCount, it's a major period
+      return index < majorCount;
+    });
+  }, [tidesWithinSolunarPeriod, curDaySolunarData.majorPeriods, curDaySolunarData.minorPeriods]);
   const { min, max } = tideBoundaries;
 
-  const y0 = min < 0 ? min - Y_PADDING : 0;
+  const y0 = min - Y_PADDING > 0 ? 0 : min - Y_PADDING;
 
   // Transform data for Victory Native v41
   const transformedTideData = tideData.map((datum) => ({
@@ -99,12 +114,12 @@ const ForecastTide: React.FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <View style={{ height: 180, width: width - 20 }}>
+      <View style={{ height: 130, width: width - 20 }}>
         <CartesianChart
           data={transformedTideData}
           xKey="x"
           yKeys={["y"]}
-          padding={{ left: 25, top: 20, right: 25, bottom: 30 }}
+          padding={{ left: 0, top: 0, right: 17, bottom: 0 }}
           domain={{
             x: [startOfDay(date).getTime(), endOfDay(date).getTime()],
             y: [y0, max + Y_PADDING],
@@ -176,7 +191,7 @@ const ForecastTide: React.FC<Props> = ({
                 )}
 
                 {/* Dawn background */}
-                {dawn.length > 0 && (
+                {/* {dawn.length > 0 && (
                   <Rect
                     x={
                       chartBounds.left +
@@ -193,10 +208,10 @@ const ForecastTide: React.FC<Props> = ({
                     height={chartHeight}
                     color={gray[500]}
                   />
-                )}
+                )} */}
 
                 {/* Dusk background */}
-                {dusk.length > 0 && (
+                {/* {dusk.length > 0 && (
                   <Rect
                     x={
                       chartBounds.left +
@@ -213,7 +228,7 @@ const ForecastTide: React.FC<Props> = ({
                     height={chartHeight}
                     color={gray[500]}
                   />
-                )}
+                )} */}
 
                 {/* Main tide area with blue fill - fills from curve down to bottom */}
                 <Area
@@ -228,7 +243,7 @@ const ForecastTide: React.FC<Props> = ({
                 <Line
                   points={points.y}
                   color={blue[800]}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   curveType="natural"
                 />
 
@@ -246,15 +261,80 @@ const ForecastTide: React.FC<Props> = ({
 
                   if (solunarPoints.length === 0) return null;
 
+                  // Calculate center of the feeding period for fish positioning
+                  const periodStart = solunarTides[0].x.getTime();
+                  const periodEnd =
+                    solunarTides[solunarTides.length - 1].x.getTime();
+                  const periodCenter = (periodStart + periodEnd) / 2;
+
+                  // Find the corresponding point on the tide curve
+                  const centerPointIndex = transformedTideData.findIndex(
+                    (datum) =>
+                      Math.abs(datum.x - periodCenter) ===
+                      Math.min(
+                        ...transformedTideData.map((d) =>
+                          Math.abs(d.x - periodCenter)
+                        )
+                      )
+                  );
+                  const centerPoint = points.y[centerPointIndex];
+                  const isMajor = isMajorPeriod[i];
+
                   return (
-                    <Area
-                      key={i}
-                      points={solunarPoints}
-                      y0={bottomY}
-                      color={"rgba(255,255,255, .25)"}
-                      opacity={1}
-                      curveType="natural"
-                    />
+                    <React.Fragment key={i}>
+                      <Area
+                        points={solunarPoints}
+                        y0={bottomY}
+                        color={"rgba(255,255,255, .25)"}
+                        opacity={1}
+                        curveType="natural"
+                      />
+
+                      {/* Fish icons within the feeding period */}
+                      {centerPoint && centerPoint.y != null && (
+                        <>
+                          {isMajor ? (
+                            <>
+                              <Path
+                                path="M 20 30 C 20 20, 40 15, 52 27 L 68 20 L 68 40 L 52 33 C 40 45, 20 40, 20 30 Z"
+                                color="black"
+                                opacity={0.6}
+                                transform={[
+                                  {
+                                    translateX: centerPoint.x - 13,
+                                  },
+                                  { translateY: centerPoint.y + -1 },
+                                  { scale: 0.3 },
+                                ]}
+                              />
+                              <Path
+                                path="M 20 30 C 20 20, 40 15, 52 27 L 68 20 L 68 40 L 52 33 C 40 45, 20 40, 20 30 Z"
+                                color="black"
+                                opacity={0.6}
+                                transform={[
+                                  {
+                                    translateX: centerPoint.x - 13,
+                                  },
+                                  { translateY: centerPoint.y + 7 },
+                                  { scale: 0.3 },
+                                ]}
+                              />
+                            </>
+                          ) : (
+                            <Path
+                              path="M 20 30 C 20 20, 40 15, 52 27 L 68 20 L 68 40 L 52 33 C 40 45, 20 40, 20 30 Z"
+                              color="black"
+                              opacity={0.6}
+                              transform={[
+                                { translateX: centerPoint.x - 8 },
+                                { translateY: centerPoint.y + 1 },
+                                { scale: 0.2 },
+                              ]}
+                            />
+                          )}
+                        </>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </>
@@ -286,26 +366,24 @@ const ChartLegend: React.FC<{ stationName: string }> = ({ stationName }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 10,
-    marginBottom: 0,
-    marginTop: 4,
+    paddingInline: 10,
+    paddingTop: 15,
   },
   chartLabelWrapper: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    flexWrap: "wrap",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    alignSelf: "center",
+    marginTop: 5,
   },
   chartLabelInnerWrapper: {
-    marginRight: 20,
-    marginTop: 5,
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 2,
   },
   chartLabelText: {
     textTransform: "uppercase",
     color: gray[600],
     fontSize: 10,
-    letterSpacing: -0.3,
+    letterSpacing: -0.1,
   },
 });

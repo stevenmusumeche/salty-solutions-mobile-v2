@@ -104,5 +104,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: gray[600],
     fontSize: 12,
+    letterSpacing: -0.1,
   },
 });
