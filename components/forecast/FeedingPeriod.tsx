@@ -23,9 +23,7 @@ const FeedingPeriod: FC<Props> = ({ type, periods }) => (
         <Text style={[styles.time, styles.startTime, { fontSize: 16 }]}>
           {format(new Date(period.start), "h:mmaaaaa")}
         </Text>
-        <Text style={[styles.time, styles.dash, { fontSize: 16 }]}>
-          -
-        </Text>
+        <Text style={[styles.time, styles.dash, { fontSize: 16 }]}>-</Text>
         <Text style={[styles.time, styles.endTime, { fontSize: 16 }]}>
           {format(new Date(period.end), "h:mmaaaaa")}
         </Text>
@@ -40,7 +38,6 @@ export default FeedingPeriod;
 const styles = StyleSheet.create({
   container: {
     width: "50%",
-    marginTop: 20,
   },
   periodRow: {
     flexDirection: "row",

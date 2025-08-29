@@ -49,6 +49,17 @@ const ForecastSun: React.FC<Props> = ({ sunData, date, solunarData }) => {
 
   return (
     <View style={styles.container}>
+      {/* Solunar score with star rating */}
+      <View style={styles.starsWrapper}>
+        <Stars score={curDaySolunarData.score} />
+        <Text style={[styles.solunarScoreLabel]}>Solunar Score</Text>
+      </View>
+      {/* Solunar feeding periods row: Major and Minor periods */}
+      <View style={styles.rowWrapper}>
+        <FeedingPeriod type="Major" periods={curDaySolunarData.majorPeriods} />
+        <FeedingPeriod type="Minor" periods={curDaySolunarData.minorPeriods} />
+      </View>
+
       {/* Sun times row: nautical dawn, sunrise, sunset, nautical dusk */}
       <View style={styles.rowWrapper}>
         <SunTimeDisplay
@@ -64,16 +75,6 @@ const ForecastSun: React.FC<Props> = ({ sunData, date, solunarData }) => {
           name="nautical dusk"
           value={new Date(curDaySunData.nauticalDusk)}
         />
-      </View>
-      {/* Solunar feeding periods row: Major and Minor periods */}
-      <View style={styles.rowWrapper}>
-        <FeedingPeriod type="Major" periods={curDaySolunarData.majorPeriods} />
-        <FeedingPeriod type="Minor" periods={curDaySolunarData.minorPeriods} />
-      </View>
-      {/* Solunar score with star rating */}
-      <View style={styles.starsWrapper}>
-        <Stars score={curDaySolunarData.score} />
-        <Text style={[styles.solunarScoreLabel]}>Solunar Score</Text>
       </View>
     </View>
   );
@@ -92,10 +93,11 @@ const styles = StyleSheet.create({
   },
   rowWrapper: {
     flexDirection: "row",
+    marginTop: 20,
   },
   starsWrapper: {
     width: "40%",
-    marginTop: 20,
+    // marginTop: 20,
     alignSelf: "center",
   },
   solunarScoreLabel: {
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textTransform: "uppercase",
     color: gray[600],
-    fontSize: 12,
+    fontSize: 10,
     letterSpacing: -0.1,
   },
 });

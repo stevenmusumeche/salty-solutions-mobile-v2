@@ -92,15 +92,19 @@ const ForecastTide: React.FC<Props> = ({
     if (!curDaySolunarData.majorPeriods || !curDaySolunarData.minorPeriods) {
       return tidesWithinSolunarPeriod.map(() => false);
     }
-    
+
     // The buildDatasets function creates the array as [...majorPeriods, ...minorPeriods]
     const majorCount = curDaySolunarData.majorPeriods.length;
-    
+
     return tidesWithinSolunarPeriod.map((_, index) => {
       // If index is less than majorCount, it's a major period
       return index < majorCount;
     });
-  }, [tidesWithinSolunarPeriod, curDaySolunarData.majorPeriods, curDaySolunarData.minorPeriods]);
+  }, [
+    tidesWithinSolunarPeriod,
+    curDaySolunarData.majorPeriods,
+    curDaySolunarData.minorPeriods,
+  ]);
   const { min, max } = tideBoundaries;
 
   const y0 = min - Y_PADDING > 0 ? 0 : min - Y_PADDING;
