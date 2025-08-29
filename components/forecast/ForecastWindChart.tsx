@@ -200,21 +200,18 @@ const RainDrops: React.FC<RainDropsProps> = ({
         const barTopY = basePointY - gustBarHeightPixels;
         const dropBaseY = barTopY - 15;
 
-        // Calculate opacity based on rain amount - single blue color
-        let dropOpacity = 0.3; // light rain
-
+        let color = blue["500"];
         if (rainAmount >= 5) {
-          dropOpacity = 1.0; // heavy rain
+          color = blue["700"]; // heavy rain
         } else if (rainAmount >= 2) {
-          dropOpacity = 0.6; // medium rain
+          color = blue["600"]; // medium rain
         }
 
         return [
           <Path
             key={`${index}-drop`}
             path={dropPath}
-            color={blue[700]}
-            opacity={dropOpacity}
+            color={color}
             transform={[
               { translateX: point.x - 4 },
               { translateY: dropBaseY },
