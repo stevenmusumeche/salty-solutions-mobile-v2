@@ -17,7 +17,7 @@ interface Props {
 
 const MIN_CHART_SCALE = 22;
 
-const ForecastChart: React.FC<Props> = ({ data, date }) => {
+const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
   const font = useFont(inter, 10);
   const { width } = useWindowDimensions();
   const { chartData } = useMemo(
@@ -90,11 +90,6 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
           }}
         >
           {({ points, chartBounds }) => {
-            // Debug logging
-            console.log("=== NEW DEBUG SESSION ===");
-            console.log("Total data points:", points.windBase.length);
-            console.log("chartBounds:", chartBounds);
-
             return (
               <>
                 <StackedBar
@@ -123,7 +118,7 @@ const ForecastChart: React.FC<Props> = ({ data, date }) => {
   );
 };
 
-export default ForecastChart;
+export default ForecastWindChart;
 
 const EmptyChart: React.FC = () => (
   <View style={styles.emptyState}>

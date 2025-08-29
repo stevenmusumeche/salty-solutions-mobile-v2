@@ -15,11 +15,11 @@ import {
   TideDetailFieldsFragment,
 } from "../../graphql/generated";
 import Teaser from "../Teaser";
-import ForecastChart from "./ForecastChart";
 import ForecastSun from "./ForecastSun";
 import ForecastText from "./ForecastText";
 import ForecastTide from "./ForecastTide";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
+import ForecastWindChart from "./ForecastWindChart";
 
 interface Props {
   datum: CombinedForecastV2DetailFragment;
@@ -57,7 +57,7 @@ const ForecastCard: React.FC<Props> = (props) => {
       <View style={{ width }}>
         <View style={styles.cardWrapper}>
           <View style={styles.children}>
-            <ForecastChart data={datum} date={date} />
+            <ForecastWindChart data={datum} date={date} />
             <ForecastTimeBuckets data={datum} date={date} />
             <ForecastTide
               tideData={tideData}
