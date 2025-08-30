@@ -1,4 +1,4 @@
-import { Group, matchFont, Path } from "@shopify/react-native-skia";
+import { matchFont } from "@shopify/react-native-skia";
 import { addHours, format } from "date-fns";
 import React, { useMemo } from "react";
 import {
@@ -12,14 +12,18 @@ import { CartesianChart, StackedBar } from "victory-native";
 import { black, blue, gray } from "../../constants/colors";
 import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
 import { prepareForecastData } from "../../utils/forecast-helpers";
-import ChartLabelSwatch from "../ChartLabelSwatch";
+import WindChartLegend from "./WindChartLegend";
+import WindCompassArrows from "./WindCompassArrows";
+import WindRainDrops from "./WindRainDrops";
 
 interface Props {
   data: CombinedForecastV2DetailFragment;
   date: Date;
 }
 
-const MIN_CHART_SCALE = 22;
+// Minimum Y-axis range to ensure chart remains readable even with low wind speeds
+// and provides adequate space for wind arrows and rain drops
+const MIN_Y_AXIS_RANGE = 22;
 
 const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
   const fontFamily = Platform.select({
@@ -72,7 +76,7 @@ const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
           domainPadding={{ left: 6, right: 6, top: 10, bottom: 0 }}
           domain={{
             x: [date.getTime(), addHours(date, 23).getTime()],
-            y: [0, Math.max(maxWindSpeedForDay, MIN_CHART_SCALE)],
+            y: [0, Math.max(maxWindSpeedForDay, MIN_Y_AXIS_RANGE)],
           }}
           yAxis={[
             {
@@ -107,22 +111,23 @@ const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
                   colors={[blue[700], `${blue[700]}4D`]}
                   innerPadding={0.2}
                 />
-                <CompassArrows
+                <WindCompassArrows
                   windBasePoints={points.windBase}
                   directionPoints={points["directionDegrees"]}
                 />
-                <RainDrops
+                <WindRainDrops
                   windBasePoints={points.windBase}
                   transformedData={transformedData}
                   chartBounds={chartBounds}
                   maxWindSpeedForDay={maxWindSpeedForDay}
+                  minYAxisRange={MIN_Y_AXIS_RANGE}
                 />
               </>
             );
           }}
         </CartesianChart>
       </View>
-      <ChartLegend />
+      <WindChartLegend />
     </View>
   );
 };
@@ -135,116 +140,7 @@ const EmptyChart: React.FC = () => (
   </View>
 );
 
-interface CompassArrowsProps {
-  windBasePoints: any[];
-  directionPoints: any[];
-}
 
-const CompassArrows: React.FC<CompassArrowsProps> = ({
-  windBasePoints,
-  directionPoints,
-}) => {
-  return (
-    <Group>
-      {windBasePoints.flatMap((point, index) => {
-        if (index % 2 !== 1) {
-          return [];
-        }
-
-        const direction = directionPoints[index]?.yValue ?? 0;
-        const transformAngle = Math.abs(direction + 180);
-
-        return [
-          <Path
-            key={index}
-            path="m0.475,11.94427l4.525,-11.49427l4.5,11.55l-4.5,-2.5l-4.525,2.45z"
-            color={gray[800]}
-            transform={[
-              { translateX: point.x - 5 },
-              { translateY: 0 },
-              { translateX: 5.5 },
-              { translateY: 6.25 },
-              { rotate: transformAngle * (Math.PI / 180) },
-              { translateX: -5.5 },
-              { translateY: -6.25 },
-            ]}
-          />,
-        ];
-      })}
-    </Group>
-  );
-};
-
-interface RainDropsProps {
-  windBasePoints: any[];
-  transformedData: any[];
-  chartBounds: any;
-  maxWindSpeedForDay: number;
-}
-
-const RainDrops: React.FC<RainDropsProps> = ({
-  windBasePoints,
-  transformedData,
-  chartBounds,
-  maxWindSpeedForDay,
-}) => {
-  return (
-    <Group>
-      {windBasePoints.flatMap((point, index) => {
-        const rainAmount = transformedData[index]?.rain ?? 0;
-
-        if (rainAmount === 0) {
-          return [];
-        }
-
-        const dropPath =
-          "m80.5,7.11458c-3.14918,-0.14918 -152,228 -1,228c151,0 4.14918,-227.85081 1,-228z";
-
-        // Calculate the top of the stack
-        const gustWindValue = transformedData[index]?.windGusts ?? 0;
-        const basePointY = point.y ?? 0;
-        const chartHeight = chartBounds.bottom - chartBounds.top;
-        const maxValue = Math.max(maxWindSpeedForDay, MIN_CHART_SCALE);
-        const gustBarHeightPixels = (gustWindValue / maxValue) * chartHeight;
-        const barTopY = basePointY - gustBarHeightPixels;
-        const dropBaseY = barTopY - 15;
-
-        let color = blue["500"];
-        if (rainAmount >= 5) {
-          color = blue["700"]; // heavy rain
-        } else if (rainAmount >= 2) {
-          color = blue["600"]; // medium rain
-        }
-
-        return [
-          <Path
-            key={`${index}-drop`}
-            path={dropPath}
-            color={color}
-            transform={[
-              { translateX: point.x - 4 },
-              { translateY: dropBaseY },
-              { scale: 0.05 },
-            ]}
-          />,
-        ];
-      })}
-    </Group>
-  );
-};
-
-const ChartLegend: React.FC = () => {
-  return (
-    <View style={styles.chartLabelWrapper}>
-      <View style={styles.chartLabelInnerWrapper}>
-        <ChartLabelSwatch color={blue[700]} />
-        <Text style={[styles.chartLabelText, { marginRight: 10 }]}>Wind</Text>
-        <ChartLabelSwatch color={blue[700]} opacity={0.3} />
-        <Text style={styles.chartLabelText}>Gusts</Text>
-      </View>
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -261,22 +157,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: gray[600],
-  },
-  chartLabelWrapper: {
-    marginTop: 10,
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  chartLabelInnerWrapper: {
-    marginRight: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  chartLabelText: {
-    textTransform: "uppercase",
-    color: gray[600],
-    fontSize: 10,
-    letterSpacing: -0.3,
   },
 });

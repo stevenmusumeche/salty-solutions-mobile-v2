@@ -1,70 +1,55 @@
 import FullScreenError from "@/components/FullScreenError";
-import { addDays, endOfDay, startOfDay } from "date-fns";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, View } from "react-native";
 import PagerView, {
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
 } from "react-native-pager-view";
 import ForecastCard, {
-  styles as cardStyles,
   TeaserForecastCard,
 } from "../../components/forecast/ForecastCard";
 import ForecastHeader from "../../components/forecast/ForecastHeader";
-import LoaderBlock from "../../components/LoaderBlock";
-import { gray } from "../../constants/colors";
+import ForecastLoader from "../../components/forecast/ForecastLoader";
 import { useLocationContext } from "../../context/LocationContext";
 import { useUserContext } from "../../context/UserContext";
-import { useCombinedForecastV2Query } from "../../graphql/generated";
+import { useForecastData } from "../../hooks/useForecastData";
 
-const NUM_DAYS_PREMIUM = 9;
-const NUM_DAYS_FREE = 2;
+const SCROLL_THRESHOLD = 0.7; // Threshold for triggering early header animation
+const REVERSE_SCROLL_THRESHOLD = 1 - SCROLL_THRESHOLD;
 
 const ForecastScreen: React.FC = () => {
   const { user } = useUserContext();
   const { activeLocation } = useLocationContext();
   if (!activeLocation) throw new Error("invariant");
 
-  const [refreshing, setRefreshing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const pagerRef = useRef<PagerView>(null);
 
-  const numDays = user.entitledToPremium ? NUM_DAYS_PREMIUM : NUM_DAYS_FREE;
+  const {
+    forecastData,
+    sunData,
+    tideData,
+    solunarData,
+    tideStationName,
+    loading,
+    error,
+    refreshing,
+    handleRefresh,
+  } = useForecastData({
+    locationId: activeLocation?.id,
+    isEntitledToPremium: user.entitledToPremium,
+  });
 
   // Reset to first page when location changes
   useEffect(() => {
     setCurrentIndex(0);
-  }, [activeLocation?.id]);
-
-  const { data, loading, error, refetch } = useCombinedForecastV2Query({
-    variables: {
-      locationId: activeLocation?.id || "",
-      startDate: startOfDay(new Date()).toISOString(),
-      endDate: addDays(endOfDay(new Date()), numDays).toISOString(),
-    },
-    skip: !activeLocation?.id,
-  });
-
-  // Extract data from GraphQL response
-  const forecastData =
-    data?.location?.combinedForecastV2?.slice(0, numDays) || [];
-  const sunData = data?.location?.sun || [];
-  const tideData = data?.location?.tidePreditionStations?.[0]?.tides || [];
-  const solunarData = data?.location?.solunar || [];
-  const tideStationName =
-    data?.location?.tidePreditionStations?.[0]?.name || "";
-
-  // Handle pull-to-refresh
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    try {
-      await refetch();
-    } catch (error) {
-      console.error("Refresh failed:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  }, [refetch]);
+  }, [activeLocation.id]);
 
   // Updates index when page settles after swipe completes
   const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
@@ -72,37 +57,24 @@ const ForecastScreen: React.FC = () => {
   }, []);
 
   // Updates index during swipe for early header animation trigger
-  // offset > 0.7 means user has swiped more than 70% to next page
   const handlePageScroll = useCallback(
     (e: PagerViewOnPageScrollEvent) => {
       const { position, offset } = e.nativeEvent;
-      if (offset > 0.7 && position + 1 !== currentIndex) {
+
+      if (offset > SCROLL_THRESHOLD && position + 1 !== currentIndex) {
         setCurrentIndex(position + 1);
-      } else if (offset < 0.3 && position !== currentIndex) {
+      } else if (
+        offset < REVERSE_SCROLL_THRESHOLD &&
+        position !== currentIndex
+      ) {
         setCurrentIndex(position);
       }
     },
     [currentIndex]
   );
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ForecastLoaderCard />
-      </View>
-    );
-  }
-
-  if (error && !forecastData.length) {
-    return (
-      <View style={styles.container}>
-        <FullScreenError />
-      </View>
-    );
-  }
-
-  // Helper function to render forecast pages
-  const renderPages = () => {
+  // Render a page for each day (and a teaser page for free users)
+  const forecastPages = useMemo(() => {
     const pages = [];
 
     // Add forecast data pages
@@ -123,7 +95,7 @@ const ForecastScreen: React.FC = () => {
       );
     });
 
-    // Add teaser page for non-premium users
+    // Add teaser page for free users
     if (!user.entitledToPremium) {
       pages.push(
         <View key="teaser-card" collapsable={false}>
@@ -133,7 +105,32 @@ const ForecastScreen: React.FC = () => {
     }
 
     return pages;
-  };
+  }, [
+    forecastData,
+    sunData,
+    tideData,
+    tideStationName,
+    refreshing,
+    handleRefresh,
+    solunarData,
+    user.entitledToPremium,
+  ]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ForecastLoader />
+      </View>
+    );
+  }
+
+  if (error && !forecastData.length) {
+    return (
+      <View style={styles.container}>
+        <FullScreenError />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -149,27 +146,11 @@ const ForecastScreen: React.FC = () => {
         onPageSelected={handlePageSelected}
         onPageScroll={handlePageScroll}
       >
-        {renderPages()}
+        {forecastPages}
       </PagerView>
     </View>
   );
 };
-
-const ForecastLoaderCard = () => (
-  <>
-    <View style={styles.headerShimmer}>
-      <LoaderBlock styles={styles.loaderBlockHeader} />
-      <View style={styles.pageDotsShimmer}>
-        <LoaderBlock styles={styles.loaderBlockDots} />
-      </View>
-    </View>
-    <View style={cardStyles.cardWrapper}>
-      <View style={[cardStyles.children, styles.loaderContent]}>
-        <LoaderBlock styles={styles.loaderBlockBody} />
-      </View>
-    </View>
-  </>
-);
 
 const styles = StyleSheet.create({
   container: {
@@ -177,38 +158,6 @@ const styles = StyleSheet.create({
   },
   pager: {
     flex: 1,
-  },
-  headerShimmer: {
-    backgroundColor: gray[700],
-    paddingVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerCenter: {
-    alignItems: "center",
-  },
-  loaderContent: {
-    padding: 15,
-  },
-  loaderBlockHeader: {
-    width: 150,
-    height: 18,
-    backgroundColor: gray[600],
-  },
-  pageDotsShimmer: {
-    marginTop: 8,
-    alignItems: "center",
-    height: 8, // Account for scaled dots (6px * 1.2 scale)
-  },
-  loaderBlockDots: {
-    width: 60,
-    height: 8,
-    backgroundColor: gray[600],
-    borderRadius: 4,
-  },
-  loaderBlockBody: {
-    width: "100%",
-    height: "100%",
   },
 });
 

@@ -1,21 +1,24 @@
 import {
+  addDays,
+  addHours,
   addMinutes,
   endOfDay,
   isAfter,
   isBefore,
+  isWithinInterval,
   startOfDay,
   subMinutes,
-  isWithinInterval,
 } from "date-fns";
 import {
+  SolunarDetailFieldsFragment,
   SunDetailFieldsFragment,
   TideDetailFieldsFragment,
-  SolunarDetailFieldsFragment,
 } from "../graphql/generated";
+import { SolunarPeriod } from "../types";
 
 export const Y_PADDING = 0.4;
 
-export const buildDatasets = (
+const buildDatasets = (
   sunData: SunDetailFieldsFragment,
   tideDetails: TideDetailFieldsFragment[],
   solunarDetails?: SolunarDetailFieldsFragment
@@ -51,29 +54,38 @@ export const buildDatasets = (
     tideBoundaries.max + Y_PADDING
   );
 
-  const toVictory = (tide: TideDetailFieldsFragment) => ({
-    x: new Date(tide.time),
-    y: tide.height,
+  const tideData = tideDetails.map((tide: TideDetailFieldsFragment) => ({
+    date: new Date(tide.time),
+    timestamp: Date.parse(tide.time),
+    waterHeight: tide.height,
     type: tide.type,
-  });
+  }));
 
-  const tideData = tideDetails.map(toVictory);
-
-  let tidesWithinSolunarPeriod: typeof tideData[] = [];
+  let solunarPeriods: SolunarPeriod[] = [];
   if (solunarDetails && solunarDetails.majorPeriods) {
-    const solunarPeriods = [
-      ...solunarDetails.majorPeriods,
-      ...solunarDetails.minorPeriods,
-    ];
-
-    tidesWithinSolunarPeriod = solunarPeriods.map((period) =>
-      tideData.filter((tideDatum) =>
-        isWithinInterval(tideDatum.x, {
+    // Process major periods
+    const majorPeriods = solunarDetails.majorPeriods.map((period) => ({
+      tides: tideData.filter((tideDatum) =>
+        isWithinInterval(tideDatum.date, {
           start: new Date(period.start),
           end: new Date(period.end),
         })
-      )
-    );
+      ),
+      type: "major" as const,
+    }));
+
+    // Process minor periods
+    const minorPeriods = solunarDetails.minorPeriods.map((period) => ({
+      tides: tideData.filter((tideDatum) =>
+        isWithinInterval(tideDatum.date, {
+          start: new Date(period.start),
+          end: new Date(period.end),
+        })
+      ),
+      type: "minor" as const,
+    }));
+
+    solunarPeriods = [...majorPeriods, ...minorPeriods];
   }
 
   const darkMorning = timespanFilterer(isDarkMorning);
@@ -90,7 +102,7 @@ export const buildDatasets = (
     daylight,
     tideData,
     tideBoundaries,
-    tidesWithinSolunarPeriod,
+    solunarPeriods,
   };
 };
 
@@ -117,12 +129,48 @@ function calcTideBoundaries(
 }
 
 // used to select the timespans corresponding to a certain group, like dusk, dawn, etc
-const makeTimespanFilterer = (
-  tides: TideDetailFieldsFragment[],
-  maxValue: number
-) => (filterFn: (tide: TideDetailFieldsFragment) => boolean) => {
-  return tides.filter(filterFn).map((tide) => ({
-    x: new Date(tide.time),
-    y: maxValue,
-  }));
+const makeTimespanFilterer =
+  (tides: TideDetailFieldsFragment[], maxValue: number) =>
+  (filterFn: (tide: TideDetailFieldsFragment) => boolean) => {
+    return tides.filter(filterFn).map((tide) => ({
+      x: new Date(tide.time),
+      y: maxValue,
+    }));
+  };
+
+// Comprehensive data preparation function that handles all filtering and processing
+export const prepareTideDataForDay = (
+  rawTideData: TideDetailFieldsFragment[],
+  sunData: SunDetailFieldsFragment[],
+  solunarData: SolunarDetailFieldsFragment[],
+  date: Date
+) => {
+  const TIDE_WINDOW_HOURS = 2;
+
+  // Filter tide data for the current day (with buffer)
+  const curDayTideData = rawTideData.filter((x) =>
+    isWithinInterval(new Date(x.time), {
+      start: addHours(startOfDay(date), -TIDE_WINDOW_HOURS),
+      end: addHours(startOfDay(addDays(date, 1)), TIDE_WINDOW_HOURS),
+    })
+  );
+
+  // Find sun data for the specific day
+  const curDaySunData =
+    sunData.find(
+      (x) =>
+        startOfDay(new Date(x.sunrise)).toISOString() ===
+        startOfDay(date).toISOString()
+    ) || ({} as SunDetailFieldsFragment);
+
+  // Find solunar data for the specific day
+  const curDaySolunarData =
+    solunarData.find(
+      (x) =>
+        startOfDay(new Date(x.date)).toISOString() ===
+        startOfDay(date).toISOString()
+    ) || ({} as SolunarDetailFieldsFragment);
+
+  // Build the datasets using existing function
+  return buildDatasets(curDaySunData, curDayTideData, curDaySolunarData);
 };

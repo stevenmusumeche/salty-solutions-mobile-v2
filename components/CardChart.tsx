@@ -1,8 +1,7 @@
 import { Group, matchFont, Path } from "@shopify/react-native-skia";
 import { differenceInHours, format } from "date-fns";
 import React, { useMemo } from "react";
-import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Platform, StyleSheet, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { CartesianChart, Line } from "victory-native";
 import { black, yellow } from "../constants/colors";
 

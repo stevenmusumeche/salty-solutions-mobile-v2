@@ -32,17 +32,16 @@ interface Props {
   solunarData: SolunarDetailFieldsFragment[];
 }
 
-const ForecastCard: React.FC<Props> = (props) => {
-  const {
-    datum,
-    dateString,
-    tideData,
-    sunData,
-    tideStationName,
-    refreshing,
-    onRefresh,
-    solunarData,
-  } = props;
+const ForecastCard: React.FC<Props> = ({
+  datum,
+  dateString,
+  tideData,
+  sunData,
+  tideStationName,
+  refreshing,
+  onRefresh,
+  solunarData,
+}) => {
   const date = new Date(dateString);
 
   const { width } = useWindowDimensions();
