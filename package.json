@@ -50,7 +50,8 @@
     "react-native-webview": "13.13.5",
     "usehooks-ts": "^3.1.1",
     "victory-native": "^41.19.3",
-    "react-native-pager-view": "6.7.1"
+    "react-native-pager-view": "6.7.1",
+    "react-native-svg": "15.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

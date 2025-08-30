@@ -6,6 +6,7 @@ import {
   degreesToCompass,
   prepareForecastData,
 } from "../../utils/forecast-helpers";
+import WaterConditionIcon from "./WaterConditionIcon";
 
 interface Props {
   data: CombinedForecastV2DetailFragment;
@@ -20,9 +21,7 @@ const ForecastTimeBuckets: React.FC<Props> = ({ data, date }) => {
       {timeChunks.map((timeChunk, i) => (
         <View style={styles.bucketContainer} key={i}>
           <Text style={styles.label}>{timeChunk.label}</Text>
-          <View style={styles.iconPlaceholder}>
-            <Text style={styles.placeholderText}>~</Text>
-          </View>
+          <WaterConditionIcon min={timeChunk.min} max={timeChunk.max} />
           {timeChunk.min === Infinity ? (
             <Text style={styles.wind}>unknown</Text>
           ) : (
@@ -68,16 +67,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: gray[600],
     fontSize: 12,
-  },
-  iconPlaceholder: {
-    alignItems: "center",
-    height: 40,
-    marginTop: 8,
-  },
-  placeholderText: {
-    fontSize: 24,
-    color: gray[400],
-    textAlign: "center",
   },
   wind: {
     textAlign: "center",
