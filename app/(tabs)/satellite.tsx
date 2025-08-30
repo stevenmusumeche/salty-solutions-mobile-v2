@@ -1,31 +1,44 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { differenceInDays, format } from "date-fns";
+import { format } from "date-fns";
 import { useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Image,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
 } from "react-native";
+import PagerView, {
+  PagerViewOnPageScrollEvent,
+  PagerViewOnPageSelectedEvent,
+} from "react-native-pager-view";
 
 import BrandButton from "@/components/BrandButton";
 import LoaderBlock from "@/components/LoaderBlock";
+import PagerHeader from "@/components/PagerHeader";
 import Teaser from "@/components/Teaser";
 import { gray, white } from "@/constants/colors";
 import { useLocationContext } from "@/context/LocationContext";
 import { useUserContext } from "@/context/UserContext";
 import { useModisMapQuery } from "@/graphql/generated";
+import { formatRelativeDate } from "@/utils/date-helpers";
+
+const SCROLL_THRESHOLD = 0.7; // Threshold for triggering early header animation
+const REVERSE_SCROLL_THRESHOLD = 1 - SCROLL_THRESHOLD;
 
 export default function SatelliteScreen() {
   const router = useRouter();
   const { user } = useUserContext();
   const { activeLocation } = useLocationContext();
-  const scrollRef = useRef<ScrollView>(null);
+  const pagerRef = useRef<PagerView>(null);
   const { width } = useWindowDimensions();
 
   const { data: modisMapData, loading } = useModisMapQuery({
@@ -52,19 +65,39 @@ export default function SatelliteScreen() {
     router.push("/modis-info");
   };
 
+  const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
+    setCurIndex(e.nativeEvent.position);
+  }, []);
+
+  // Updates index during swipe for early header animation trigger
+  const handlePageScroll = useCallback(
+    (e: PagerViewOnPageScrollEvent) => {
+      const { position, offset } = e.nativeEvent;
+
+      if (offset > SCROLL_THRESHOLD && position + 1 !== curIndex) {
+        setCurIndex(position + 1);
+      } else if (offset < REVERSE_SCROLL_THRESHOLD && position !== curIndex) {
+        setCurIndex(position);
+      }
+    },
+    [curIndex]
+  );
+
   const maps = useMemo(() => {
     return modisMapData?.location?.modisMaps
       ? [...modisMapData.location.modisMaps].reverse()
       : [];
   }, [modisMapData?.location?.modisMaps]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (scrollRef.current && maps.length > 0) {
-        scrollRef.current.scrollToEnd({ animated: false });
-      }
-    }, 10);
+  const getTitle = useCallback(
+    (index: number) => {
+      if (!maps[index]) return "";
+      return formatRelativeDate(maps[index].date);
+    },
+    [maps]
+  );
 
+  useEffect(() => {
     if (maps.length > 0) {
       setCurIndex(maps.length - 1);
     }
@@ -111,71 +144,38 @@ export default function SatelliteScreen() {
     );
   }
 
-  const curImage = maps[curIndex];
-  const curDate = new Date(curImage.date);
-  const dayDiff = differenceInDays(new Date(), curDate);
   const pressText = Platform.OS === "android" ? "Long press" : "Press";
   const touchableProps = {
     [Platform.OS === "ios" ? "onPress" : "onLongPress"]: handleSmallMapPress,
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
+      <PagerHeader
+        currentIndex={curIndex}
+        totalPages={maps.length}
+        getTitle={getTitle}
+      />
       <View style={styles.topSection}>
-        <View style={styles.tileHeader}>
-          <View>
-            <MaterialCommunityIcons
-              name="gesture-swipe-right"
-              size={20}
-              color={curIndex > 0 ? "rgba(0,0,0,.5)" : "transparent"}
-            />
-          </View>
-          <View>
-            <Text style={styles.tileText}>
-              {format(curDate, "EEEE, LLLL d")}
-            </Text>
-            <Text style={styles.tileDiffText}>
-              {dayDiff === 0
-                ? "Today "
-                : `${dayDiff} day${dayDiff > 1 ? "s" : ""} ago `}
-              ({curImage.satellite.toLowerCase()} satellite)
-            </Text>
-          </View>
-          <View>
-            <MaterialCommunityIcons
-              name="gesture-swipe-left"
-              size={20}
-              color={
-                curIndex < maps.length - 1 ? "rgba(0,0,0,.5)" : "transparent"
-              }
-            />
-          </View>
-        </View>
         <View style={styles.imageContainer}>
-          <ScrollView
-            ref={scrollRef}
-            horizontal={true}
-            pagingEnabled
-            showsHorizontalScrollIndicator={true}
-            onMomentumScrollEnd={(e) => {
-              let newIndex = Math.floor(e.nativeEvent.contentOffset.x / width);
-              if (newIndex < 0) {
-                newIndex = 0;
-              }
-              if (newIndex > maps.length - 1) {
-                newIndex = maps.length - 1;
-              }
-              setCurIndex(newIndex);
-            }}
+          <PagerView
+            ref={pagerRef}
             style={styles.swiperView}
+            initialPage={maps.length - 1}
+            onPageSelected={handlePageSelected}
+            onPageScroll={handlePageScroll}
           >
             {maps.map((map, i) => {
-              const smallImageDisplayWidth = width - 40;
+              const smallImageDisplayWidth = width - 30;
               const smallImageDisplayHeight =
                 (map.small.height * smallImageDisplayWidth) / map.small.width;
 
               return (
-                <View key={i} style={[styles.scrollContainer]}>
+                <View
+                  key={i}
+                  style={[styles.scrollContainer]}
+                  collapsable={false}
+                >
                   <TouchableWithoutFeedback {...touchableProps}>
                     <Image
                       source={{
@@ -191,31 +191,29 @@ export default function SatelliteScreen() {
                 </View>
               );
             })}
-          </ScrollView>
+          </PagerView>
           <View style={styles.swipeCopyOverlay}>
             <Text style={styles.overlayInstructionText}>
-              Swipe to change days • {pressText} image to zoom
+              {pressText} image to zoom
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.bottomSection}>
-        <View style={styles.colorGuide}>
-          <Text style={styles.colorGuideTitle}>Water Color Guide</Text>
-          <View style={styles.colorRow}>
-            <View style={styles.colorItem}>
-              <View style={[styles.colorDot, { backgroundColor: "#495468" }]} />
-              <Text style={styles.colorLabel}>Clear</Text>
-            </View>
-            <View style={styles.colorItem}>
-              <View style={[styles.colorDot, { backgroundColor: "#F6F6F6" }]} />
-              <Text style={styles.colorLabel}>Cloudy</Text>
-            </View>
-            <View style={styles.colorItem}>
-              <View style={[styles.colorDot, { backgroundColor: "#6B5E32" }]} />
-              <Text style={styles.colorLabel}>Muddy</Text>
-            </View>
+      <View style={styles.colorGuide}>
+        <Text style={styles.colorGuideTitle}>Water Color Guide</Text>
+        <View style={styles.colorRow}>
+          <View style={styles.colorItem}>
+            <View style={[styles.colorDot, { backgroundColor: "#495468" }]} />
+            <Text style={styles.colorLabel}>Clear</Text>
+          </View>
+          <View style={styles.colorItem}>
+            <View style={[styles.colorDot, { backgroundColor: "#F6F6F6" }]} />
+            <Text style={styles.colorLabel}>Cloudy</Text>
+          </View>
+          <View style={styles.colorItem}>
+            <View style={[styles.colorDot, { backgroundColor: "#6B5E32" }]} />
+            <Text style={styles.colorLabel}>Muddy</Text>
           </View>
         </View>
       </View>
@@ -224,46 +222,46 @@ export default function SatelliteScreen() {
         onPress={handleModisInfoPress}
         style={{ margin: 20, borderTopWidth: 1, borderTopColor: gray[100] }}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: white,
   },
   topSection: {
-    padding: 20,
+    padding: 15,
+    paddingBottom: 0,
   },
   imageContainer: {
     position: "relative",
   },
   swipeCopyOverlay: {
     position: "absolute",
-    bottom: 10,
+    bottom: 5,
     left: 0,
     right: 0,
     alignItems: "center",
   },
   overlayInstructionText: {
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
     color: white,
     backgroundColor: "rgba(0, 0, 0, 0.75)",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
     overflow: "hidden",
   },
-  bottomSection: {
-    margin: 0,
-    paddingInline: 20,
-  },
   colorGuide: {
-    backgroundColor: white,
-    padding: 16,
-    borderWidth: 1,
+    padding: 15,
+    marginTop: 15,
+    backgroundColor: gray[100],
     borderColor: gray[200],
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
   },
   colorGuideTitle: {
     fontSize: 16,
@@ -294,24 +292,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
-  tileHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  tileText: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  tileDiffText: {
-    textAlign: "center",
-    fontSize: 14,
-    marginBottom: 10,
-    textTransform: "capitalize",
-    color: gray[600],
-  },
   loaderBlock: {
     backgroundColor: gray[400],
     width: "100%",
@@ -323,11 +303,13 @@ const styles = StyleSheet.create({
     color: gray[600],
   },
   swiperView: {
-    flexGrow: 0,
+    height: 300,
   },
   scrollContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    width: "100%",
   },
   bold: {
     fontWeight: "bold",
