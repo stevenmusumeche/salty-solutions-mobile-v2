@@ -4,3 +4,4 @@
 - can we get rid of react-native-svg dependency and use skia for the water condition icons?
 - which locations don't have marine forecast?
 - which locations/stations are missing data?
+- pull to refresh jumps down
