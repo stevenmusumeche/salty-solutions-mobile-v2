@@ -3,6 +3,7 @@ import { addDays, endOfDay, startOfDay } from "date-fns";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import PagerView, {
+  PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
 } from "react-native-pager-view";
 import ForecastCard, {
@@ -65,9 +66,22 @@ const ForecastScreen: React.FC = () => {
     }
   }, [refetch]);
 
+  // Updates index when page settles after swipe completes
   const handlePageSelected = useCallback((e: PagerViewOnPageSelectedEvent) => {
     setCurrentIndex(e.nativeEvent.position);
   }, []);
+
+  // Updates index during swipe for early header animation trigger
+  // offset > 0.7 means user has swiped more than 70% to next page
+  const handlePageScroll = useCallback((e: PagerViewOnPageScrollEvent) => {
+    const { position, offset } = e.nativeEvent;
+    if (offset > 0.7 && position + 1 !== currentIndex) {
+      setCurrentIndex(position + 1);
+    } else if (offset < 0.3 && position !== currentIndex) {
+      setCurrentIndex(position);
+    }
+  }, [currentIndex]);
+
 
   if (loading) {
     return (
@@ -131,6 +145,7 @@ const ForecastScreen: React.FC = () => {
         style={styles.pager}
         initialPage={0}
         onPageSelected={handlePageSelected}
+        onPageScroll={handlePageScroll}
       >
         {renderPages()}
       </PagerView>
