@@ -73,15 +73,17 @@ const ForecastScreen: React.FC = () => {
 
   // Updates index during swipe for early header animation trigger
   // offset > 0.7 means user has swiped more than 70% to next page
-  const handlePageScroll = useCallback((e: PagerViewOnPageScrollEvent) => {
-    const { position, offset } = e.nativeEvent;
-    if (offset > 0.7 && position + 1 !== currentIndex) {
-      setCurrentIndex(position + 1);
-    } else if (offset < 0.3 && position !== currentIndex) {
-      setCurrentIndex(position);
-    }
-  }, [currentIndex]);
-
+  const handlePageScroll = useCallback(
+    (e: PagerViewOnPageScrollEvent) => {
+      const { position, offset } = e.nativeEvent;
+      if (offset > 0.7 && position + 1 !== currentIndex) {
+        setCurrentIndex(position + 1);
+      } else if (offset < 0.3 && position !== currentIndex) {
+        setCurrentIndex(position);
+      }
+    },
+    [currentIndex]
+  );
 
   if (loading) {
     return (
