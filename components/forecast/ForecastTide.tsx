@@ -1,4 +1,4 @@
-import { Path, Rect, useFont } from "@shopify/react-native-skia";
+import { matchFont, Path, Rect } from "@shopify/react-native-skia";
 import {
   addDays,
   addHours,
@@ -8,7 +8,13 @@ import {
   startOfDay,
 } from "date-fns";
 import React, { useMemo } from "react";
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
 import { black, blue, gray } from "../../constants/colors";
 import {
@@ -18,8 +24,6 @@ import {
 } from "../../graphql/generated";
 import { buildDatasets, Y_PADDING } from "../../utils/tide-helpers";
 import ChartLabelSwatch from "../ChartLabelSwatch";
-// @ts-ignore
-import inter from "../../assets/fonts/inter-medium.ttf";
 
 interface Props {
   stationName: string;
@@ -36,7 +40,12 @@ const ForecastTide: React.FC<Props> = ({
   stationName,
   solunarData,
 }) => {
-  const font = useFont(inter, 10);
+  const fontFamily = Platform.select({
+    ios: "Helvetica",
+    android: "Roboto",
+    default: "sans-serif",
+  });
+  const font = matchFont({ fontFamily, fontSize: 10 });
   const { width } = useWindowDimensions();
 
   const curDayTideData = useMemo(

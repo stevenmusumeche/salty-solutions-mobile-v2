@@ -1,14 +1,18 @@
-import { Group, Path, useFont } from "@shopify/react-native-skia";
+import { Group, matchFont, Path } from "@shopify/react-native-skia";
 import { addHours, format } from "date-fns";
 import React, { useMemo } from "react";
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { CartesianChart, StackedBar } from "victory-native";
 import { black, blue, gray } from "../../constants/colors";
 import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
 import { prepareForecastData } from "../../utils/forecast-helpers";
 import ChartLabelSwatch from "../ChartLabelSwatch";
-// @ts-ignore
-import inter from "../../assets/fonts/inter-medium.ttf";
 
 interface Props {
   data: CombinedForecastV2DetailFragment;
@@ -18,7 +22,12 @@ interface Props {
 const MIN_CHART_SCALE = 22;
 
 const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
-  const font = useFont(inter, 10);
+  const fontFamily = Platform.select({
+    ios: "Helvetica",
+    android: "Roboto",
+    default: "sans-serif",
+  });
+  const font = matchFont({ fontFamily, fontSize: 10 });
   const { width } = useWindowDimensions();
   const { chartData } = useMemo(
     () => prepareForecastData(data, date),
