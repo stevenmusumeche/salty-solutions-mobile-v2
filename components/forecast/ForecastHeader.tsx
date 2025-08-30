@@ -1,5 +1,4 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { format } from "date-fns";
+import { format, isToday, isTomorrow, differenceInDays, startOfDay } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -10,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { gray, white } from "../../constants/colors";
 import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
+import PageDots from "./PageDots";
 
 
 interface ForecastHeaderProps {
@@ -64,44 +64,60 @@ const ForecastHeader: React.FC<ForecastHeaderProps> = ({
     }
   );
 
+  // Converts date strings into natural relative day names
+  // Examples: "Today", "Tomorrow", "Saturday", "Next Friday"
+  const formatRelativeDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    
+    if (isToday(date)) {
+      return "Today";
+    }
+    
+    if (isTomorrow(date)) {
+      return "Tomorrow";
+    }
+    
+    const dayName = format(date, "EEEE");
+    const daysFromToday = differenceInDays(startOfDay(date), startOfDay(new Date()));
+    
+    // Only use "Next" prefix for dates that are 7+ days away (truly next week)
+    // This matches natural speech: "Sunday" (this weekend) vs "Next Friday" (week after)
+    if (daysFromToday >= 7) {
+      return `Next ${dayName}`;
+    }
+    
+    return dayName;
+  };
+
   // Update displayed title when data or index changes
   useEffect(() => {
     const currentData = data[currentIndex];
-    const title = currentData
-      ? `${currentData.name} ${format(new Date(currentData.date), "M/d")}`
-      : "";
+    let title = "";
+    
+    if (currentData) {
+      title = formatRelativeDate(currentData.date);
+    } else if (currentIndex >= data.length && !user.entitledToPremium) {
+      // User is on teaser page
+      title = "Upgrade for More";
+    }
+    
     setDisplayTitle(title);
-  }, [currentIndex, data]);
+  }, [currentIndex, data, user.entitledToPremium]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [{ translateX: translateX.value }],
   }));
 
-  const canSwipeLeft = currentIndex > 0;
-  const canSwipeRight = user.isLoggedIn
-    ? currentIndex < data.length - 1
-    : currentIndex < data.length;
-
   return (
     <View style={styles.header}>
       <View style={styles.headerInner}>
-        <MaterialCommunityIcons
-          name="gesture-swipe-right"
-          size={20}
-          color={canSwipeLeft ? styles.swipeIconVisible.color : "transparent"}
-        />
-
         <Animated.Text style={[styles.headerText, animatedStyle]}>
           {displayTitle}
         </Animated.Text>
-
-        <MaterialCommunityIcons
-          name="gesture-swipe-left"
-          size={20}
-          color={canSwipeRight ? styles.swipeIconVisible.color : "transparent"}
-        />
       </View>
+      {/* Page dots show swipe navigation - includes teaser page for free users */}
+      <PageDots currentIndex={currentIndex} totalPages={data.length + (user.entitledToPremium ? 0 : 1)} />
     </View>
   );
 };
@@ -114,7 +130,7 @@ const styles = StyleSheet.create({
   },
   headerInner: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10,
   },
@@ -122,9 +138,6 @@ const styles = StyleSheet.create({
     color: white,
     fontSize: 17,
     fontWeight: "600",
-  },
-  swipeIconVisible: {
-    color: "rgba(255,255,255,.6)",
   },
 });
 
