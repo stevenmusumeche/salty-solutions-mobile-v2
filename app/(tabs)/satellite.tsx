@@ -1,3 +1,4 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { useRouter } from "expo-router";
 import React, {
@@ -144,7 +145,6 @@ export default function SatelliteScreen() {
     );
   }
 
-  const pressText = Platform.OS === "android" ? "Long press" : "Press";
   const touchableProps = {
     [Platform.OS === "ios" ? "onPress" : "onLongPress"]: handleSmallMapPress,
   };
@@ -192,31 +192,12 @@ export default function SatelliteScreen() {
               );
             })}
           </PagerView>
-          <View style={styles.swipeCopyOverlay}>
-            <Text style={styles.overlayInstructionText}>
-              {pressText} image to zoom
-            </Text>
+          <View style={styles.zoomIconOverlay}>
+            <MaterialIcons name="zoom-in" size={20} color={white} />
           </View>
         </View>
       </View>
 
-      <View style={styles.colorGuide}>
-        <Text style={styles.colorGuideTitle}>Water Color Guide</Text>
-        <View style={styles.colorRow}>
-          <View style={styles.colorItem}>
-            <View style={[styles.colorDot, { backgroundColor: "#495468" }]} />
-            <Text style={styles.colorLabel}>Clear</Text>
-          </View>
-          <View style={styles.colorItem}>
-            <View style={[styles.colorDot, { backgroundColor: "#F6F6F6" }]} />
-            <Text style={styles.colorLabel}>Cloudy</Text>
-          </View>
-          <View style={styles.colorItem}>
-            <View style={[styles.colorDot, { backgroundColor: "#6B5E32" }]} />
-            <Text style={styles.colorLabel}>Muddy</Text>
-          </View>
-        </View>
-      </View>
       <BrandButton
         title="Learn about MODIS satellites"
         onPress={handleModisInfoPress}
@@ -238,59 +219,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: "relative",
   },
-  swipeCopyOverlay: {
+  zoomIconOverlay: {
     position: "absolute",
-    bottom: 5,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  overlayInstructionText: {
-    fontSize: 12,
-    textAlign: "center",
-    color: white,
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    bottom: 10,
+    right: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    padding: 8,
     borderRadius: 20,
-    overflow: "hidden",
-  },
-  colorGuide: {
-    padding: 15,
-    marginTop: 15,
-    backgroundColor: gray[100],
-    borderColor: gray[200],
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-  },
-  colorGuideTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: gray[800],
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  colorRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  colorItem: {
-    alignItems: "center",
-    flex: 1,
-  },
-  colorDot: {
-    width: 32,
-    height: 32,
-    borderRadius: 32,
-    marginBottom: 6,
-    borderWidth: 1,
-    borderColor: gray[300],
-  },
-  colorLabel: {
-    fontSize: 13,
-    color: gray[700],
-    fontWeight: "500",
-    textAlign: "center",
+    pointerEvents: "none",
   },
   loaderBlock: {
     backgroundColor: gray[400],
