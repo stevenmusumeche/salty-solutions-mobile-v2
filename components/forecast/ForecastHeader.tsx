@@ -1,16 +1,21 @@
-import { format, isToday, isTomorrow, differenceInDays, startOfDay } from "date-fns";
+import {
+  differenceInDays,
+  format,
+  isToday,
+  isTomorrow,
+  startOfDay,
+} from "date-fns";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  useAnimatedReaction,
 } from "react-native-reanimated";
 import { gray, white } from "../../constants/colors";
 import { CombinedForecastV2DetailFragment } from "../../graphql/generated";
 import PageDots from "./PageDots";
-
 
 interface ForecastHeaderProps {
   currentIndex: number;
@@ -29,7 +34,10 @@ const ForecastHeader: React.FC<ForecastHeaderProps> = ({
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
   const currentIndexShared = useSharedValue(currentIndex);
-  const [displayTitle, setDisplayTitle] = useState("");
+  const [displayTitle, setDisplayTitle] = useState(() => {
+    const currentData = data[currentIndex];
+    return currentData ? formatRelativeDate(currentData.date) : "";
+  });
 
   // Use animated reaction to handle index changes on UI thread
   useAnimatedReaction(
@@ -64,43 +72,18 @@ const ForecastHeader: React.FC<ForecastHeaderProps> = ({
     }
   );
 
-  // Converts date strings into natural relative day names
-  // Examples: "Today", "Tomorrow", "Saturday", "Next Friday"
-  const formatRelativeDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    
-    if (isToday(date)) {
-      return "Today";
-    }
-    
-    if (isTomorrow(date)) {
-      return "Tomorrow";
-    }
-    
-    const dayName = format(date, "EEEE");
-    const daysFromToday = differenceInDays(startOfDay(date), startOfDay(new Date()));
-    
-    // Only use "Next" prefix for dates that are 7+ days away (truly next week)
-    // This matches natural speech: "Sunday" (this weekend) vs "Next Friday" (week after)
-    if (daysFromToday >= 7) {
-      return `Next ${dayName}`;
-    }
-    
-    return dayName;
-  };
-
   // Update displayed title when data or index changes
   useEffect(() => {
     const currentData = data[currentIndex];
     let title = "";
-    
+
     if (currentData) {
       title = formatRelativeDate(currentData.date);
     } else if (currentIndex >= data.length && !user.entitledToPremium) {
       // User is on teaser page
       title = "Upgrade for More";
     }
-    
+
     setDisplayTitle(title);
   }, [currentIndex, data, user.entitledToPremium]);
 
@@ -117,10 +100,41 @@ const ForecastHeader: React.FC<ForecastHeaderProps> = ({
         </Animated.Text>
       </View>
       {/* Page dots show swipe navigation - includes teaser page for free users */}
-      <PageDots currentIndex={currentIndex} totalPages={data.length + (user.entitledToPremium ? 0 : 1)} />
+      <PageDots
+        currentIndex={currentIndex}
+        totalPages={data.length + (user.entitledToPremium ? 0 : 1)}
+      />
     </View>
   );
 };
+
+// Converts date strings into natural relative day names
+// Examples: "Today", "Tomorrow", "Saturday", "Next Friday"
+function formatRelativeDate(dateString: string) {
+  const date = new Date(dateString);
+
+  if (isToday(date)) {
+    return "Today";
+  }
+
+  if (isTomorrow(date)) {
+    return "Tomorrow";
+  }
+
+  const dayName = format(date, "EEEE");
+  const daysFromToday = differenceInDays(
+    startOfDay(date),
+    startOfDay(new Date())
+  );
+
+  // Only use "Next" prefix for dates that are 7+ days away (truly next week)
+  // This matches natural speech: "Sunday" (this weekend) vs "Next Friday" (week after)
+  if (daysFromToday >= 7) {
+    return `Next ${dayName}`;
+  }
+
+  return dayName;
+}
 
 const styles = StyleSheet.create({
   header: {
