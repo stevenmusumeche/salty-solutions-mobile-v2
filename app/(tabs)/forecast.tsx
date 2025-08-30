@@ -159,6 +159,9 @@ const ForecastLoaderCard = () => (
   <>
     <View style={styles.headerShimmer}>
       <LoaderBlock styles={styles.loaderBlockHeader} />
+      <View style={styles.pageDotsShimmer}>
+        <LoaderBlock styles={styles.loaderBlockDots} />
+      </View>
     </View>
     <View style={cardStyles.cardWrapper}>
       <View style={[cardStyles.children, styles.loaderContent]}>
@@ -188,9 +191,20 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   loaderBlockHeader: {
-    width: "55%",
-    height: 23,
+    width: 150,
+    height: 18,
     backgroundColor: gray[600],
+  },
+  pageDotsShimmer: {
+    marginTop: 8,
+    alignItems: "center",
+    height: 8, // Account for scaled dots (6px * 1.2 scale)
+  },
+  loaderBlockDots: {
+    width: 60,
+    height: 8,
+    backgroundColor: gray[600],
+    borderRadius: 4,
   },
   loaderBlockBody: {
     width: "100%",
