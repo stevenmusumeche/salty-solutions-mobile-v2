@@ -30,13 +30,18 @@ export function formatRelativeDate(dateString: string): string {
       return "Tomorrow";
     }
 
-    // Only use "Next" prefix for dates that are 7+ days away (truly next week)
-    // This matches natural speech: "Sunday" (this weekend) vs "Next Friday" (week after)
-    if (daysFromToday >= 7) {
+    // For dates within this week (2-6 days), just use day name
+    if (daysFromToday <= 6) {
+      return dayName;
+    }
+
+    // For dates 7-13 days away (next week), use "Next [DayName]"
+    if (daysFromToday <= 13) {
       return `Next ${dayName}`;
     }
 
-    return dayName;
+    // For dates more than 2 weeks away, show actual date
+    return format(date, "MMMM d");
   }
 
   // Past dates

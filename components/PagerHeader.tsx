@@ -13,12 +13,14 @@ interface PagerHeaderProps {
   currentIndex: number;
   totalPages: number;
   getTitle: (index: number) => string;
+  showDots?: boolean;
 }
 
 const PagerHeader: React.FC<PagerHeaderProps> = ({
   currentIndex,
   totalPages,
   getTitle,
+  showDots = true,
 }) => {
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
@@ -77,10 +79,12 @@ const PagerHeader: React.FC<PagerHeaderProps> = ({
           {displayTitle}
         </Animated.Text>
       </View>
-      <PageDots
-        currentIndex={currentIndex}
-        totalPages={totalPages}
-      />
+      {showDots && (
+        <PageDots
+          currentIndex={currentIndex}
+          totalPages={totalPages}
+        />
+      )}
     </View>
   );
 };

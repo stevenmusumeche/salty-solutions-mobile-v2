@@ -1,6 +1,13 @@
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
+
+import { SOLUNAR_DETAIL_FIELDS } from "../fragments/SolunarDetailFields";
+import { SUN_DETAIL_FIELDS } from "../fragments/SunDetailFields";
+import { TIDE_DETAIL_FIELDS } from "../fragments/TideDetailFields";
 
 export const COMBINED_FORECAST_V2_QUERY = gql`
+  ${TIDE_DETAIL_FIELDS}
+  ${SUN_DETAIL_FIELDS}
+  ${SOLUNAR_DETAIL_FIELDS}
   query CombinedForecastV2(
     $locationId: ID!
     $startDate: String!
@@ -59,37 +66,5 @@ export const COMBINED_FORECAST_V2_QUERY = gql`
       timestamp
       mmPerHour
     }
-  }
-
-  fragment TideDetailFields on TideDetail {
-    time
-    height
-    type
-  }
-
-  fragment SunDetailFields on SunDetail {
-    sunrise
-    sunset
-    dawn
-    dusk
-    nauticalDawn
-    nauticalDusk
-  }
-
-  fragment SolunarDetailFields on SolunarDetail {
-    date
-    score
-    majorPeriods {
-      ...SolunarPeriodFields
-    }
-    minorPeriods {
-      ...SolunarPeriodFields
-    }
-  }
-
-  fragment SolunarPeriodFields on SolunarPeriod {
-    start
-    end
-    weight
   }
 `;

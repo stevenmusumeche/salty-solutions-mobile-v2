@@ -631,14 +631,6 @@ export type CombinedForecastV2Query = { __typename?: 'Query', location?: { __typ
 
 export type CombinedForecastV2DetailFragment = { __typename?: 'CombinedForecastV2', name: string, date: string, wind: Array<{ __typename?: 'ForecastWindDetailV2', timestamp: string, base: number, gusts: number, direction: { __typename?: 'WindDirection', text: string, degrees: number } }>, day: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, night: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, temperature: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }>, rain: Array<{ __typename?: 'RainDetail', timestamp: string, mmPerHour: number }> };
 
-export type TideDetailFieldsFragment = { __typename?: 'TideDetail', time: string, height: number, type: string };
-
-export type SunDetailFieldsFragment = { __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string };
-
-export type SolunarDetailFieldsFragment = { __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> };
-
-export type SolunarPeriodFieldsFragment = { __typename?: 'SolunarPeriod', start: string, end: string, weight: number };
-
 export type CurrentConditionsDataQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
   usgsSiteId?: InputMaybe<Scalars['ID']['input']>;
@@ -688,6 +680,26 @@ export type SalinityMapQueryVariables = Exact<{
 
 export type SalinityMapQuery = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, salinityMap: string } | null };
 
+export type TideQueryVariables = Exact<{
+  locationId: Scalars['ID']['input'];
+  tideStationId: Scalars['ID']['input'];
+  usgsSiteId?: InputMaybe<Scalars['ID']['input']>;
+  includeUsgs: Scalars['Boolean']['input'];
+  noaaStationId?: InputMaybe<Scalars['ID']['input']>;
+  includeNoaa: Scalars['Boolean']['input'];
+  startDate: Scalars['String']['input'];
+  endDate: Scalars['String']['input'];
+}>;
+
+
+export type TideQuery = { __typename?: 'Query', tidePreditionStation?: { __typename?: 'TidePreditionStation', id: string, tides?: Array<{ __typename?: 'TideDetail', time: string, height: number, type: string }> | null } | null, usgsSite?: { __typename?: 'UsgsSite', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, noaaWaterHeight?: { __typename?: 'TidePreditionStation', waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, location?: { __typename?: 'Location', id: string, sun?: Array<{ __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string }> | null, moon?: Array<{ __typename?: 'MoonDetail', date: string, phase: string, illumination: number }> | null, solunar?: Array<{ __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> }> | null } | null };
+
+export type UsgsSiteFieldsFragment = { __typename?: 'UsgsSite', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null };
+
+export type WaterHeightFieldsFragment = { __typename?: 'WaterHeight', timestamp: string, height: number };
+
+export type MoonDetailFieldsFragment = { __typename?: 'MoonDetail', date: string, phase: string, illumination: number };
+
 export type UpsertUserMutationVariables = Exact<{
   input: UpsertUserInput;
 }>;
@@ -703,6 +715,14 @@ export type UserLoggedInMutationVariables = Exact<{
 
 
 export type UserLoggedInMutation = { __typename?: 'Mutation', userLoggedIn: { __typename?: 'UserLoggedInResponse', success: boolean } };
+
+export type SolunarDetailFieldsFragment = { __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> };
+
+export type SolunarPeriodFieldsFragment = { __typename?: 'SolunarPeriod', start: string, end: string, weight: number };
+
+export type SunDetailFieldsFragment = { __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string };
+
+export type TideDetailFieldsFragment = { __typename?: 'TideDetail', time: string, height: number, type: string };
 
 export const CombinedForecastV2DetailFragmentDoc = gql`
     fragment CombinedForecastV2Detail on CombinedForecastV2 {
@@ -739,42 +759,6 @@ export const CombinedForecastV2DetailFragmentDoc = gql`
   }
 }
     `;
-export const TideDetailFieldsFragmentDoc = gql`
-    fragment TideDetailFields on TideDetail {
-  time
-  height
-  type
-}
-    `;
-export const SunDetailFieldsFragmentDoc = gql`
-    fragment SunDetailFields on SunDetail {
-  sunrise
-  sunset
-  dawn
-  dusk
-  nauticalDawn
-  nauticalDusk
-}
-    `;
-export const SolunarPeriodFieldsFragmentDoc = gql`
-    fragment SolunarPeriodFields on SolunarPeriod {
-  start
-  end
-  weight
-}
-    `;
-export const SolunarDetailFieldsFragmentDoc = gql`
-    fragment SolunarDetailFields on SolunarDetail {
-  date
-  score
-  majorPeriods {
-    ...SolunarPeriodFields
-  }
-  minorPeriods {
-    ...SolunarPeriodFields
-  }
-}
-    ${SolunarPeriodFieldsFragmentDoc}`;
 export const WaterTemperatureDetailFieldsFragmentDoc = gql`
     fragment WaterTemperatureDetailFields on WaterTemperature {
   summary {
@@ -911,6 +895,28 @@ export const LocationDetailFragmentDoc = gql`
 }
     ${TideStationDetailFragmentDoc}
 ${UsgsSiteDetailFragmentDoc}`;
+export const WaterHeightFieldsFragmentDoc = gql`
+    fragment WaterHeightFields on WaterHeight {
+  timestamp
+  height
+}
+    `;
+export const UsgsSiteFieldsFragmentDoc = gql`
+    fragment UsgsSiteFields on UsgsSite {
+  id
+  name
+  waterHeight(start: $startDate, end: $endDate) {
+    ...WaterHeightFields
+  }
+}
+    ${WaterHeightFieldsFragmentDoc}`;
+export const MoonDetailFieldsFragmentDoc = gql`
+    fragment MoonDetailFields on MoonDetail {
+  date
+  phase
+  illumination
+}
+    `;
 export const UserFieldsFragmentDoc = gql`
     fragment UserFields on User {
   id
@@ -919,6 +925,42 @@ export const UserFieldsFragmentDoc = gql`
   picture
   createdAt
   entitledToPremium
+}
+    `;
+export const SolunarPeriodFieldsFragmentDoc = gql`
+    fragment SolunarPeriodFields on SolunarPeriod {
+  start
+  end
+  weight
+}
+    `;
+export const SolunarDetailFieldsFragmentDoc = gql`
+    fragment SolunarDetailFields on SolunarDetail {
+  date
+  score
+  majorPeriods {
+    ...SolunarPeriodFields
+  }
+  minorPeriods {
+    ...SolunarPeriodFields
+  }
+}
+    ${SolunarPeriodFieldsFragmentDoc}`;
+export const SunDetailFieldsFragmentDoc = gql`
+    fragment SunDetailFields on SunDetail {
+  sunrise
+  sunset
+  dawn
+  dusk
+  nauticalDawn
+  nauticalDusk
+}
+    `;
+export const TideDetailFieldsFragmentDoc = gql`
+    fragment TideDetailFields on TideDetail {
+  time
+  height
+  type
 }
     `;
 export const CombinedForecastV2Document = gql`
@@ -1185,6 +1227,81 @@ export type SalinityMapQueryHookResult = ReturnType<typeof useSalinityMapQuery>;
 export type SalinityMapLazyQueryHookResult = ReturnType<typeof useSalinityMapLazyQuery>;
 export type SalinityMapSuspenseQueryHookResult = ReturnType<typeof useSalinityMapSuspenseQuery>;
 export type SalinityMapQueryResult = Apollo.QueryResult<SalinityMapQuery, SalinityMapQueryVariables>;
+export const TideDocument = gql`
+    query Tide($locationId: ID!, $tideStationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $startDate: String!, $endDate: String!) {
+  tidePreditionStation(stationId: $tideStationId) {
+    id
+    tides(start: $startDate, end: $endDate) {
+      ...TideDetailFields
+    }
+  }
+  usgsSite(siteId: $usgsSiteId) @include(if: $includeUsgs) {
+    ...UsgsSiteFields
+  }
+  noaaWaterHeight: tidePreditionStation(stationId: $noaaStationId) @include(if: $includeNoaa) {
+    waterHeight(start: $startDate, end: $endDate) {
+      ...WaterHeightFields
+    }
+  }
+  location(id: $locationId) {
+    id
+    sun(start: $startDate, end: $endDate) {
+      ...SunDetailFields
+    }
+    moon(start: $startDate, end: $endDate) {
+      ...MoonDetailFields
+    }
+    solunar(start: $startDate, end: $endDate) {
+      ...SolunarDetailFields
+    }
+  }
+}
+    ${TideDetailFieldsFragmentDoc}
+${UsgsSiteFieldsFragmentDoc}
+${WaterHeightFieldsFragmentDoc}
+${SunDetailFieldsFragmentDoc}
+${MoonDetailFieldsFragmentDoc}
+${SolunarDetailFieldsFragmentDoc}`;
+
+/**
+ * __useTideQuery__
+ *
+ * To run a query within a React component, call `useTideQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTideQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTideQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *      tideStationId: // value for 'tideStationId'
+ *      usgsSiteId: // value for 'usgsSiteId'
+ *      includeUsgs: // value for 'includeUsgs'
+ *      noaaStationId: // value for 'noaaStationId'
+ *      includeNoaa: // value for 'includeNoaa'
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *   },
+ * });
+ */
+export function useTideQuery(baseOptions: Apollo.QueryHookOptions<TideQuery, TideQueryVariables> & ({ variables: TideQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TideQuery, TideQueryVariables>(TideDocument, options);
+      }
+export function useTideLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TideQuery, TideQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TideQuery, TideQueryVariables>(TideDocument, options);
+        }
+export function useTideSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TideQuery, TideQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TideQuery, TideQueryVariables>(TideDocument, options);
+        }
+export type TideQueryHookResult = ReturnType<typeof useTideQuery>;
+export type TideLazyQueryHookResult = ReturnType<typeof useTideLazyQuery>;
+export type TideSuspenseQueryHookResult = ReturnType<typeof useTideSuspenseQuery>;
+export type TideQueryResult = Apollo.QueryResult<TideQuery, TideQueryVariables>;
 export const UpsertUserDocument = gql`
     mutation UpsertUser($input: UpsertUserInput!) {
   upsertUser(input: $input) {
