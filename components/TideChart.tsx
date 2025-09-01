@@ -3,16 +3,16 @@ import { addHours, endOfDay, format, startOfDay } from "date-fns";
 import React, { useMemo } from "react";
 import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
-import { black, blue } from "../../constants/colors";
+import { black, blue } from "../constants/colors";
 import {
   SolunarDetailFieldsFragment,
   SunDetailFieldsFragment,
   TideDetailFieldsFragment,
-} from "../../graphql/generated";
-import { prepareTideDataForDay, Y_PADDING } from "../../utils/tide-helpers";
-import SolunarFeedingPeriodsOverlay from "./SolunarFeedingPeriodsOverlay";
-import TideChartSkyBackground from "./TideChartBackground";
-import TideChartLegend from "./TideChartLegend";
+} from "../graphql/generated";
+import { prepareTideDataForDay, Y_PADDING } from "../utils/tide-helpers";
+import SolunarFeedingPeriodsOverlay from "./forecast/SolunarFeedingPeriodsOverlay";
+import TideChartSkyBackground from "./forecast/TideChartBackground";
+import TideChartLegend from "./forecast/TideChartLegend";
 
 const CHART_HEIGHT = 130;
 const CHART_PADDING = 20;
@@ -26,7 +26,7 @@ interface Props {
   solunarData: SolunarDetailFieldsFragment[];
 }
 
-const ForecastTide: React.FC<Props> = ({
+const TideChart: React.FC<Props> = ({
   tideData: rawTideData,
   sunData,
   date,
@@ -46,10 +46,11 @@ const ForecastTide: React.FC<Props> = ({
     [date]
   );
 
-  const { tideData, tideBoundaries, daylight, solunarPeriods } = useMemo(
-    () => prepareTideDataForDay(rawTideData, sunData, solunarData, date),
-    [rawTideData, sunData, solunarData, date]
-  );
+  const { tideData, tideBoundaries, daylight, dawn, dusk, solunarPeriods } =
+    useMemo(
+      () => prepareTideDataForDay(rawTideData, sunData, solunarData, date),
+      [rawTideData, sunData, solunarData, date]
+    );
   const { min, max } = tideBoundaries;
 
   const y0 = min - Y_PADDING > 0 ? 0 : min - Y_PADDING;
@@ -96,8 +97,10 @@ const ForecastTide: React.FC<Props> = ({
                 {/* Day/night background colors */}
                 <TideChartSkyBackground
                   date={date}
-                  daylight={daylight}
                   chartBounds={chartBounds}
+                  daylight={daylight}
+                  dawn={dawn}
+                  dusk={dusk}
                 />
 
                 {/* Main tide area with blue fill*/}
@@ -141,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForecastTide;
+export default TideChart;

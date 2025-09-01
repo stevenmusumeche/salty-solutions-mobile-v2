@@ -13,6 +13,7 @@ import { useTideData } from "../../hooks/useTideData";
 import { prepareTideDataForDay } from "../../utils/tide-helpers";
 import FullScreenError from "../FullScreenError";
 import LoaderBlock from "../LoaderBlock";
+import TideChart from "../TideChart";
 import TideHighlights from "./TideHighlights";
 
 interface TideCardProps {
@@ -168,6 +169,18 @@ const TideCard: React.FC<TideCardProps> = ({
           </View>
         )}
       </View>
+
+      {/* Tide Chart - part of scrollable content */}
+      {tideData.length > 0 && sunData.length > 0 && (
+        <TideChart
+          tideData={tideData}
+          sunData={sunData}
+          solunarData={solunarData}
+          date={date}
+          stationName={tideStationName || tideStationId || ""}
+          showDawnDusk={true}
+        />
+      )}
 
       {/* Tide Highlights Section - part of scrollable content */}
       {processedTideData && (

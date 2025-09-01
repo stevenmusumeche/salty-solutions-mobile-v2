@@ -17,7 +17,7 @@ import {
 import Teaser from "../Teaser";
 import ForecastSun from "./ForecastSun";
 import ForecastText from "./ForecastText";
-import ForecastTide from "./ForecastTide";
+import TideChart from "../TideChart";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
 import ForecastWindChart from "./ForecastWindChart";
 
@@ -58,7 +58,7 @@ const ForecastCard: React.FC<Props> = ({
           <View style={styles.children}>
             <ForecastWindChart data={datum} date={date} />
             <ForecastTimeBuckets data={datum} date={date} />
-            <ForecastTide
+            <TideChart
               tideData={tideData}
               stationName={tideStationName}
               date={date}
