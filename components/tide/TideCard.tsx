@@ -61,7 +61,12 @@ const TideCard: React.FC<TideCardProps> = ({
     if (!tideData.length || !sunData.length || !solunarData.length) {
       return null;
     }
-    return prepareTideDataForDay(tideData, sunData, solunarData, date);
+    return prepareTideDataForDay({
+      rawTideData: tideData,
+      sunData,
+      solunarData,
+      date,
+    });
   }, [tideData, sunData, solunarData, date]);
 
   // Filter sun/moon data for current date
@@ -179,6 +184,7 @@ const TideCard: React.FC<TideCardProps> = ({
           date={date}
           stationName={tideStationName || tideStationId || ""}
           showLegend={false}
+          waterHeightData={waterHeightData}
         />
       )}
 

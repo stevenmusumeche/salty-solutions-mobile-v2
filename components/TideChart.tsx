@@ -8,11 +8,13 @@ import {
   SolunarDetailFieldsFragment,
   SunDetailFieldsFragment,
   TideDetailFieldsFragment,
+  WaterHeightFieldsFragment,
 } from "../graphql/generated";
 import { prepareTideDataForDay, Y_PADDING } from "../utils/tide-helpers";
 import SolunarFeedingPeriodsOverlay from "./forecast/SolunarFeedingPeriodsOverlay";
 import TideChartSkyBackground from "./forecast/TideChartBackground";
 import TideChartLegend from "./forecast/TideChartLegend";
+import WaterHeightLine from "./forecast/WaterHeightLine";
 
 const CHART_HEIGHT = 130;
 const CHART_PADDING = 20;
@@ -25,6 +27,7 @@ interface Props {
   date: Date;
   solunarData: SolunarDetailFieldsFragment[];
   showLegend?: boolean;
+  waterHeightData?: WaterHeightFieldsFragment[];
 }
 
 const TideChart: React.FC<Props> = ({
@@ -34,6 +37,7 @@ const TideChart: React.FC<Props> = ({
   stationName,
   solunarData,
   showLegend = true,
+  waterHeightData: rawWaterHeightData = [],
 }) => {
   const fontFamily = Platform.select({
     ios: "Helvetica",
@@ -48,11 +52,25 @@ const TideChart: React.FC<Props> = ({
     [date]
   );
 
-  const { tideData, tideBoundaries, daylight, dawn, dusk, solunarPeriods } =
-    useMemo(
-      () => prepareTideDataForDay(rawTideData, sunData, solunarData, date),
-      [rawTideData, sunData, solunarData, date]
-    );
+  const {
+    tideData,
+    tideBoundaries,
+    daylight,
+    dawn,
+    dusk,
+    solunarPeriods,
+    waterHeightData: processedWaterHeightData,
+  } = useMemo(
+    () =>
+      prepareTideDataForDay({
+        rawTideData,
+        sunData,
+        solunarData,
+        date,
+        waterHeightData: rawWaterHeightData,
+      }),
+    [rawTideData, sunData, solunarData, date, rawWaterHeightData]
+  );
   const { min, max } = tideBoundaries;
 
   const y0 = min - Y_PADDING > 0 ? 0 : min - Y_PADDING;
@@ -128,6 +146,15 @@ const TideChart: React.FC<Props> = ({
                   waterHeightPoints={points.waterHeight}
                   tideData={tideData}
                   chartBounds={chartBounds}
+                />
+
+                {/* Water height observations line */}
+                <WaterHeightLine
+                  waterHeightData={processedWaterHeightData}
+                  date={date}
+                  chartBounds={chartBounds}
+                  yDomainMin={y0}
+                  yDomainMax={max + Y_PADDING}
                 />
               </>
             );
