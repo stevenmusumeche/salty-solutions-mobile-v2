@@ -71,6 +71,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     rowGap: 3,
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
   },
   legendWithButtonContainer: {
     flexDirection: "row",
@@ -89,6 +92,8 @@ const styles = StyleSheet.create({
     color: gray[600],
     fontSize: 11,
     letterSpacing: -0.1,
+    flexShrink: 1,
+    maxWidth: "90%",
   },
   changeButton: {
     paddingHorizontal: 12,
@@ -97,6 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: gray[300],
+    flexGrow: 0,
   },
   changeButtonText: {
     fontSize: 12,
