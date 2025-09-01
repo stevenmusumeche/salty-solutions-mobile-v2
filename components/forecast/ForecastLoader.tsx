@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: gray[600],
   },
   loaderBlockDots: {
-    width: 60,
+    width: 120,
     height: 8,
     backgroundColor: gray[600],
     borderRadius: 4,

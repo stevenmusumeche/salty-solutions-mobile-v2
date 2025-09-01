@@ -19,6 +19,7 @@ export const TIDE_QUERY = gql`
   ) {
     tidePreditionStation(stationId: $tideStationId) {
       id
+      name
       tides(start: $startDate, end: $endDate) {
         ...TideDetailFields
       }
@@ -28,6 +29,8 @@ export const TIDE_QUERY = gql`
     }
     noaaWaterHeight: tidePreditionStation(stationId: $noaaStationId)
       @include(if: $includeNoaa) {
+      id
+      name
       waterHeight(start: $startDate, end: $endDate) {
         ...WaterHeightFields
       }

@@ -64,6 +64,7 @@ const ForecastCard: React.FC<Props> = ({
               date={date}
               sunData={sunData}
               solunarData={solunarData}
+              showObserved={false}
             />
             <ForecastSun
               sunData={sunData}

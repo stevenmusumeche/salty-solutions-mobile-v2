@@ -72,7 +72,7 @@ const ForecastWindChart: React.FC<Props> = ({ data, date }) => {
           data={transformedData}
           xKey="x"
           yKeys={["windBase", "windGusts", "directionDegrees"]}
-          padding={{ left: 0, top: 0, right: 17, bottom: 0 }}
+          padding={{ left: 0, top: 0, right: 10, bottom: 0 }}
           domainPadding={{ left: 6, right: 6, top: 10, bottom: 0 }}
           domain={{
             x: [date.getTime(), addHours(date, 23).getTime()],
@@ -139,8 +139,6 @@ const EmptyChart: React.FC = () => (
     <Text style={styles.placeholderText}>No wind data available</Text>
   </View>
 );
-
-
 
 const styles = StyleSheet.create({
   container: {

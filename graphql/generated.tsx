@@ -692,7 +692,7 @@ export type TideQueryVariables = Exact<{
 }>;
 
 
-export type TideQuery = { __typename?: 'Query', tidePreditionStation?: { __typename?: 'TidePreditionStation', id: string, tides?: Array<{ __typename?: 'TideDetail', time: string, height: number, type: string }> | null } | null, usgsSite?: { __typename?: 'UsgsSite', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, noaaWaterHeight?: { __typename?: 'TidePreditionStation', waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, location?: { __typename?: 'Location', id: string, sun?: Array<{ __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string }> | null, moon?: Array<{ __typename?: 'MoonDetail', date: string, phase: string, illumination: number }> | null, solunar?: Array<{ __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> }> | null } | null };
+export type TideQuery = { __typename?: 'Query', tidePreditionStation?: { __typename?: 'TidePreditionStation', id: string, name: string, tides?: Array<{ __typename?: 'TideDetail', time: string, height: number, type: string }> | null } | null, usgsSite?: { __typename?: 'UsgsSite', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, noaaWaterHeight?: { __typename?: 'TidePreditionStation', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null } | null, location?: { __typename?: 'Location', id: string, sun?: Array<{ __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string }> | null, moon?: Array<{ __typename?: 'MoonDetail', date: string, phase: string, illumination: number }> | null, solunar?: Array<{ __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> }> | null } | null };
 
 export type UsgsSiteFieldsFragment = { __typename?: 'UsgsSite', id: string, name: string, waterHeight?: Array<{ __typename?: 'WaterHeight', timestamp: string, height: number }> | null };
 
@@ -1231,6 +1231,7 @@ export const TideDocument = gql`
     query Tide($locationId: ID!, $tideStationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $startDate: String!, $endDate: String!) {
   tidePreditionStation(stationId: $tideStationId) {
     id
+    name
     tides(start: $startDate, end: $endDate) {
       ...TideDetailFields
     }
@@ -1239,6 +1240,8 @@ export const TideDocument = gql`
     ...UsgsSiteFields
   }
   noaaWaterHeight: tidePreditionStation(stationId: $noaaStationId) @include(if: $includeNoaa) {
+    id
+    name
     waterHeight(start: $startDate, end: $endDate) {
       ...WaterHeightFields
     }

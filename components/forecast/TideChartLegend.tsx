@@ -1,19 +1,37 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { blue, gray } from "../../constants/colors";
+import { black, blue, gray } from "../../constants/colors";
 import ChartLabelSwatch from "../ChartLabelSwatch";
 
 interface TideChartLegendProps {
-  stationName: string;
+  tideStationName?: string;
+  observationStationName?: string;
+  showObserved?: boolean;
 }
 
-const TideChartLegend: React.FC<TideChartLegendProps> = ({ stationName }) => {
+const TideChartLegend: React.FC<TideChartLegendProps> = ({
+  tideStationName,
+  observationStationName,
+  showObserved = true,
+}) => {
   return (
     <View style={styles.chartLabelWrapper}>
-      <View style={styles.chartLabelInnerWrapper}>
-        <ChartLabelSwatch color={blue[650]} />
-        <Text style={styles.chartLabelText}>Tides for {stationName}</Text>
-      </View>
+      {tideStationName && (
+        <View style={styles.chartLabelInnerWrapper}>
+          <ChartLabelSwatch color={blue[650]} />
+          <Text style={styles.chartLabelText}>
+            {showObserved && `Tides for ${tideStationName}`}
+          </Text>
+        </View>
+      )}
+      {showObserved && observationStationName && (
+        <View style={styles.chartLabelInnerWrapper}>
+          <ChartLabelSwatch color={black} />
+          <Text style={styles.chartLabelText}>
+            Observed at {observationStationName}
+          </Text>
+        </View>
+      )}
       <View style={styles.chartLabelInnerWrapper}>
         <ChartLabelSwatch color={blue.solunar} />
         <Text style={styles.chartLabelText}>Solunar Feeding Periods</Text>

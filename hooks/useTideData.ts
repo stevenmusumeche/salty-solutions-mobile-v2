@@ -61,8 +61,8 @@ export const useTideData = ({
     const solunarData = data?.location?.solunar || [];
     const waterHeightData =
       data?.usgsSite?.waterHeight || data?.noaaWaterHeight?.waterHeight || [];
-    const tideStationName = data?.tidePreditionStation?.id || "";
-    const waterHeightSiteName = data?.usgsSite?.name || "";
+    const tideStationName = data?.tidePreditionStation?.name || "";
+    const waterHeightSiteName = data?.usgsSite?.name || data?.noaaWaterHeight?.name || "";
 
     return {
       tideData,

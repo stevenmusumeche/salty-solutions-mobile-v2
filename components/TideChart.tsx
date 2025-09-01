@@ -25,9 +25,10 @@ interface Props {
   sunData: SunDetailFieldsFragment[];
   date: Date;
   solunarData: SolunarDetailFieldsFragment[];
-  showLegend?: boolean;
   waterHeightData?: WaterHeightFieldsFragment[];
   height?: number;
+  observationStationName?: string;
+  showObserved?: boolean;
 }
 
 const TideChart: React.FC<Props> = ({
@@ -36,9 +37,10 @@ const TideChart: React.FC<Props> = ({
   date,
   stationName,
   solunarData,
-  showLegend = true,
   waterHeightData: rawWaterHeightData = [],
   height = DEFAULT_CHART_HEIGHT,
+  observationStationName,
+  showObserved = true,
 }) => {
   const fontFamily = Platform.select({
     ios: "Helvetica",
@@ -76,7 +78,7 @@ const TideChart: React.FC<Props> = ({
           data={tideData}
           xKey="timestamp"
           yKeys={["predictedHeight", "observedHeight"]}
-          padding={{ left: 0, top: 0, right: 17, bottom: 0 }}
+          padding={{ left: 0, top: 0, right: 10, bottom: 0 }}
           domain={{
             x: [startOfDay(date).getTime(), endOfDay(date).getTime()],
             y: [y0, max + Y_PADDING],
@@ -154,7 +156,11 @@ const TideChart: React.FC<Props> = ({
           }}
         </CartesianChart>
       </View>
-      {showLegend && <TideChartLegend stationName={stationName} />}
+      <TideChartLegend
+        tideStationName={stationName}
+        observationStationName={observationStationName}
+        showObserved={showObserved}
+      />
     </View>
   );
 };
@@ -162,7 +168,7 @@ const TideChart: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     paddingInline: 10,
-    paddingTop: 15,
+    paddingBlock: 15,
   },
 });
 

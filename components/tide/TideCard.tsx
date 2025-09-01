@@ -36,6 +36,7 @@ const TideCard: React.FC<TideCardProps> = ({
     solunarData,
     waterHeightData,
     tideStationName,
+    waterHeightSiteName,
     loading,
     error,
     refreshing,
@@ -117,7 +118,7 @@ const TideCard: React.FC<TideCardProps> = ({
         solunarData={solunarData}
         date={date}
         stationName={tideStationName || tideStationId || ""}
-        showLegend={false}
+        observationStationName={waterHeightSiteName}
         waterHeightData={waterHeightData}
         height={200}
       />
