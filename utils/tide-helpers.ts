@@ -49,9 +49,6 @@ export interface PreparedTideData {
   // Processed tide data (reuse existing TidePoint type)
   tideData: TidePoint[];
 
-  // Observed water height data for chart rendering
-  waterHeightData: TideDataset[];
-
   // Boundaries for chart scaling
   tideBoundaries: TideBoundaries;
 
@@ -99,25 +96,59 @@ const buildDatasets = ({
     isAfter(new Date(tide.time), subMinutes(sunrise, 6)) &&
     isBefore(new Date(tide.time), addMinutes(sunset, 6));
 
-  const tideBoundaries = calcTideBoundaries(tideDetails, waterHeightData);
+  const tideBoundaries = calcTideBoundaries(tideDetails, waterHeightData || []);
 
   const timespanFilterer = makeTimespanFilterer(
     tideDetails,
     tideBoundaries.max + Y_PADDING
   );
 
+  // Create tide data and add observed height
   const tideData: TidePoint[] = tideDetails.map(
-    (tide: TideDetailFieldsFragment) => ({
-      date: new Date(tide.time),
-      timestamp: Date.parse(tide.time),
-      waterHeight: tide.height,
-      type: tide.type,
-    })
+    (tide: TideDetailFieldsFragment) => {
+      const tidePt = {
+        date: new Date(tide.time),
+        timestamp: Date.parse(tide.time),
+        predictedHeight: tide.height,
+        type: tide.type,
+      };
+
+      // Find closest water height observation within 15 minutes
+      let observedHeight: number | null = null;
+      if (waterHeightData && waterHeightData.length > 0) {
+        const tolerance = 15 * 60 * 1000; // 15 minutes in ms
+        const tideTime = tidePt.date.getTime();
+
+        // Find all water height observations within tolerance window
+        const candidateObs = waterHeightData.filter(
+          (data) =>
+            Math.abs(new Date(data.timestamp).getTime() - tideTime) <= tolerance
+        );
+
+        if (candidateObs.length > 0) {
+          const closest = candidateObs.reduce((prev, curr) => {
+            const prevDiff = Math.abs(
+              new Date(prev.timestamp).getTime() - tideTime
+            );
+            const currDiff = Math.abs(
+              new Date(curr.timestamp).getTime() - tideTime
+            );
+            return currDiff < prevDiff ? curr : prev;
+          });
+          observedHeight = closest.height;
+        }
+      }
+
+      return {
+        ...tidePt,
+        observedHeight,
+      };
+    }
   );
 
   let solunarPeriods: SolunarPeriod[] = [];
   if (solunarDetails && solunarDetails.majorPeriods) {
-    // Process major periods
+    // Process major periods - use tide data for solunar matching
     const majorPeriods = solunarDetails.majorPeriods.map((period) => ({
       tides: tideData.filter((tideDatum) =>
         isWithinInterval(tideDatum.date, {
@@ -148,14 +179,6 @@ const buildDatasets = ({
   const dusk = timespanFilterer(isDusk);
   const daylight = timespanFilterer(isDaylight);
 
-  // Observed water height data
-  const processedWaterHeightData: TideDataset[] = waterHeightData.map(
-    (data) => ({
-      x: new Date(data.timestamp),
-      y: data.height,
-    })
-  );
-
   // Extract high/low tide events for badges
   const hiLowData: HiLowTide[] = tideDetails
     .filter((tide) => tide.type === "high" || tide.type === "low")
@@ -172,7 +195,6 @@ const buildDatasets = ({
     dusk,
     daylight,
     tideData,
-    waterHeightData: processedWaterHeightData,
     tideBoundaries,
     solunarPeriods,
     hiLowData,

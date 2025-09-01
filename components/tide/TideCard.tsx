@@ -42,7 +42,6 @@ const TideCard: React.FC<TideCardProps> = ({
     solunarData,
     waterHeightData,
     tideStationName,
-    waterHeightSiteName,
     loading,
     error,
     refreshing,
@@ -141,17 +140,6 @@ const TideCard: React.FC<TideCardProps> = ({
           </Text>
         </View>
 
-        {waterHeightSiteName && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Water Height Site</Text>
-            <Text style={styles.sectionContent}>{waterHeightSiteName}</Text>
-            <Text style={styles.sectionContent}>
-              {waterHeightData.length > 0
-                ? `${waterHeightData.length} water height readings`
-                : "No water height data available"}
-            </Text>
-          </View>
-        )}
 
         {sunData.length > 0 && (
           <View style={styles.section}>

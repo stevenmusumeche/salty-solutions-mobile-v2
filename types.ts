@@ -18,7 +18,8 @@ export interface SolunarPeriod {
 export interface TidePoint {
   date: Date;
   timestamp: number;
-  waterHeight: number;
+  predictedHeight: number;
+  observedHeight?: number | null;
   type: string;
   [key: string]: unknown; // Index signature for chart library compatibility
 }

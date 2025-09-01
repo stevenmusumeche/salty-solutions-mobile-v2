@@ -14,7 +14,6 @@ import { prepareTideDataForDay, Y_PADDING } from "../utils/tide-helpers";
 import SolunarFeedingPeriodsOverlay from "./forecast/SolunarFeedingPeriodsOverlay";
 import TideChartSkyBackground from "./forecast/TideChartBackground";
 import TideChartLegend from "./forecast/TideChartLegend";
-import WaterHeightLine from "./forecast/WaterHeightLine";
 
 const CHART_HEIGHT = 130;
 const CHART_PADDING = 20;
@@ -59,7 +58,6 @@ const TideChart: React.FC<Props> = ({
     dawn,
     dusk,
     solunarPeriods,
-    waterHeightData: processedWaterHeightData,
   } = useMemo(
     () =>
       prepareTideDataForDay({
@@ -81,7 +79,7 @@ const TideChart: React.FC<Props> = ({
         <CartesianChart
           data={tideData}
           xKey="timestamp"
-          yKeys={["waterHeight"]}
+          yKeys={["predictedHeight", "observedHeight"]}
           padding={{ left: 0, top: 0, right: 17, bottom: 0 }}
           domain={{
             x: [startOfDay(date).getTime(), endOfDay(date).getTime()],
@@ -91,7 +89,7 @@ const TideChart: React.FC<Props> = ({
             {
               font,
               lineWidth: 0,
-              formatYLabel: (value) => value.toFixed(1),
+              formatYLabel: (value) => value?.toFixed(1) ?? '',
             },
           ]}
           xAxis={{
@@ -125,7 +123,7 @@ const TideChart: React.FC<Props> = ({
 
                 {/* Main tide area with blue fill*/}
                 <Area
-                  points={points.waterHeight}
+                  points={points.predictedHeight}
                   y0={chartBounds.bottom}
                   color={blue[650]}
                   opacity={1}
@@ -134,7 +132,7 @@ const TideChart: React.FC<Props> = ({
 
                 {/* Tide area stroke for better visibility */}
                 <Line
-                  points={points.waterHeight}
+                  points={points.predictedHeight}
                   color={blue[800]}
                   strokeWidth={1}
                   curveType="natural"
@@ -143,18 +141,17 @@ const TideChart: React.FC<Props> = ({
                 {/* Solunar feeding period overlays */}
                 <SolunarFeedingPeriodsOverlay
                   solunarPeriods={solunarPeriods}
-                  waterHeightPoints={points.waterHeight}
+                  waterHeightPoints={points.predictedHeight}
                   tideData={tideData}
                   chartBounds={chartBounds}
                 />
 
                 {/* Water height observations line */}
-                <WaterHeightLine
-                  waterHeightData={processedWaterHeightData}
-                  date={date}
-                  chartBounds={chartBounds}
-                  yDomainMin={y0}
-                  yDomainMax={max + Y_PADDING}
+                <Line
+                  points={points.observedHeight}
+                  color={black}
+                  strokeWidth={2}
+                  curveType="natural"
                 />
               </>
             );

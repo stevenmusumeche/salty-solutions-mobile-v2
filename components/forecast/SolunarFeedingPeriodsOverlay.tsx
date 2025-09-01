@@ -22,9 +22,11 @@ const SolunarFeedingPeriodsOverlay: React.FC<
     if (period.tides.length === 0) return null;
 
     // Extract the subset of tide curve chart points that fall within this solunar feeding period
-    // by matching tide timestamps with chart data points (with 1-minute tolerance for timing precision)
+    // Filter to only predicted tide data points (not observations) for solunar matching
+    const predictedTideData = tideData.filter(datum => datum.predictedHeight !== null);
     const solunarPoints = waterHeightPoints.filter((_, index) => {
-      const dataPoint = tideData[index];
+      const dataPoint = predictedTideData[index];
+      if (!dataPoint) return false;
       return period.tides.some(
         (tide) => Math.abs(tide.timestamp - dataPoint.timestamp) < 60000 // within 1 minute
       );
@@ -37,11 +39,11 @@ const SolunarFeedingPeriodsOverlay: React.FC<
     const periodEnd = period.tides[period.tides.length - 1].timestamp;
     const periodCenter = (periodStart + periodEnd) / 2;
 
-    // Find the corresponding point on the tide curve
-    const centerPointIndex = tideData.findIndex(
+    // Find the corresponding point on the tide curve (using predicted data only)
+    const centerPointIndex = predictedTideData.findIndex(
       (datum) =>
         Math.abs(datum.timestamp - periodCenter) ===
-        Math.min(...tideData.map((d) => Math.abs(d.timestamp - periodCenter)))
+        Math.min(...predictedTideData.map((d) => Math.abs(d.timestamp - periodCenter)))
     );
     const centerPoint = waterHeightPoints[centerPointIndex];
     const isMajor = period.type === "major";
