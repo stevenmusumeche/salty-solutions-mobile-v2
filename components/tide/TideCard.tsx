@@ -1,13 +1,7 @@
-import { format, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import React, { useMemo } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { gray, white } from "../../constants/colors";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { white } from "../../constants/colors";
 import { useUserContext } from "../../context/UserContext";
 import { useTideData } from "../../hooks/useTideData";
 import { prepareTideDataForDay } from "../../utils/tide-helpers";
@@ -109,8 +103,6 @@ const TideCard: React.FC<TideCardProps> = ({
     );
   }
 
-  const dateString = format(date, "EEEE, MMMM d, yyyy");
-
   return (
     <ScrollView
       style={styles.container}
@@ -119,64 +111,16 @@ const TideCard: React.FC<TideCardProps> = ({
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-      <View style={{ padding: 15 }}>
-        <View style={styles.dateHeader}>
-          <Text style={styles.dateText}>{dateString}</Text>
-        </View>
+      <TideChart
+        tideData={tideData}
+        sunData={sunData}
+        solunarData={solunarData}
+        date={date}
+        stationName={tideStationName || tideStationId || ""}
+        showLegend={false}
+        waterHeightData={waterHeightData}
+      />
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tide Station</Text>
-          <Text style={styles.sectionContent}>
-            {tideStationName || tideStationId || "No station selected"}
-          </Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tide Events</Text>
-          <Text style={styles.sectionContent}>
-            {tideData.length > 0
-              ? `${tideData.length} tide events found`
-              : "No tide data available"}
-          </Text>
-        </View>
-
-
-        {sunData.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sun & Moon</Text>
-            <Text style={styles.sectionContent}>
-              Sun data: {sunData.length} entries
-            </Text>
-            <Text style={styles.sectionContent}>
-              Moon data: {moonData.length} entries
-            </Text>
-          </View>
-        )}
-
-        {solunarData.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Solunar Data</Text>
-            <Text style={styles.sectionContent}>
-              {solunarData.length} solunar periods found
-            </Text>
-          </View>
-        )}
-      </View>
-
-      {/* Tide Chart - part of scrollable content */}
-      {tideData.length > 0 && sunData.length > 0 && (
-        <TideChart
-          tideData={tideData}
-          sunData={sunData}
-          solunarData={solunarData}
-          date={date}
-          stationName={tideStationName || tideStationId || ""}
-          showLegend={false}
-          waterHeightData={waterHeightData}
-        />
-      )}
-
-      {/* Tide Highlights Section - part of scrollable content */}
       {processedTideData && (
         <TideHighlights
           hiLowData={processedTideData.hiLowData}
@@ -204,35 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: white,
   },
-  contentContainer: {
-    // paddingBottom: 15, // Keep bottom padding for ScrollView
-  },
-  dateHeader: {
-    marginBottom: 16,
-    paddingHorizontal: 15, // Add horizontal padding to content
-  },
-  dateText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  section: {
-    backgroundColor: gray[100],
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-    color: gray[900],
-  },
-  sectionContent: {
-    fontSize: 14,
-    color: gray[700],
-    marginBottom: 4,
-  },
+  contentContainer: {},
 });
 
 export default TideCard;
