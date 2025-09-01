@@ -2,17 +2,16 @@ import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   Modal,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { black, blue, gray, white } from "../../constants/colors";
 import { DataSite, useTideContext } from "../../context/TideContext";
 import BrandButton from "../BrandButton";
-import UsgsSiteSelect from "../UsgsSiteSelect";
 
 interface TideStationModalProps {
   visible: boolean;
@@ -29,9 +28,9 @@ const TideStationModal: React.FC<TideStationModalProps> = ({
   const [selectedTideStationId, setSelectedTideStationId] = useState(
     selectedTideStation?.id || ""
   );
-  const [selectedDataSite, setSelectedDataSite] = useState<DataSite | undefined>(
-    selectedSite
-  );
+  const [selectedDataSite, setSelectedDataSite] = useState<
+    DataSite | undefined
+  >(selectedSite);
 
   const handleSave = () => {
     if (selectedTideStationId) {
@@ -151,10 +150,7 @@ const TideStationModal: React.FC<TideStationModalProps> = ({
         </ScrollView>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleCancel}
-          >
+          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
           <BrandButton
@@ -193,6 +189,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    marginBottom: 15,
   },
   section: {
     marginTop: 24,
@@ -214,9 +211,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: gray[200],
+    borderColor: gray[400],
     marginBottom: 8,
     backgroundColor: white,
   },
@@ -244,7 +241,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: gray[200],
+    borderTopColor: gray[400],
     gap: 12,
   },
   cancelButton: {
@@ -253,7 +250,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gray[300],
+    borderColor: gray[400],
     alignItems: "center",
   },
   cancelButtonText: {
