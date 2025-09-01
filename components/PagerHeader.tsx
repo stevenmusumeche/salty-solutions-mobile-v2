@@ -38,27 +38,25 @@ const PagerHeader: React.FC<PagerHeaderProps> = ({
       }
 
       const isGoingForward = newIndex > previousIndex;
-      const slideDistance = 30;
+      const slideDistance = 50;
 
+      // Start fade out of current text
+      opacity.value = withTiming(0, { duration: 150 });
+
+      // Set starting position and opacity for incoming text
       if (isGoingForward) {
-        // FORWARD ANIMATION (swiping left to future days)
-        translateX.value = withTiming(-slideDistance, { duration: 150 });
-        opacity.value = withTiming(0, { duration: 100 }, () => {
-          currentIndexShared.value = newIndex;
-          translateX.value = slideDistance;
-          translateX.value = withTiming(0, { duration: 100 });
-          opacity.value = withTiming(1, { duration: 100 });
-        });
+        translateX.value = slideDistance; // Start from right
       } else {
-        // BACKWARD ANIMATION (swiping right to past days)
-        translateX.value = withTiming(slideDistance, { duration: 150 });
-        opacity.value = withTiming(0, { duration: 150 }, () => {
-          currentIndexShared.value = newIndex;
-          translateX.value = -slideDistance;
-          translateX.value = withTiming(0, { duration: 150 });
-          opacity.value = withTiming(1, { duration: 150 });
-        });
+        translateX.value = -slideDistance; // Start from left
       }
+
+      // Update content immediately but keep it invisible
+      currentIndexShared.value = newIndex;
+      opacity.value = 0; // Ensure new text starts invisible
+      
+      // Now animate the new text in
+      translateX.value = withTiming(0, { duration: 150 });
+      opacity.value = withTiming(1, { duration: 150 });
     }
   );
 
@@ -80,10 +78,7 @@ const PagerHeader: React.FC<PagerHeaderProps> = ({
         </Animated.Text>
       </View>
       {showDots && (
-        <PageDots
-          currentIndex={currentIndex}
-          totalPages={totalPages}
-        />
+        <PageDots currentIndex={currentIndex} totalPages={totalPages} />
       )}
     </View>
   );
