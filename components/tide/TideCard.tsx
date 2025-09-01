@@ -119,6 +119,7 @@ const TideCard: React.FC<TideCardProps> = ({
         stationName={tideStationName || tideStationId || ""}
         showLegend={false}
         waterHeightData={waterHeightData}
+        height={200}
       />
 
       {processedTideData && (

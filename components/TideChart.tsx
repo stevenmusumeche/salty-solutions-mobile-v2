@@ -15,7 +15,7 @@ import SolunarFeedingPeriodsOverlay from "./forecast/SolunarFeedingPeriodsOverla
 import TideChartSkyBackground from "./forecast/TideChartBackground";
 import TideChartLegend from "./forecast/TideChartLegend";
 
-const CHART_HEIGHT = 130;
+const DEFAULT_CHART_HEIGHT = 130;
 const CHART_PADDING = 20;
 const TICK_HOURS = [0, 3, 6, 9, 12, 15, 18, 21];
 
@@ -27,6 +27,7 @@ interface Props {
   solunarData: SolunarDetailFieldsFragment[];
   showLegend?: boolean;
   waterHeightData?: WaterHeightFieldsFragment[];
+  height?: number;
 }
 
 const TideChart: React.FC<Props> = ({
@@ -37,6 +38,7 @@ const TideChart: React.FC<Props> = ({
   solunarData,
   showLegend = true,
   waterHeightData: rawWaterHeightData = [],
+  height = DEFAULT_CHART_HEIGHT,
 }) => {
   const fontFamily = Platform.select({
     ios: "Helvetica",
@@ -51,31 +53,25 @@ const TideChart: React.FC<Props> = ({
     [date]
   );
 
-  const {
-    tideData,
-    tideBoundaries,
-    daylight,
-    dawn,
-    dusk,
-    solunarPeriods,
-  } = useMemo(
-    () =>
-      prepareTideDataForDay({
-        rawTideData,
-        sunData,
-        solunarData,
-        date,
-        waterHeightData: rawWaterHeightData,
-      }),
-    [rawTideData, sunData, solunarData, date, rawWaterHeightData]
-  );
+  const { tideData, tideBoundaries, daylight, dawn, dusk, solunarPeriods } =
+    useMemo(
+      () =>
+        prepareTideDataForDay({
+          rawTideData,
+          sunData,
+          solunarData,
+          date,
+          waterHeightData: rawWaterHeightData,
+        }),
+      [rawTideData, sunData, solunarData, date, rawWaterHeightData]
+    );
   const { min, max } = tideBoundaries;
 
   const y0 = min - Y_PADDING > 0 ? 0 : min - Y_PADDING;
 
   return (
     <View style={styles.container}>
-      <View style={{ height: CHART_HEIGHT, width: width - CHART_PADDING }}>
+      <View style={{ height, width: width - CHART_PADDING }}>
         <CartesianChart
           data={tideData}
           xKey="timestamp"
@@ -89,7 +85,7 @@ const TideChart: React.FC<Props> = ({
             {
               font,
               lineWidth: 0,
-              formatYLabel: (value) => value?.toFixed(1) ?? '',
+              formatYLabel: (value) => value?.toFixed(1) ?? "",
             },
           ]}
           xAxis={{
