@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { black, blue, gray } from "../../constants/colors";
 import ChartLabelSwatch from "../ChartLabelSwatch";
 
@@ -7,21 +7,23 @@ interface TideChartLegendProps {
   tideStationName?: string;
   observationStationName?: string;
   showObserved?: boolean;
+  onChangePress?: () => void;
 }
 
 const TideChartLegend: React.FC<TideChartLegendProps> = ({
   tideStationName,
   observationStationName,
   showObserved = true,
+  onChangePress,
 }) => {
-  return (
-    <View style={styles.chartLabelWrapper}>
+  const legendContent = (
+    <View
+      style={onChangePress ? styles.chartLabelItems : styles.chartLabelWrapper}
+    >
       {tideStationName && (
         <View style={styles.chartLabelInnerWrapper}>
           <ChartLabelSwatch color={blue[650]} />
-          <Text style={styles.chartLabelText}>
-            {showObserved && `Tides for ${tideStationName}`}
-          </Text>
+          <Text style={styles.chartLabelText}>Tides for {tideStationName}</Text>
         </View>
       )}
       {showObserved && observationStationName && (
@@ -38,6 +40,21 @@ const TideChartLegend: React.FC<TideChartLegendProps> = ({
       </View>
     </View>
   );
+
+  if (onChangePress) {
+    return (
+      <View style={styles.chartLabelWrapper}>
+        <View style={styles.legendWithButtonContainer}>
+          {legendContent}
+          <TouchableOpacity style={styles.changeButton} onPress={onChangePress}>
+            <Text style={styles.changeButtonText}>Change</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  return legendContent;
 };
 
 const styles = StyleSheet.create({
@@ -46,6 +63,21 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     alignSelf: "center",
     marginTop: 5,
+    rowGap: 3,
+    paddingLeft: 27,
+    paddingRight: 20,
+  },
+  chartLabelItems: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    rowGap: 3,
+  },
+  legendWithButtonContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    width: "100%",
+    columnGap: 10,
   },
   chartLabelInnerWrapper: {
     flexDirection: "row",
@@ -55,8 +87,21 @@ const styles = StyleSheet.create({
   chartLabelText: {
     textTransform: "uppercase",
     color: gray[600],
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: -0.1,
+  },
+  changeButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: gray[100],
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: gray[300],
+  },
+  changeButtonText: {
+    fontSize: 12,
+    color: gray[700],
+    fontWeight: "500",
   },
 });
 

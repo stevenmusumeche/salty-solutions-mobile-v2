@@ -20,6 +20,7 @@ import ForecastText from "./ForecastText";
 import TideChart from "../TideChart";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
 import ForecastWindChart from "./ForecastWindChart";
+import TideChartLegend from "./TideChartLegend";
 
 interface Props {
   datum: CombinedForecastV2DetailFragment;
@@ -60,10 +61,12 @@ const ForecastCard: React.FC<Props> = ({
             <ForecastTimeBuckets data={datum} date={date} />
             <TideChart
               tideData={tideData}
-              stationName={tideStationName}
               date={date}
               sunData={sunData}
               solunarData={solunarData}
+            />
+            <TideChartLegend
+              tideStationName={tideStationName}
               showObserved={false}
             />
             <ForecastSun

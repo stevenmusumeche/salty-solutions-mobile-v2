@@ -13,34 +13,27 @@ import {
 import { prepareTideDataForDay, Y_PADDING } from "../utils/tide-helpers";
 import SolunarFeedingPeriodsOverlay from "./forecast/SolunarFeedingPeriodsOverlay";
 import TideChartSkyBackground from "./forecast/TideChartBackground";
-import TideChartLegend from "./forecast/TideChartLegend";
 
 const DEFAULT_CHART_HEIGHT = 130;
 const CHART_PADDING = 20;
 const TICK_HOURS = [0, 3, 6, 9, 12, 15, 18, 21];
 
 interface Props {
-  stationName: string;
   tideData: TideDetailFieldsFragment[];
   sunData: SunDetailFieldsFragment[];
   date: Date;
   solunarData: SolunarDetailFieldsFragment[];
   waterHeightData?: WaterHeightFieldsFragment[];
   height?: number;
-  observationStationName?: string;
-  showObserved?: boolean;
 }
 
 const TideChart: React.FC<Props> = ({
   tideData: rawTideData,
   sunData,
   date,
-  stationName,
   solunarData,
   waterHeightData: rawWaterHeightData = [],
   height = DEFAULT_CHART_HEIGHT,
-  observationStationName,
-  showObserved = true,
 }) => {
   const fontFamily = Platform.select({
     ios: "Helvetica",
@@ -156,11 +149,6 @@ const TideChart: React.FC<Props> = ({
           }}
         </CartesianChart>
       </View>
-      <TideChartLegend
-        tideStationName={stationName}
-        observationStationName={observationStationName}
-        showObserved={showObserved}
-      />
     </View>
   );
 };
@@ -168,7 +156,7 @@ const TideChart: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     paddingInline: 10,
-    paddingBlock: 15,
+    paddingTop: 15,
   },
 });
 

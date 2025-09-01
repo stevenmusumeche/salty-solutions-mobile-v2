@@ -1,14 +1,16 @@
 import { startOfDay } from "date-fns";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { white } from "../../constants/colors";
 import { useUserContext } from "../../context/UserContext";
 import { useTideData } from "../../hooks/useTideData";
 import { prepareTideDataForDay } from "../../utils/tide-helpers";
+import TideChartLegend from "../forecast/TideChartLegend";
 import FullScreenError from "../FullScreenError";
 import LoaderBlock from "../LoaderBlock";
 import TideChart from "../TideChart";
 import TideHighlights from "./TideHighlights";
+import TideStationModal from "./TideStationModal";
 
 interface TideCardProps {
   date: Date;
@@ -28,6 +30,7 @@ const TideCard: React.FC<TideCardProps> = ({
   isVisible = false,
 }) => {
   const { user } = useUserContext();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const {
     tideData,
@@ -117,11 +120,18 @@ const TideCard: React.FC<TideCardProps> = ({
         sunData={sunData}
         solunarData={solunarData}
         date={date}
-        stationName={tideStationName || tideStationId || ""}
-        observationStationName={waterHeightSiteName}
         waterHeightData={waterHeightData}
         height={200}
       />
+
+      <View style={styles.legendContainer}>
+        <TideChartLegend
+          tideStationName={tideStationName || tideStationId || ""}
+          observationStationName={waterHeightSiteName}
+          showObserved={true}
+          onChangePress={() => setIsModalVisible(true)}
+        />
+      </View>
 
       {processedTideData && (
         <TideHighlights
@@ -132,6 +142,11 @@ const TideCard: React.FC<TideCardProps> = ({
           isPremiumUser={user.entitledToPremium}
         />
       )}
+
+      <TideStationModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
     </ScrollView>
   );
 };
@@ -151,6 +166,9 @@ const styles = StyleSheet.create({
     backgroundColor: white,
   },
   contentContainer: {},
+  legendContainer: {
+    marginBottom: 15,
+  },
 });
 
 export default TideCard;

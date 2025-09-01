@@ -20,10 +20,10 @@ const ChartLabelSwatch: React.FC<Props> = ({ color, opacity = 1 }) => (
 
 const styles = StyleSheet.create({
   chartLabelSwatch: {
-    height: 12,
-    width: 12,
-    borderRadius: 12,
-    marginRight: 3,
+    height: 15,
+    width: 15,
+    borderRadius: 15,
+    marginRight: 5,
   },
 });
 
