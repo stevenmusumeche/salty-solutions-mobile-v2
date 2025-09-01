@@ -24,6 +24,7 @@ interface Props {
   sunData: SunDetailFieldsFragment[];
   date: Date;
   solunarData: SolunarDetailFieldsFragment[];
+  showLegend?: boolean;
 }
 
 const TideChart: React.FC<Props> = ({
@@ -32,6 +33,7 @@ const TideChart: React.FC<Props> = ({
   date,
   stationName,
   solunarData,
+  showLegend = true,
 }) => {
   const fontFamily = Platform.select({
     ios: "Helvetica",
@@ -132,7 +134,7 @@ const TideChart: React.FC<Props> = ({
           }}
         </CartesianChart>
       </View>
-      <TideChartLegend stationName={stationName} />
+      {showLegend && <TideChartLegend stationName={stationName} />}
     </View>
   );
 };

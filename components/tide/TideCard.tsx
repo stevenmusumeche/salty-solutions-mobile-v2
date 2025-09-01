@@ -178,7 +178,7 @@ const TideCard: React.FC<TideCardProps> = ({
           solunarData={solunarData}
           date={date}
           stationName={tideStationName || tideStationId || ""}
-          showDawnDusk={true}
+          showLegend={false}
         />
       )}
 
