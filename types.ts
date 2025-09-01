@@ -20,4 +20,5 @@ export interface TidePoint {
   timestamp: number;
   waterHeight: number;
   type: string;
+  [key: string]: unknown; // Index signature for chart library compatibility
 }

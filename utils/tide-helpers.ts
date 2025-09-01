@@ -14,9 +14,49 @@ import {
   SunDetailFieldsFragment,
   TideDetailFieldsFragment,
 } from "../graphql/generated";
-import { SolunarPeriod } from "../types";
+import { SolunarPeriod, TidePoint } from "../types";
 
 export const Y_PADDING = 0.4;
+
+// TypeScript interfaces for tide data processing
+export interface TideDataset {
+  x: Date;
+  y: number;
+}
+
+export type HiLowTideType = 'high' | 'low';
+
+export interface HiLowTide {
+  time: string;
+  type: HiLowTideType;
+  height: number;
+}
+
+export interface TideBoundaries {
+  min: number;
+  max: number;
+}
+
+export interface PreparedTideData {
+  // Timespan data for chart rendering
+  darkMorning: TideDataset[];
+  darkEvening: TideDataset[];
+  dawn: TideDataset[];
+  dusk: TideDataset[];
+  daylight: TideDataset[];
+  
+  // Processed tide data (reuse existing TidePoint type)
+  tideData: TidePoint[];
+  
+  // Boundaries for chart scaling
+  tideBoundaries: TideBoundaries;
+  
+  // Solunar periods with associated tides (reuse existing SolunarPeriod type)
+  solunarPeriods: SolunarPeriod[];
+  
+  // High/Low tide events for badges
+  hiLowData: HiLowTide[];
+}
 
 const buildDatasets = (
   sunData: SunDetailFieldsFragment,
@@ -54,7 +94,7 @@ const buildDatasets = (
     tideBoundaries.max + Y_PADDING
   );
 
-  const tideData = tideDetails.map((tide: TideDetailFieldsFragment) => ({
+  const tideData: TidePoint[] = tideDetails.map((tide: TideDetailFieldsFragment) => ({
     date: new Date(tide.time),
     timestamp: Date.parse(tide.time),
     waterHeight: tide.height,
@@ -94,6 +134,15 @@ const buildDatasets = (
   const dusk = timespanFilterer(isDusk);
   const daylight = timespanFilterer(isDaylight);
 
+  // Extract high/low tide events for badges
+  const hiLowData: HiLowTide[] = tideDetails
+    .filter(tide => tide.type === 'high' || tide.type === 'low')
+    .map(tide => ({
+      time: tide.time,
+      type: tide.type as HiLowTideType,
+      height: tide.height,
+    }));
+
   return {
     darkMorning,
     darkEvening,
@@ -103,6 +152,7 @@ const buildDatasets = (
     tideData,
     tideBoundaries,
     solunarPeriods,
+    hiLowData,
   };
 };
 
@@ -144,7 +194,7 @@ export const prepareTideDataForDay = (
   sunData: SunDetailFieldsFragment[],
   solunarData: SolunarDetailFieldsFragment[],
   date: Date
-) => {
+): PreparedTideData => {
   const TIDE_WINDOW_HOURS = 2;
 
   // Filter tide data for the current day (with buffer)

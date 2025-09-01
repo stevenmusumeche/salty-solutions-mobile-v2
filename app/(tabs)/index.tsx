@@ -11,8 +11,13 @@ import { useWindSites } from "@/hooks/useWindSites";
 import { useApolloClient } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { RefreshControl } from "react-native-gesture-handler";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useInterval } from "usehooks-ts";
 
 export default function NowScreen() {

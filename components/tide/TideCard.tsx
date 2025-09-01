@@ -1,5 +1,5 @@
-import { format } from "date-fns";
-import React from "react";
+import { format, startOfDay } from "date-fns";
+import React, { useMemo } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -7,9 +7,13 @@ import {
   Text,
   View,
 } from "react-native";
-import { blue, gray, white } from "../../constants/colors";
+import { gray, white } from "../../constants/colors";
+import { useUserContext } from "../../context/UserContext";
 import { useTideData } from "../../hooks/useTideData";
+import { prepareTideDataForDay } from "../../utils/tide-helpers";
+import FullScreenError from "../FullScreenError";
 import LoaderBlock from "../LoaderBlock";
+import TideHighlights from "./TideHighlights";
 
 interface TideCardProps {
   date: Date;
@@ -28,6 +32,8 @@ const TideCard: React.FC<TideCardProps> = ({
   noaaStationId,
   isVisible = false,
 }) => {
+  const { user } = useUserContext();
+
   const {
     tideData,
     sunData,
@@ -46,26 +52,54 @@ const TideCard: React.FC<TideCardProps> = ({
     date,
     usgsSiteId,
     noaaStationId,
-    skip: !isVisible, // Only fetch data when card is visible
+    skip: !isVisible,
   });
 
-  // Show placeholder when not visible
-  if (!isVisible) {
-    return <View style={styles.container}></View>;
-  }
+  // Process tide data for TideHighlights component
+  const processedTideData = useMemo(() => {
+    if (!tideData.length || !sunData.length || !solunarData.length) {
+      return null;
+    }
+    return prepareTideDataForDay(tideData, sunData, solunarData, date);
+  }, [tideData, sunData, solunarData, date]);
 
-  if (loading && !refreshing) {
+  // Filter sun/moon data for current date
+  const currentDateSunData = useMemo(() => {
+    return sunData.find(
+      (x) =>
+        startOfDay(new Date(x.sunrise)).toISOString() ===
+        startOfDay(date).toISOString()
+    );
+  }, [sunData, date]);
+
+  const currentDateMoonData = useMemo(() => {
+    return moonData.find(
+      (x) =>
+        startOfDay(new Date(x.date)).toISOString() ===
+        startOfDay(date).toISOString()
+    );
+  }, [moonData, date]);
+
+  const currentDateSolunarData = useMemo(() => {
+    return solunarData.find(
+      (x) =>
+        startOfDay(new Date(x.date)).toISOString() ===
+        startOfDay(date).toISOString()
+    );
+  }, [solunarData, date]);
+
+  if (!isVisible || (loading && !refreshing)) {
     return (
-      <View style={styles.container}>
-        <LoaderBlock />
+      <View style={styles.loadingContainer}>
+        <LoaderBlock styles={styles.loaderBlockBody} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error loading tide data</Text>
+      <View style={styles.loadingContainer}>
+        <FullScreenError />
       </View>
     );
   }
@@ -80,92 +114,97 @@ const TideCard: React.FC<TideCardProps> = ({
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-      <View style={styles.dateHeader}>
-        <Text style={styles.dateText}>{dateString}</Text>
-      </View>
+      <View style={{ padding: 15 }}>
+        <View style={styles.dateHeader}>
+          <Text style={styles.dateText}>{dateString}</Text>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tide Station</Text>
-        <Text style={styles.sectionContent}>
-          {tideStationName || tideStationId || "No station selected"}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tide Events</Text>
-        <Text style={styles.sectionContent}>
-          {tideData.length > 0
-            ? `${tideData.length} tide events found`
-            : "No tide data available"}
-        </Text>
-      </View>
-
-      {waterHeightSiteName && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Water Height Site</Text>
-          <Text style={styles.sectionContent}>{waterHeightSiteName}</Text>
+          <Text style={styles.sectionTitle}>Tide Station</Text>
           <Text style={styles.sectionContent}>
-            {waterHeightData.length > 0
-              ? `${waterHeightData.length} water height readings`
-              : "No water height data available"}
+            {tideStationName || tideStationId || "No station selected"}
           </Text>
         </View>
-      )}
 
-      {sunData.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sun & Moon</Text>
+          <Text style={styles.sectionTitle}>Tide Events</Text>
           <Text style={styles.sectionContent}>
-            Sun data: {sunData.length} entries
-          </Text>
-          <Text style={styles.sectionContent}>
-            Moon data: {moonData.length} entries
+            {tideData.length > 0
+              ? `${tideData.length} tide events found`
+              : "No tide data available"}
           </Text>
         </View>
-      )}
 
-      {solunarData.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Solunar Data</Text>
-          <Text style={styles.sectionContent}>
-            {solunarData.length} solunar periods found
-          </Text>
-        </View>
-      )}
+        {waterHeightSiteName && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Water Height Site</Text>
+            <Text style={styles.sectionContent}>{waterHeightSiteName}</Text>
+            <Text style={styles.sectionContent}>
+              {waterHeightData.length > 0
+                ? `${waterHeightData.length} water height readings`
+                : "No water height data available"}
+            </Text>
+          </View>
+        )}
 
-      <View style={styles.debugSection}>
-        <Text style={styles.debugTitle}>Debug Info</Text>
-        <Text style={styles.debugText}>Location ID: {locationId}</Text>
-        <Text style={styles.debugText}>
-          Tide Station ID: {tideStationId || "None"}
-        </Text>
-        <Text style={styles.debugText}>
-          USGS Site ID: {usgsSiteId || "None"}
-        </Text>
-        <Text style={styles.debugText}>
-          NOAA Station ID: {noaaStationId || "None"}
-        </Text>
+        {sunData.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Sun & Moon</Text>
+            <Text style={styles.sectionContent}>
+              Sun data: {sunData.length} entries
+            </Text>
+            <Text style={styles.sectionContent}>
+              Moon data: {moonData.length} entries
+            </Text>
+          </View>
+        )}
+
+        {solunarData.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Solunar Data</Text>
+            <Text style={styles.sectionContent}>
+              {solunarData.length} solunar periods found
+            </Text>
+          </View>
+        )}
       </View>
+
+      {/* Tide Highlights Section - part of scrollable content */}
+      {processedTideData && (
+        <TideHighlights
+          hiLowData={processedTideData.hiLowData}
+          sunData={currentDateSunData}
+          moonData={currentDateMoonData}
+          solunarData={currentDateSolunarData}
+          isPremiumUser={user.entitledToPremium}
+        />
+      )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+  },
+  loaderBlockBody: {
+    flexGrow: 1,
+    flexShrink: 0,
+    width: "auto",
+    margin: 15,
+  },
   container: {
     flex: 1,
     backgroundColor: white,
   },
   contentContainer: {
-    padding: 16,
+    // paddingBottom: 15, // Keep bottom padding for ScrollView
   },
   dateHeader: {
-    backgroundColor: blue[600],
-    padding: 16,
-    borderRadius: 8,
     marginBottom: 16,
+    paddingHorizontal: 15, // Add horizontal padding to content
   },
   dateText: {
-    color: white,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
@@ -186,29 +225,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: gray[700],
     marginBottom: 4,
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    padding: 20,
-    fontSize: 16,
-  },
-  debugSection: {
-    backgroundColor: gray[100],
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 16,
-  },
-  debugTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 8,
-    color: gray[600],
-  },
-  debugText: {
-    fontSize: 12,
-    color: gray[500],
-    marginBottom: 2,
   },
 });
 
