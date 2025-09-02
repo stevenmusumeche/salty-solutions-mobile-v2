@@ -1,9 +1,9 @@
-import { matchFont } from "@shopify/react-native-skia";
 import { addHours, endOfDay, format, startOfDay } from "date-fns";
 import React, { useMemo } from "react";
-import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { Area, CartesianChart, Line } from "victory-native";
 import { black, blue } from "../constants/colors";
+import { useFontContext } from "../context/FontContext";
 import {
   SolunarDetailFieldsFragment,
   SunDetailFieldsFragment,
@@ -35,12 +35,7 @@ const TideChart: React.FC<Props> = ({
   waterHeightData: rawWaterHeightData = [],
   height = DEFAULT_CHART_HEIGHT,
 }) => {
-  const fontFamily = Platform.select({
-    ios: "Helvetica",
-    android: "Roboto",
-    default: "sans-serif",
-  });
-  const font = matchFont({ fontFamily, fontSize: 10 });
+  const { interFont: font } = useFontContext();
   const { width } = useWindowDimensions();
 
   const yTickVals = useMemo(

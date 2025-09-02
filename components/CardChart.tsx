@@ -1,9 +1,15 @@
-import { Group, matchFont, Path } from "@shopify/react-native-skia";
+import { Group, Path } from "@shopify/react-native-skia";
 import { differenceInHours, format } from "date-fns";
 import React, { useMemo } from "react";
-import { Platform, StyleSheet, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { CartesianChart, Line } from "victory-native";
 import { black, yellow } from "../constants/colors";
+import { useFontContext } from "../context/FontContext";
 
 interface Props {
   data: {
@@ -27,12 +33,7 @@ export const CardChart: React.FC<Props> = ({
   height,
   showDirectionArrows = false,
 }) => {
-  const fontFamily = Platform.select({
-    ios: "Helvetica",
-    android: "Roboto",
-    default: "sans-serif",
-  });
-  const font = matchFont({ fontFamily, fontSize: 10 });
+  const { interFont: font } = useFontContext();
   const { width: windowWidth } = useWindowDimensions();
 
   // reduce the number of data points to display on the graph

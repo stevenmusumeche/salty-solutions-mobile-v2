@@ -6,6 +6,7 @@ import "react-native-reanimated";
 import { gray, red, white } from "@/constants/colors";
 import { LocationContextProvider } from "@/context/LocationContext";
 import { UserContextProvider, useUserContext } from "@/context/UserContext";
+import { FontProvider } from "@/context/FontContext";
 import {
   ApolloClient,
   ApolloProvider,
@@ -175,7 +176,9 @@ export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
       <UserContextProvider>
-        <AppContent />
+        <FontProvider>
+          <AppContent />
+        </FontProvider>
       </UserContextProvider>
     </ApolloProvider>
   );
