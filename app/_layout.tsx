@@ -131,7 +131,44 @@ export default function RootLayout() {
   const client = new ApolloClient({
     link: httpLink,
     cache: new InMemoryCache({
-      dataIdFromObject: () => false, // Disable normalization
+      typePolicies: {
+        Location: {
+          fields: {
+            temperature: {
+              merge: false,
+            },
+            wind: {
+              merge: false,
+            },
+          },
+        },
+        UsgsSite: {
+          fields: {
+            salinity: {
+              merge: false,
+            },
+            waterTemperature: {
+              merge: false,
+            },
+            wind: {
+              merge: false,
+            },
+          },
+        },
+        TidePreditionStation: {
+          fields: {
+            temperature: {
+              merge: false,
+            },
+            waterTemperature: {
+              merge: false,
+            },
+            wind: {
+              merge: false,
+            },
+          },
+        },
+      },
     }),
   });
 
