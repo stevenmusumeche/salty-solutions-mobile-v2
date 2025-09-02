@@ -16,10 +16,9 @@ import UsgsSiteSelect from "./UsgsSiteSelect";
 interface Props {
   location: LocationDetail;
   sites: DataSite[];
-  onLoad?: () => void;
 }
 
-export const WindCard: React.FC<Props> = ({ sites, location, onLoad }) => {
+export const WindCard: React.FC<Props> = ({ sites, location }) => {
   const router = useRouter();
   const headerText = "Wind Speed (mph)";
 
@@ -32,7 +31,7 @@ export const WindCard: React.FC<Props> = ({ sites, location, onLoad }) => {
   }, [sites]);
 
   const date = useMemo(() => new Date(), []);
-  const { curValue, curDirectionValue, loading, curDetail, error, refresh } =
+  const { curValue, curDirectionValue, loading, curDetail, error } =
     useCurrentWindData({
       locationId: location.id,
       startDate: subHours(date, 48),
@@ -45,7 +44,6 @@ export const WindCard: React.FC<Props> = ({ sites, location, onLoad }) => {
         selectedSite && selectedSite.__typename === "TidePreditionStation"
           ? selectedSite.id
           : undefined,
-      onCompleted: onLoad,
     });
 
   if (loading) {
