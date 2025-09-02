@@ -58,17 +58,6 @@ function AuthenticatedApp() {
             }}
           />
           <Stack.Screen
-            name="about"
-            options={{
-              presentation: "modal",
-              title: "About Salty Solutions",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-          <Stack.Screen
             name="full-screen-chart"
             options={{
               presentation: "modal",
