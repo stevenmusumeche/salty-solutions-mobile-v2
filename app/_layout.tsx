@@ -7,6 +7,7 @@ import { gray, red, white } from "@/constants/colors";
 import { LocationContextProvider } from "@/context/LocationContext";
 import { UserContextProvider, useUserContext } from "@/context/UserContext";
 import { FontProvider } from "@/context/FontContext";
+import { PurchaseContextProvider } from "@/context/PurchaseContext";
 import {
   ApolloClient,
   ApolloProvider,
@@ -43,7 +44,8 @@ function ErrorScreen({ error }: { error: string }) {
 function AuthenticatedApp() {
   return (
     <LocationContextProvider>
-      <GestureHandlerRootView>
+      <PurchaseContextProvider>
+        <GestureHandlerRootView>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
@@ -101,7 +103,8 @@ function AuthenticatedApp() {
           />
         </Stack>
         <StatusBar style="light" />
-      </GestureHandlerRootView>
+        </GestureHandlerRootView>
+      </PurchaseContextProvider>
     </LocationContextProvider>
   );
 }

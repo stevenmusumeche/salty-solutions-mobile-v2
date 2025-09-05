@@ -22,6 +22,15 @@ GraphQL queries and fragments are in the graphql/documents directory.  To genera
 
 To build remotely with Expo's EAS:
 
+### Development builds
+
+After these are done, you can install them on your phone by using the QR code from Expo, but they require running the development server locally.  Then you can make code changes and see the results hot-reloaded on the device. The device that you are installing it on has to have been added to your Apple provisioning profile via Expo with `eas device:create`.
+
+```sh
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform ios --profile development
+EXPO_NO_CAPABILITY_SYNC=1 eas build --platform android --profile development
+```
+
 ### Standalone development builds
 
 After these are done, you can install them on your phone by using the QR code.  The device that you are installing it on has to have been added to your Apple provisioning profile via Expo with `eas device:create`.

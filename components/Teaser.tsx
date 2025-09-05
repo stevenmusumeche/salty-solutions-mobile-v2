@@ -1,12 +1,7 @@
 import { gray, white } from "@/constants/colors";
+import { usePurchaseContext } from "@/context/PurchaseContext";
 import React from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import BrandButton from "./BrandButton";
 
 interface Props {
@@ -21,16 +16,32 @@ const Teaser: React.FC<Props> = ({
   title,
   description,
   buttonTitle = "Upgrade to Premium",
-  buttonSubtitle = "Only $1.99/month. Cancel anytime.", // TODO: IAP - Replace with dynamic pricing from app store
   children,
 }) => {
-  // TODO: IAP - Implement actual purchase flow when IAP is ready
-  const handlePurchasePress = () => {
-    Alert.alert(
-      "Coming Soon",
-      "Premium features will be available for purchase soon!",
-      [{ text: "OK", style: "default" }]
-    );
+  const {
+    premiumSubscription,
+    initiatePurchase,
+    purchasing,
+    purchaseResultMessage,
+  } = usePurchaseContext();
+
+  const buttonSubtitle = premiumSubscription
+    ? `${premiumSubscription.displayPrice}/month. Cancel anytime.`
+    : "";
+
+  const handlePurchasePress = async () => {
+    if (purchasing) {
+      console.error(
+        "Error in handlePurchasePress - purchase already in progress"
+      );
+    }
+    if (!premiumSubscription) {
+      console.error(
+        "Error in handlePurchasePress - no premiumSubscription found"
+      );
+      return;
+    }
+    await initiatePurchase(premiumSubscription);
   };
 
   return (
@@ -38,11 +49,14 @@ const Teaser: React.FC<Props> = ({
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
       {children}
+      <Text>purchaseResultMessage: {purchaseResultMessage}</Text>
       <View style={styles.buttonContainer}>
-        <BrandButton title={buttonTitle} onPress={handlePurchasePress} />
-        {buttonSubtitle && (
-          <Text style={styles.buttonSubtitle}>{buttonSubtitle}</Text>
-        )}
+        <BrandButton
+          title={purchasing ? "Processing..." : buttonTitle}
+          onPress={handlePurchasePress}
+          disabled={purchasing}
+        />
+        <Text style={styles.buttonSubtitle}>{buttonSubtitle}</Text>
       </View>
     </ScrollView>
   );

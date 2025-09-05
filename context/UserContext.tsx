@@ -25,7 +25,7 @@ interface UserContextType {
   actions: {
     login: () => void;
     logout: () => void;
-    purchaseComplete: (userFields: UserFieldsFragment) => void;
+    onPurchaseComplete: (userFields: UserFieldsFragment) => void;
     setPremiumOverride: (override: boolean | null) => void;
   };
 }
@@ -123,7 +123,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const purchaseComplete = useCallback(
+  /**
+   * Called when an IAP was completed, used to user info to show they are entitled to premium
+   */
+  const onPurchaseComplete = useCallback(
     (userFields: UserFieldsFragment) => {
       setUser(makeLoadedUser(userFields));
     },
@@ -316,11 +319,18 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       actions: {
         login,
         logout,
-        purchaseComplete,
+        onPurchaseComplete,
         setPremiumOverride,
       },
     };
-  }, [user, premiumOverride, login, logout, purchaseComplete, setPremiumOverride]);
+  }, [
+    user,
+    premiumOverride,
+    login,
+    logout,
+    onPurchaseComplete,
+    setPremiumOverride,
+  ]);
 
   return (
     <UserContext.Provider value={providerValue}>

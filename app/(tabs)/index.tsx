@@ -8,12 +8,7 @@ import { useSalinitySites } from "@/hooks/useSalinitySites";
 import { useWaterTempSites } from "@/hooks/useWaterTempSites";
 import { useWindSites } from "@/hooks/useWindSites";
 import { useApolloClient } from "@apollo/client";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 
 export default function NowScreen() {
   const { activeLocation } = useLocationContext();
@@ -40,10 +35,7 @@ export default function NowScreen() {
         }
       >
         <CardGrid>
-          <WindCard
-            sites={windSites}
-            location={activeLocation}
-          />
+          <WindCard sites={windSites} location={activeLocation} />
           <AirTempCard location={activeLocation} />
           <WaterTempCard location={activeLocation} sites={waterTempSites} />
           <SalinityCard location={activeLocation} sites={salinitySites} />
