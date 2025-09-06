@@ -53,6 +53,25 @@ export type CompletePurchaseResponse = {
   user?: Maybe<User>;
 };
 
+/**
+ * Input for completePurchaseV2 mutation using expo-iap format.
+ *
+ * iOS: Use purchase.transactionId and purchase.jwsRepresentationIOS
+ * Android: Use purchase.transactionId and purchase.purchaseToken
+ */
+export type CompletePurchaseV2Input = {
+  platform: Platform;
+  /** Price in cents from purchase.priceIOS or purchase.priceAndroid */
+  priceCents: Scalars['Int']['input'];
+  /**
+   * iOS: JWS token from purchase.jwsRepresentationIOS or purchase.purchaseToken
+   * Android: Token from purchase.purchaseToken
+   */
+  purchaseToken: Scalars['String']['input'];
+  /** Transaction ID from purchase.transactionId */
+  transactionId: Scalars['String']['input'];
+};
+
 export type Coords = {
   __typename?: 'Coords';
   lat: Scalars['Float']['output'];
@@ -241,6 +260,12 @@ export type Mutation = {
   /** Record an IAP purchase */
   completePurchase: CompletePurchaseResponse;
   /**
+   * Complete purchase using expo-iap format.
+   * iOS: Pass the jwsRepresentationIOS (JWS token from StoreKit 2)
+   * Android: Pass the purchaseToken
+   */
+  completePurchaseV2: CompletePurchaseResponse;
+  /**
    * Create a new user. If user already exists, this is a no-op.
    * @deprecated Use upsert user
    */
@@ -255,6 +280,11 @@ export type Mutation = {
 
 export type MutationCompletePurchaseArgs = {
   input: CompletePurchaseInput;
+};
+
+
+export type MutationCompletePurchaseV2Args = {
+  input: CompletePurchaseV2Input;
 };
 
 
@@ -630,6 +660,13 @@ export type CombinedForecastV2QueryVariables = Exact<{
 export type CombinedForecastV2Query = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, combinedForecastV2?: Array<{ __typename?: 'CombinedForecastV2', name: string, date: string, wind: Array<{ __typename?: 'ForecastWindDetailV2', timestamp: string, base: number, gusts: number, direction: { __typename?: 'WindDirection', text: string, degrees: number } }>, day: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, night: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, temperature: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }>, rain: Array<{ __typename?: 'RainDetail', timestamp: string, mmPerHour: number }> }> | null, tidePreditionStations: Array<{ __typename?: 'TidePreditionStation', id: string, name: string, tides?: Array<{ __typename?: 'TideDetail', time: string, height: number, type: string }> | null }>, sun?: Array<{ __typename?: 'SunDetail', sunrise: string, sunset: string, dawn: string, dusk: string, nauticalDawn: string, nauticalDusk: string }> | null, solunar?: Array<{ __typename?: 'SolunarDetail', date: string, score: number, majorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }>, minorPeriods: Array<{ __typename?: 'SolunarPeriod', start: string, end: string, weight: number }> }> | null } | null };
 
 export type CombinedForecastV2DetailFragment = { __typename?: 'CombinedForecastV2', name: string, date: string, wind: Array<{ __typename?: 'ForecastWindDetailV2', timestamp: string, base: number, gusts: number, direction: { __typename?: 'WindDirection', text: string, degrees: number } }>, day: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, night: { __typename?: 'ForecastDescription', short?: string | null, detailed?: string | null, marine?: string | null }, temperature: Array<{ __typename?: 'TemperatureDetail', timestamp: string, temperature: { __typename?: 'Temperature', degrees: number } }>, rain: Array<{ __typename?: 'RainDetail', timestamp: string, mmPerHour: number }> };
+
+export type CompletePurchaseV2MutationVariables = Exact<{
+  input: CompletePurchaseV2Input;
+}>;
+
+
+export type CompletePurchaseV2Mutation = { __typename?: 'Mutation', completePurchaseV2: { __typename?: 'CompletePurchaseResponse', isComplete: boolean, user?: { __typename?: 'User', id: string, email?: string | null, name: string, picture?: string | null, createdAt: string, entitledToPremium: boolean } | null } };
 
 export type CurrentConditionsDataQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
@@ -1024,6 +1061,47 @@ export type CombinedForecastV2QueryHookResult = ReturnType<typeof useCombinedFor
 export type CombinedForecastV2LazyQueryHookResult = ReturnType<typeof useCombinedForecastV2LazyQuery>;
 export type CombinedForecastV2SuspenseQueryHookResult = ReturnType<typeof useCombinedForecastV2SuspenseQuery>;
 export type CombinedForecastV2QueryResult = Apollo.QueryResult<CombinedForecastV2Query, CombinedForecastV2QueryVariables>;
+export const CompletePurchaseV2Document = gql`
+    mutation CompletePurchaseV2($input: CompletePurchaseV2Input!) {
+  completePurchaseV2(input: $input) {
+    isComplete
+    user {
+      id
+      email
+      name
+      picture
+      createdAt
+      entitledToPremium
+    }
+  }
+}
+    `;
+export type CompletePurchaseV2MutationFn = Apollo.MutationFunction<CompletePurchaseV2Mutation, CompletePurchaseV2MutationVariables>;
+
+/**
+ * __useCompletePurchaseV2Mutation__
+ *
+ * To run a mutation, you first call `useCompletePurchaseV2Mutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompletePurchaseV2Mutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completePurchaseV2Mutation, { data, loading, error }] = useCompletePurchaseV2Mutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCompletePurchaseV2Mutation(baseOptions?: Apollo.MutationHookOptions<CompletePurchaseV2Mutation, CompletePurchaseV2MutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CompletePurchaseV2Mutation, CompletePurchaseV2MutationVariables>(CompletePurchaseV2Document, options);
+      }
+export type CompletePurchaseV2MutationHookResult = ReturnType<typeof useCompletePurchaseV2Mutation>;
+export type CompletePurchaseV2MutationResult = Apollo.MutationResult<CompletePurchaseV2Mutation>;
+export type CompletePurchaseV2MutationOptions = Apollo.BaseMutationOptions<CompletePurchaseV2Mutation, CompletePurchaseV2MutationVariables>;
 export const CurrentConditionsDataDocument = gql`
     query CurrentConditionsData($locationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $includeLocationWind: Boolean = false, $startDate: String!, $endDate: String!) {
   location(id: $locationId) {

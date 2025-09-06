@@ -1,4 +1,8 @@
-import { UserFieldsFragment } from "@/graphql/generated";
+import {
+  Platform,
+  UserFieldsFragment,
+  useCompletePurchaseV2Mutation,
+} from "@/graphql/generated";
 import { ErrorCode, Purchase, SubscriptionProduct, useIAP } from "expo-iap";
 import React, {
   createContext,
@@ -8,7 +12,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useUserContext } from "./UserContext";
+import { User, useUserContext } from "./UserContext";
 
 export const IAP_PRODUCT_ID_V1 = "premium.monthly.v1";
 export const IAP_PRODUCT_IDS = [IAP_PRODUCT_ID_V1];
@@ -38,7 +42,8 @@ export function usePurchaseContext() {
 export const PurchaseContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { actions: userActions } = useUserContext();
+  const { actions: userActions, user } = useUserContext();
+  const [completePurchaseV2] = useCompletePurchaseV2Mutation();
 
   // true when the purchase is initiated and false after purchase in app store succeeds
   const [isProcessing, setIsProcessing] = useState(false);
@@ -56,7 +61,18 @@ export const PurchaseContextProvider: React.FC<{
   } = useIAP({
     onPurchaseSuccess: async (purchase) => {
       try {
-        console.info("onPurchaseSuccess called");
+        console.info(
+          "onPurchaseSuccess called",
+          purchase.id,
+          purchase.transactionId
+        );
+
+        const productBeingPurchased = subscriptions.find(
+          (sub) => sub.id === purchase.productId
+        );
+        if (!productBeingPurchased) {
+          throw new Error("invariant: error finding product for purchase");
+        }
         setIsProcessing(false);
         setPurchaseResultMessage(
           `✅ Purchase successful (${purchase.platform})\n` +
@@ -69,20 +85,17 @@ export const PurchaseContextProvider: React.FC<{
         );
         setIsPostProcessing(true);
 
-        console.info("Validating receipt");
-        const isValidReceipt = await validateReceiptOnServer(purchase);
-        if (!isValidReceipt) {
-          // todo
-          console.error("Invalid receipt");
-          return;
-        }
-
-        console.info("Recording purchase");
-        const recordResponse = await recordPurchaseOnServer(purchase);
+        console.info("Completing purchase on server");
+        const recordResponse = await completePurchaseOnServer(
+          purchase,
+          productBeingPurchased,
+          user,
+          completePurchaseV2
+        );
 
         if (!recordResponse.isSuccess) {
-          // todo
-          console.error("Error recording purchase");
+          console.log(recordResponse);
+          console.error("Error completing purchase");
           return;
         }
 
@@ -180,24 +193,63 @@ export const PurchaseContextProvider: React.FC<{
   );
 };
 
-// TODO:ACTUALLY VALIDATE RECEIPT ON BACKEND
-async function validateReceiptOnServer(purchase: Purchase) {
-  return true;
-}
+async function completePurchaseOnServer(
+  purchase: Purchase,
+  product: SubscriptionProduct,
+  user: User,
+  completePurchaseV2Mutation: ReturnType<
+    typeof useCompletePurchaseV2Mutation
+  >[0]
+): Promise<
+  | {
+      isSuccess: true;
+      user: UserFieldsFragment;
+    }
+  | { isSuccess: false }
+> {
+  try {
+    if (!product.price) {
+      throw new Error("invariant, no price");
+    }
+    if (!purchase.transactionId) {
+      throw new Error("invariant, no transactionId");
+    }
+    if (!purchase.purchaseToken) {
+      throw new Error("invariant, no purchaseToken");
+    }
+    if (!user.isLoggedIn) {
+      throw new Error("invariant, user not logged in");
+    }
 
-// TODO:ACTUALLY RECORD PURCHASE ON BACKEND
-async function recordPurchaseOnServer(purchase: Purchase): Promise<{
-  isSuccess: boolean;
-  user: UserFieldsFragment;
-}> {
-  // todo: return actual response from backend
-  return {
-    isSuccess: true,
-    user: {
-      id: "123",
-      createdAt: "111",
-      entitledToPremium: true,
-      name: "Foo Bar",
-    },
-  };
+    const response = await completePurchaseV2Mutation({
+      variables: {
+        input: {
+          platform:
+            purchase.platform === "ios" ? Platform.Ios : Platform.Android,
+          transactionId: purchase.transactionId,
+          purchaseToken: purchase.purchaseToken,
+          priceCents: Math.ceil(product.price * 100),
+        },
+      },
+      context: {
+        headers: { authorization: `Bearer ${user.idToken}` },
+      },
+    });
+
+    if (response.data?.completePurchaseV2) {
+      return {
+        isSuccess: response.data.completePurchaseV2.isComplete,
+        user: response.data.completePurchaseV2.user!,
+      };
+    }
+
+    return {
+      isSuccess: false,
+    };
+  } catch (error) {
+    console.error("Error completing purchase on server:", error);
+    return {
+      isSuccess: false,
+    };
+  }
 }
