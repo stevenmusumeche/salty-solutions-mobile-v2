@@ -7,16 +7,19 @@
     "development": {
       "node": "22.12.0",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "development-standalone": {
       "node": "22.12.0",
       "developmentClient": false,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development-standalone"
     },
     "production": {
       "node": "22.12.0",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {

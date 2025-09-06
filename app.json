@@ -10,6 +10,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "buildNumber": "1",
       "supportsTablet": true,
       "bundleIdentifier": "com.musumeche.salty.solutions",
       "infoPlist": {
@@ -17,6 +18,7 @@
       }
     },
     "android": {
+      "buildNumber": "1",
       "package": "com.musumeche.salty.solutions",
       "edgeToEdgeEnabled": true
     },
@@ -69,6 +71,12 @@
         "projectId": "29c6d436-f00e-4bed-a7e7-6d501cd7df3a"
       }
     },
-    "owner": "stevenmusumeche"
+    "owner": "stevenmusumeche",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/29c6d436-f00e-4bed-a7e7-6d501cd7df3a"
+    }
   }
 }
