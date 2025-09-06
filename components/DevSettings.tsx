@@ -6,7 +6,7 @@
  * test different app states and features without needing actual data or accounts.
  *
  * IMPORTANT: This component only renders in development builds (__DEV__ === true)
- * and will be completely excluded from production builds.
+ * or development-standalone builds and will be completely excluded from production builds.
  *
  * Current Features:
  * - Premium status override: Test premium/free experiences without a subscription
@@ -14,14 +14,19 @@
 
 import { gray, yellow } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
+import Constants from "expo-constants";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const DevSettings: React.FC = () => {
   const { user, premiumOverride, actions } = useUserContext();
 
-  // Only render in development builds
-  if (!__DEV__) {
+  // Only render in development builds (including development-standalone)
+  const isDevelopmentBuild = __DEV__ || 
+    Constants.channel === "development" || 
+    Constants.channel === "development-standalone";
+  
+  if (!isDevelopmentBuild) {
     return null;
   }
 
