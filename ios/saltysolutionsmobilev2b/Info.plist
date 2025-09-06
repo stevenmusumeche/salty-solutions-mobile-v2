@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>salty-solutions-mobile-v2b</string>
+    <string>Salty Solutions</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>3.0.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -28,6 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>com.musumeche.salty.solutions</string>
+          <string>com.musumeche.salty.solutions</string>
         </array>
       </dict>
       <dict>
@@ -35,7 +36,13 @@
         <string>auth0</string>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.musumeche.salty.solutions</string>
+          <string>com.musumeche.salty.solutions.auth0</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+salty-solutions-v2</string>
         </array>
       </dict>
     </array>

@@ -2,6 +2,7 @@ import DevSettings from "@/components/DevSettings";
 import { gray, red, white } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import * as Application from "expo-application";
 import Constants from "expo-constants";
 import React from "react";
 import {
@@ -77,7 +78,8 @@ export default function AboutScreen() {
           <Text style={styles.privacyButtonText}>Privacy Policy</Text>
         </TouchableOpacity>
         <Text style={styles.versionText}>
-          App: {Constants.expoConfig?.version || "0"}, Code: 3.0.0
+          Native: v{Application.nativeApplicationVersion || "?"} ({Application.nativeBuildVersion || "?"})
+          {"\n"}Config: v{Constants.expoConfig?.version || "?"}
         </Text>
       </View>
 
