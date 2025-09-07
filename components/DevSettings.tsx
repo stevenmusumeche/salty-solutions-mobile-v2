@@ -14,16 +14,14 @@
 
 import { gray, yellow } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
+import { isDevelopmentBuild } from "@/utils/buildUtils";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const DevSettings: React.FC = () => {
   const { user, premiumOverride, actions } = useUserContext();
 
-  const isDevelopmentBuild =
-    __DEV__ || process.env.EXPO_PUBLIC_APP_VARIANT === "development";
-
-  if (!isDevelopmentBuild) {
+  if (!isDevelopmentBuild()) {
     return null;
   }
 

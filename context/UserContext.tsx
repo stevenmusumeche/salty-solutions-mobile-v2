@@ -18,6 +18,7 @@ import {
   useUpsertUserMutation,
   useUserLoggedInMutation,
 } from "../graphql/generated";
+import { isDevelopmentBuild } from "../utils/buildUtils";
 
 interface UserContextType {
   user: User;
@@ -67,7 +68,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       // In development mode, if an override is set, use that value
       // Otherwise, always use the server's entitlement value
       const finalEntitlement =
-        __DEV__ && premiumOverride !== null
+        isDevelopmentBuild() && premiumOverride !== null
           ? premiumOverride
           : user.entitledToPremium;
 
@@ -145,7 +146,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   const setPremiumOverride = useCallback(
     async (override: boolean | null) => {
-      if (!__DEV__) return; // Safety check: only works in development
 
       setPremiumOverrideState(override);
       try {
@@ -206,7 +206,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
      * Only runs in development builds for security.
      */
     const restorePremiumOverride = async () => {
-      if (!__DEV__) return; // Only restore overrides in development
 
       try {
         const savedOverride = await AsyncStorage.getItem(premiumOverrideKey);
