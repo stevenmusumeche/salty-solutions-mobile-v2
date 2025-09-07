@@ -3,15 +3,16 @@ import { useCurrentWindData } from "@/hooks/useCurrentWindData";
 import { DataSite, LocationDetail } from "@/types";
 import { subHours } from "date-fns";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useSiteSelectionContext } from "../context/SiteSelectionContext";
 import BigBlue from "./BigBlue";
 import { CardChart } from "./CardChart";
 import { ConditionCard } from "./ConditionCard";
 import { ErrorIcon } from "./FullScreenError";
 import LoaderBlock from "./LoaderBlock";
 import NoData from "./NoData";
-import UsgsSiteSelect from "./UsgsSiteSelect";
+import { SiteDisplay } from "./SiteDisplay";
 
 interface Props {
   location: LocationDetail;
@@ -21,14 +22,22 @@ interface Props {
 export const WindCard: React.FC<Props> = ({ sites, location }) => {
   const router = useRouter();
   const headerText = "Wind Speed (mph)";
+  const { selectedSites, actions } = useSiteSelectionContext();
 
-  const [selectedSite, setSelectedSite] = useState(() =>
-    sites.length ? sites[0] : undefined
-  );
+  // Get selected site from context, fallback to first site if none selected
+  const selectedSite =
+    selectedSites.wind && sites.find((s) => s.id === selectedSites.wind?.id)
+      ? selectedSites.wind
+      : sites.length
+      ? sites[0]
+      : undefined;
 
+  // Initialize context with default site if none selected
   useEffect(() => {
-    setSelectedSite(sites.length ? sites[0] : undefined);
-  }, [sites]);
+    if (!selectedSites.wind && sites.length > 0) {
+      actions.setSelectedSite("wind", sites[0]);
+    }
+  }, [sites, selectedSites.wind, actions]);
 
   const date = useMemo(() => new Date(), []);
   const { curValue, curDirectionValue, loading, curDetail, error } =
@@ -95,17 +104,18 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
       )}
       {selectedSite ? (
         <View style={styles.usgsWrapper}>
-          <UsgsSiteSelect
-            sites={sites}
-            handleChange={(selectedSiteId) => {
-              const match = sites.find((site) => site.id === selectedSiteId);
-              if (!match) {
-                return;
-              }
-
-              setSelectedSite(match);
+          <SiteDisplay
+            selectedSite={selectedSite}
+            onChangePress={() => {
+              router.push({
+                pathname: "/site-selector-modal",
+                params: {
+                  sites: JSON.stringify(sites),
+                  selectedId: selectedSite.id,
+                  componentType: "wind",
+                },
+              });
             }}
-            selectedId={selectedSite.id}
           />
         </View>
       ) : (

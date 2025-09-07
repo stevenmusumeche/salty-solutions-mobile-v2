@@ -53,18 +53,13 @@ export type CompletePurchaseResponse = {
   user?: Maybe<User>;
 };
 
-/**
- * Input for completePurchaseV2 mutation using expo-iap format.
- *
- * iOS: Use purchase.transactionId and purchase.jwsRepresentationIOS
- * Android: Use purchase.transactionId and purchase.purchaseToken
- */
+/** Input for completePurchaseV2 mutation using expo-iap format. */
 export type CompletePurchaseV2Input = {
   platform: Platform;
   /** Price in cents from purchase.priceIOS or purchase.priceAndroid */
   priceCents: Scalars['Int']['input'];
   /**
-   * iOS: JWS token from purchase.jwsRepresentationIOS or purchase.purchaseToken
+   * iOS: JWS token from purchase.purchaseToken
    * Android: Token from purchase.purchaseToken
    */
   purchaseToken: Scalars['String']['input'];

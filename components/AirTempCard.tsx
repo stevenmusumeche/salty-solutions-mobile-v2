@@ -1,17 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
-import { subHours } from "date-fns";
-import React, { useContext, useEffect, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import BigBlue from "./BigBlue";
-import LoaderBlock from "./LoaderBlock";
-import NoData from "./NoData";
-import { useLocationContext } from "@/context/LocationContext";
 import { useTemperatureData } from "@/hooks/useTemperatureData";
 import { LocationDetail } from "@/types";
+import { subHours } from "date-fns";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
+import { StyleSheet, View } from "react-native";
+import BigBlue from "./BigBlue";
+import { CardChart } from "./CardChart";
 import { ConditionCard } from "./ConditionCard";
 import { ErrorIcon } from "./FullScreenError";
-import { CardChart } from "./CardChart";
-import { useRouter } from "expo-router";
+import LoaderBlock from "./LoaderBlock";
+import NoData from "./NoData";
 
 interface Props {
   location: LocationDetail;
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   spacer: {
-    height: 19.3,
+    height: 31,
     width: 50,
     marginTop: 10,
   },

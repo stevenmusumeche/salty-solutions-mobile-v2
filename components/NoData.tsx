@@ -7,7 +7,7 @@ const NoData = () => (
   <View style={styles.container}>
     <View style={{ marginBlockEnd: 5 }}>
       <MaterialCommunityIcons
-        name="calendar-clock-outline"
+        name="chart-timeline-variant"
         size={60}
         color={gray[500]}
       />

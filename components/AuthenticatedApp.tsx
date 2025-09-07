@@ -66,6 +66,13 @@ export default function AuthenticatedApp() {
                   title: "Change Tide Stations",
                 }}
               />
+              <Stack.Screen
+                name="site-selector-modal"
+                options={{
+                  ...modalScreenOptions,
+                  title: "Select Observation Site",
+                }}
+              />
             </Stack>
             <StatusBar style="light" />
           </GestureHandlerRootView>
