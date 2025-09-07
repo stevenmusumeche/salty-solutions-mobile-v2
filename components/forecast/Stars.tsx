@@ -27,7 +27,7 @@ const Stars: FC<{ score: number; size?: number; isPremium: boolean }> = ({
 
   if (!isPremium) {
     return (
-      <BlurView style={styles.blurContainer} blurType="light" blurAmount={4}>
+      <BlurView style={styles.blurContainer} blurType="light" blurAmount={5}>
         {starsContent}
       </BlurView>
     );

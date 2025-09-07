@@ -18,12 +18,8 @@ const Teaser: React.FC<Props> = ({
   buttonTitle = "Upgrade to Premium",
   children,
 }) => {
-  const {
-    premiumSubscription,
-    initiatePurchase,
-    purchasing,
-    purchaseResultMessage,
-  } = usePurchaseContext();
+  const { premiumSubscription, initiatePurchase, purchasing } =
+    usePurchaseContext();
 
   const buttonSubtitle = premiumSubscription
     ? `${premiumSubscription.displayPrice}/month. Cancel anytime.`
@@ -45,11 +41,10 @@ const Teaser: React.FC<Props> = ({
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: white }]}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
       {children}
-      <Text>purchaseResultMessage: {purchaseResultMessage}</Text>
       <View style={styles.buttonContainer}>
         <BrandButton
           title={purchasing ? "Processing..." : buttonTitle}
@@ -67,22 +62,26 @@ export default Teaser;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: white,
   },
   title: {
     fontWeight: "600",
     fontSize: 22,
     textAlign: "center",
     marginBottom: 15,
+    paddingTop: 20,
+    paddingInline: 20,
   },
   description: {
     marginBottom: 15,
     fontSize: 16,
     lineHeight: 22,
+    paddingInline: 20,
   },
   buttonContainer: {
     marginTop: 20,
     marginBottom: 10,
+    paddingInline: 20,
   },
   buttonSubtitle: {
     color: gray[700],

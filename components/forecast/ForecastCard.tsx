@@ -16,9 +16,9 @@ import {
   TideDetailFieldsFragment,
 } from "../../graphql/generated";
 import Teaser from "../Teaser";
+import TideChart from "../TideChart";
 import ForecastSun from "./ForecastSun";
 import ForecastText from "./ForecastText";
-import TideChart from "../TideChart";
 import ForecastTimeBuckets from "./ForecastTimeBuckets";
 import ForecastWindChart from "./ForecastWindChart";
 import TideChartLegend from "./TideChartLegend";
@@ -100,16 +100,18 @@ export const TeaserForecastCard = () => {
             "Plan your perfect fishing trips with detailed weather, wind, and water conditions for the week ahead."
           }
         >
-          <Image
-            source={require("../../assets/images/forecast.jpg")}
-            style={{
-              width: width - 40,
-              height: (width - 40) / 1.4,
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-            resizeMode="stretch"
-          />
+          <View style={{ paddingInline: 20 }}>
+            <Image
+              source={require("../../assets/images/forecast.jpg")}
+              style={{
+                width: width - 40,
+                height: (width - 40) / 1.4,
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              resizeMode="stretch"
+            />
+          </View>
         </Teaser>
       </View>
     </ScrollView>

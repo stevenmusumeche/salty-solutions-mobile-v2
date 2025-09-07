@@ -111,16 +111,18 @@ export default function SatelliteScreen() {
           title="Find productive fishing spots from space"
           description="NASA's MODIS satellites capture daily images showing water clarity and conditions. Premium members get access to 7 days of high-resolution imagery to locate the cleanest, most productive fishing areas."
         >
-          <Image
-            source={require("../../assets/images/satellite-sample.jpg")}
-            style={{
-              width: width - 40,
-              height: (width - 40) / 1.4,
-              marginTop: 10,
-              marginBottom: 15,
-            }}
-            resizeMode="stretch"
-          />
+          <View style={{ paddingInline: 20 }}>
+            <Image
+              source={require("../../assets/images/satellite-sample.jpg")}
+              style={{
+                width: width - 40,
+                height: (width - 40) / 1.4,
+                marginTop: 10,
+                marginBottom: 15,
+              }}
+              resizeMode="stretch"
+            />
+          </View>
         </Teaser>
       </View>
     );

@@ -1,5 +1,6 @@
 import { startOfDay } from "date-fns";
-import React, { useMemo, useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useMemo } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { white } from "../../constants/colors";
 import { useUserContext } from "../../context/UserContext";
@@ -10,7 +11,6 @@ import FullScreenError from "../FullScreenError";
 import LoaderBlock from "../LoaderBlock";
 import TideChart from "../TideChart";
 import TideHighlights from "./TideHighlights";
-import TideStationModal from "./TideStationModal";
 
 interface TideCardProps {
   date: Date;
@@ -30,7 +30,7 @@ const TideCard: React.FC<TideCardProps> = ({
   isVisible = false,
 }) => {
   const { user } = useUserContext();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const router = useRouter();
 
   const {
     tideData,
@@ -130,7 +130,7 @@ const TideCard: React.FC<TideCardProps> = ({
           tideStationName={tideStationName || tideStationId || ""}
           observationStationName={waterHeightSiteName}
           showObserved={true}
-          onChangePress={() => setIsModalVisible(true)}
+          onChangePress={() => router.push("/tide-station-modal")}
           showFeedingPeriods={user.entitledToPremium}
         />
       </View>
@@ -145,10 +145,6 @@ const TideCard: React.FC<TideCardProps> = ({
         />
       )}
 
-      <TideStationModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-      />
     </ScrollView>
   );
 };

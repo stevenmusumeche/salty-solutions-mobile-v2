@@ -14,7 +14,7 @@ import PagerView, {
 import PagerHeader from "../../components/PagerHeader";
 import TideCard from "../../components/tide/TideCard";
 import { useLocationContext } from "../../context/LocationContext";
-import { TideContextProvider, useTideContext } from "../../context/TideContext";
+import { useTideContext } from "../../context/TideContext";
 import { formatRelativeDate } from "../../utils/date-helpers";
 
 const SCROLL_THRESHOLD = 0.7; // Threshold for triggering early header animation
@@ -31,7 +31,7 @@ const DATES = (() => {
   return dates;
 })();
 
-const TidesScreenContent: React.FC = () => {
+const TideScreen: React.FC = () => {
   const { activeLocation } = useLocationContext();
   const { selectedTideStation, selectedSite } = useTideContext();
 
@@ -39,7 +39,6 @@ const TidesScreenContent: React.FC = () => {
 
   const [currentIndex, setCurrentIndex] = useState(7); // Start at today (index 7 in -7 to +30 range)
   const pagerRef = useRef<PagerView>(null);
-
 
   // Reset to today when location changes
   useEffect(() => {
@@ -70,18 +69,15 @@ const TidesScreenContent: React.FC = () => {
   );
 
   // Get title for current page
-  const getTitle = useCallback(
-    (index: number) => {
-      if (!DATES[index]) return "";
-      return formatRelativeDate(DATES[index].toISOString());
-    },
-    []
-  );
+  const getTitle = useCallback((index: number) => {
+    if (!DATES[index]) return "";
+    return formatRelativeDate(DATES[index].toISOString());
+  }, []);
 
   // Render a page for each date
   const tidePages = useMemo(() => {
     return DATES.map((date, index) => {
-      const isVisible = 
+      const isVisible =
         index === currentIndex || // Current page
         index === currentIndex - 1 || // Previous page for smooth swiping
         index === currentIndex + 1; // Next page for smooth swiping
@@ -107,12 +103,7 @@ const TidesScreenContent: React.FC = () => {
         </View>
       );
     });
-  }, [
-    currentIndex,
-    activeLocation.id,
-    selectedTideStation,
-    selectedSite,
-  ]);
+  }, [currentIndex, activeLocation.id, selectedTideStation, selectedSite]);
 
   return (
     <View style={styles.container}>
@@ -135,13 +126,7 @@ const TidesScreenContent: React.FC = () => {
   );
 };
 
-export default function TidesScreen() {
-  return (
-    <TideContextProvider>
-      <TidesScreenContent />
-    </TideContextProvider>
-  );
-}
+export default TideScreen;
 
 const styles = StyleSheet.create({
   container: {

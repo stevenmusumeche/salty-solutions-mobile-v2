@@ -1,12 +1,13 @@
 import { startOfDay } from "date-fns";
+import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import BrandButton from "../BrandButton";
 import { gray } from "../../constants/colors";
 import {
   SolunarDetailFieldsFragment,
   SunDetailFieldsFragment,
 } from "../../graphql/generated";
+import BrandButton from "../BrandButton";
 import FeedingPeriod from "./FeedingPeriod";
 import Stars from "./Stars";
 import SunTimeDisplay from "./SunTimeDisplay";
@@ -33,6 +34,7 @@ const ForecastSun: React.FC<Props> = ({
   solunarData,
   isPremium,
 }) => {
+  const router = useRouter();
   // Filter sun data to find the entry matching the selected date
   const curDaySunData: SunDetailFieldsFragment = useMemo(
     () =>
@@ -94,8 +96,8 @@ const ForecastSun: React.FC<Props> = ({
       </View>
       {!isPremium && (
         <BrandButton
-          title="Upgrade to Premium"
-          onPress={() => alert("Premium subscription required")}
+          title="Reveal Peak Fishing Times"
+          onPress={() => router.push("/solunar-teaser")}
           style={styles.premiumButton}
         />
       )}

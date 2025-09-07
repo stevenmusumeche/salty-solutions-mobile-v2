@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { blue, gray, orange, teal } from "../../constants/colors";
@@ -26,6 +27,8 @@ const TideHighlights: React.FC<TideHighlightsProps> = ({
   solunarData,
   isPremiumUser,
 }) => {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {solunarData && (
@@ -34,7 +37,7 @@ const TideHighlights: React.FC<TideHighlightsProps> = ({
             {isPremiumUser ? (
               <Stars score={solunarData.score || 0} size={20} isPremium={true} />
             ) : (
-              <PremiumTeaser />
+              <PremiumTeaser onPress={() => router.push("/solunar-teaser")} />
             )}
           </Pill>
           <Pill color={teal[600]} label="Major Feeding">
@@ -43,7 +46,7 @@ const TideHighlights: React.FC<TideHighlightsProps> = ({
                 {solunarData.majorPeriods.map((period) => formatPeriod(period))}
               </View>
             ) : (
-              <PremiumTeaser />
+              <PremiumTeaser onPress={() => router.push("/solunar-teaser")} />
             )}
           </Pill>
           <Pill color={teal[600]} label="Minor Feeding">
@@ -52,7 +55,7 @@ const TideHighlights: React.FC<TideHighlightsProps> = ({
                 {solunarData.minorPeriods.map((period) => formatPeriod(period))}
               </View>
             ) : (
-              <PremiumTeaser />
+              <PremiumTeaser onPress={() => router.push("/solunar-teaser")} />
             )}
           </Pill>
         </>
@@ -134,10 +137,9 @@ function formatDate(dateString: string) {
   );
 }
 
-function PremiumTeaser() {
+function PremiumTeaser({ onPress }: { onPress: () => void }) {
   return (
-    // todo: premium
-    <TouchableOpacity onPress={() => alert("premium")}>
+    <TouchableOpacity onPress={onPress}>
       <Text style={styles.teaserText}>Premium Required</Text>
     </TouchableOpacity>
   );

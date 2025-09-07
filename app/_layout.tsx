@@ -1,20 +1,28 @@
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { gray, red, white } from "@/constants/colors";
-import { LocationContextProvider } from "@/context/LocationContext";
-import { UserContextProvider, useUserContext } from "@/context/UserContext";
 import { FontProvider } from "@/context/FontContext";
+import { LocationContextProvider } from "@/context/LocationContext";
 import { PurchaseContextProvider } from "@/context/PurchaseContext";
+import { TideContextProvider } from "@/context/TideContext";
+import { UserContextProvider, useUserContext } from "@/context/UserContext";
 import {
   ApolloClient,
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import LoginScreen from "./login";
 
@@ -22,6 +30,15 @@ if (__DEV__) {
   // Adds messages only in a dev environment
   loadDevMessages();
   loadErrorMessages();
+}
+
+function CloseButton() {
+  const router = useRouter();
+  return (
+    <TouchableOpacity onPress={() => router.back()}>
+      <MaterialIcons name="close" size={24} color={white} />
+    </TouchableOpacity>
+  );
 }
 
 function LoadingScreen() {
@@ -44,67 +61,94 @@ function ErrorScreen({ error }: { error: string }) {
 function AuthenticatedApp() {
   return (
     <LocationContextProvider>
-      <PurchaseContextProvider>
-        <GestureHandlerRootView>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen
-            name="location-switcher"
-            options={{
-              presentation: "modal",
-              title: "Change Location",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-          <Stack.Screen
-            name="full-screen-chart"
-            options={{
-              presentation: "modal",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-          <Stack.Screen
-            name="salinity-detail"
-            options={{
-              presentation: "modal",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-          <Stack.Screen
-            name="satellite-detail"
-            options={{
-              presentation: "modal",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-          <Stack.Screen
-            name="modis-info"
-            options={{
-              presentation: "modal",
-              title: "About MODIS Satellite Imagery",
-              headerTintColor: white,
-              headerStyle: {
-                backgroundColor: gray[800],
-              },
-            }}
-          />
-        </Stack>
-        <StatusBar style="light" />
-        </GestureHandlerRootView>
-      </PurchaseContextProvider>
+      <TideContextProvider>
+        <PurchaseContextProvider>
+          <GestureHandlerRootView>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+              <Stack.Screen
+                name="location-switcher"
+                options={{
+                  presentation: "modal",
+                  title: "Change Location",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                  headerRight: CloseButton,
+                }}
+              />
+              <Stack.Screen
+                name="full-screen-chart"
+                options={{
+                  presentation: "modal",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="salinity-detail"
+                options={{
+                  presentation: "modal",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="satellite-detail"
+                options={{
+                  presentation: "modal",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="modis-info"
+                options={{
+                  presentation: "modal",
+                  title: "About MODIS Satellite Imagery",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="solunar-teaser"
+                options={{
+                  presentation: "modal",
+                  title: "Solunar Fishing Intelligence",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                  headerRight: CloseButton,
+                }}
+              />
+              <Stack.Screen
+                name="tide-station-modal"
+                options={{
+                  presentation: "modal",
+                  title: "Change Tide Stations",
+                  headerTintColor: white,
+                  headerStyle: {
+                    backgroundColor: gray[800],
+                  },
+                  headerRight: CloseButton,
+                }}
+              />
+            </Stack>
+            <StatusBar style="light" />
+          </GestureHandlerRootView>
+        </PurchaseContextProvider>
+      </TideContextProvider>
     </LocationContextProvider>
   );
 }
