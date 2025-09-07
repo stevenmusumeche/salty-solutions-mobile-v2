@@ -23,7 +23,9 @@ const SolunarFeedingPeriodsOverlay: React.FC<
 
     // Extract the subset of tide curve chart points that fall within this solunar feeding period
     // Filter to only predicted tide data points (not observations) for solunar matching
-    const predictedTideData = tideData.filter(datum => datum.predictedHeight !== null);
+    const predictedTideData = tideData.filter(
+      (datum) => datum.predictedHeight !== null
+    );
     const solunarPoints = waterHeightPoints.filter((_, index) => {
       const dataPoint = predictedTideData[index];
       if (!dataPoint) return false;
@@ -43,7 +45,9 @@ const SolunarFeedingPeriodsOverlay: React.FC<
     const centerPointIndex = predictedTideData.findIndex(
       (datum) =>
         Math.abs(datum.timestamp - periodCenter) ===
-        Math.min(...predictedTideData.map((d) => Math.abs(d.timestamp - periodCenter)))
+        Math.min(
+          ...predictedTideData.map((d) => Math.abs(d.timestamp - periodCenter))
+        )
     );
     const centerPoint = waterHeightPoints[centerPointIndex];
     const isMajor = period.type === "major";
@@ -66,14 +70,14 @@ const SolunarFeedingPeriodsOverlay: React.FC<
                 <Fish
                   transform={[
                     { translateX: centerPoint.x - 13 },
-                    { translateY: centerPoint.y - 1 },
+                    { translateY: centerPoint.y + 6 },
                     { scale: 0.3 },
                   ]}
                 />
                 <Fish
                   transform={[
                     { translateX: centerPoint.x - 13 },
-                    { translateY: centerPoint.y + 7 },
+                    { translateY: centerPoint.y + 14 },
                     { scale: 0.3 },
                   ]}
                 />
@@ -82,7 +86,7 @@ const SolunarFeedingPeriodsOverlay: React.FC<
               <Fish
                 transform={[
                   { translateX: centerPoint.x - 8 },
-                  { translateY: centerPoint.y + 1 },
+                  { translateY: centerPoint.y + 8 },
                   { scale: 0.2 },
                 ]}
               />
