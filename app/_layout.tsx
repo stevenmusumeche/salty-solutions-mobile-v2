@@ -58,6 +58,15 @@ function ErrorScreen({ error }: { error: string }) {
   );
 }
 
+const modalScreenOptions = {
+  presentation: "modal" as const,
+  headerTintColor: white,
+  headerStyle: {
+    backgroundColor: gray[800],
+  },
+  headerRight: CloseButton,
+};
+
 function AuthenticatedApp() {
   return (
     <LocationContextProvider>
@@ -70,78 +79,41 @@ function AuthenticatedApp() {
               <Stack.Screen
                 name="location-switcher"
                 options={{
-                  presentation: "modal",
+                  ...modalScreenOptions,
                   title: "Change Location",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                  headerRight: CloseButton,
                 }}
               />
               <Stack.Screen
                 name="full-screen-chart"
-                options={{
-                  presentation: "modal",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
+                options={modalScreenOptions}
               />
               <Stack.Screen
                 name="salinity-detail"
-                options={{
-                  presentation: "modal",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
+                options={modalScreenOptions}
               />
               <Stack.Screen
                 name="satellite-detail"
-                options={{
-                  presentation: "modal",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                }}
+                options={modalScreenOptions}
               />
               <Stack.Screen
                 name="modis-info"
                 options={{
-                  presentation: "modal",
+                  ...modalScreenOptions,
                   title: "About MODIS Satellite Imagery",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
                 }}
               />
               <Stack.Screen
                 name="solunar-teaser"
                 options={{
-                  presentation: "modal",
+                  ...modalScreenOptions,
                   title: "Solunar Fishing Intelligence",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                  headerRight: CloseButton,
                 }}
               />
               <Stack.Screen
                 name="tide-station-modal"
                 options={{
-                  presentation: "modal",
+                  ...modalScreenOptions,
                   title: "Change Tide Stations",
-                  headerTintColor: white,
-                  headerStyle: {
-                    backgroundColor: gray[800],
-                  },
-                  headerRight: CloseButton,
                 }}
               />
             </Stack>
