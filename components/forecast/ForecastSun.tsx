@@ -1,6 +1,7 @@
 import { startOfDay } from "date-fns";
 import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import BrandButton from "../BrandButton";
 import { gray } from "../../constants/colors";
 import {
   SolunarDetailFieldsFragment,
@@ -58,7 +59,7 @@ const ForecastSun: React.FC<Props> = ({
     <View style={styles.container}>
       {/* Solunar score with star rating */}
       <View style={styles.starsWrapper}>
-        <Stars score={curDaySolunarData.score} />
+        <Stars score={curDaySolunarData.score} isPremium={isPremium} />
         <Text style={[styles.solunarScoreLabel]}>Solunar Score</Text>
       </View>
       {/* Solunar feeding periods row: Major and Minor periods */}
@@ -92,12 +93,11 @@ const ForecastSun: React.FC<Props> = ({
         />
       </View>
       {!isPremium && (
-        <TouchableOpacity
-          style={styles.premiumButton}
+        <BrandButton
+          title="Upgrade to Premium"
           onPress={() => alert("Premium subscription required")}
-        >
-          <Text style={styles.premiumButtonText}>Upgrade to premium</Text>
-        </TouchableOpacity>
+          style={styles.premiumButton}
+        />
       )}
     </View>
   );
@@ -134,18 +134,6 @@ const styles = StyleSheet.create({
   premiumButton: {
     alignSelf: "center",
     marginTop: 10,
-    width: "100%",
-  },
-  premiumButtonText: {
-    backgroundColor: gray[700],
-    color: "white",
-    textAlign: "center",
-    marginTop: 7,
-    borderRadius: 8,
-    fontSize: 16,
-    fontWeight: "600",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
     width: "100%",
   },
 });

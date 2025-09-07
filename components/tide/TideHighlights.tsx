@@ -32,7 +32,7 @@ const TideHighlights: React.FC<TideHighlightsProps> = ({
         <>
           <Pill color={teal[600]} label="Solunar Score">
             {isPremiumUser ? (
-              <Stars score={solunarData.score || 0} size={20} />
+              <Stars score={solunarData.score || 0} size={20} isPremium={true} />
             ) : (
               <PremiumTeaser />
             )}
