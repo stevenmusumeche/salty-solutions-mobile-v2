@@ -9,12 +9,12 @@ import { gray } from "../constants/colors";
 const sampleSolunarData = {
   score: 4,
   majorPeriods: [
-    { start: "2024-01-01T11:19:00Z", end: "2024-01-01T13:19:00Z" },
-    { start: "2023-12-31T22:48:00Z", end: "2024-01-01T00:48:00Z" },
+    { start: "2024-01-01T11:19:00Z", end: "2024-01-01T13:19:00Z", weight: 100 },
+    { start: "2023-12-31T22:48:00Z", end: "2024-01-01T00:48:00Z", weight: 100 },
   ],
   minorPeriods: [
-    { start: "2024-01-01T12:43:00Z", end: "2024-01-01T13:43:00Z" },
-    { start: "2024-01-01T22:51:00Z", end: "2024-01-01T23:51:00Z" },
+    { start: "2024-01-01T12:43:00Z", end: "2024-01-01T13:43:00Z", weight: 100 },
+    { start: "2024-01-01T22:51:00Z", end: "2024-01-01T23:51:00Z", weight: 100 },
   ],
 };
 
