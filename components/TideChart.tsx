@@ -25,6 +25,7 @@ interface Props {
   solunarData: SolunarDetailFieldsFragment[];
   waterHeightData?: WaterHeightFieldsFragment[];
   height?: number;
+  showFeedingPeriods: boolean;
 }
 
 const TideChart: React.FC<Props> = ({
@@ -34,6 +35,7 @@ const TideChart: React.FC<Props> = ({
   solunarData,
   waterHeightData: rawWaterHeightData = [],
   height = DEFAULT_CHART_HEIGHT,
+  showFeedingPeriods,
 }) => {
   const { interFont: font } = useFontContext();
   const { width } = useWindowDimensions();
@@ -125,12 +127,14 @@ const TideChart: React.FC<Props> = ({
                 />
 
                 {/* Solunar feeding period overlays */}
-                <SolunarFeedingPeriodsOverlay
-                  solunarPeriods={solunarPeriods}
-                  waterHeightPoints={points.predictedHeight}
-                  tideData={tideData}
-                  chartBounds={chartBounds}
-                />
+                {showFeedingPeriods && (
+                  <SolunarFeedingPeriodsOverlay
+                    solunarPeriods={solunarPeriods}
+                    waterHeightPoints={points.predictedHeight}
+                    tideData={tideData}
+                    chartBounds={chartBounds}
+                  />
+                )}
 
                 {/* Water height observations line */}
                 <Line
