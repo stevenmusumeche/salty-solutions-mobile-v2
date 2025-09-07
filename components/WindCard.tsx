@@ -106,6 +106,7 @@ export const WindCard: React.FC<Props> = ({ sites, location }) => {
         <View style={styles.usgsWrapper}>
           <SiteDisplay
             selectedSite={selectedSite}
+            enableEdit={sites.length > 1}
             onChangePress={() => {
               router.push({
                 pathname: "/site-selector-modal",

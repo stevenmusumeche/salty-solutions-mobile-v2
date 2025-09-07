@@ -6,20 +6,24 @@ import { blue, gray } from "../constants/colors";
 interface Props {
   selectedSite: DataSite;
   onChangePress: () => void;
+  enableEdit: boolean;
 }
 
 export const SiteDisplay: React.FC<Props> = ({
   selectedSite,
   onChangePress,
+  enableEdit,
 }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.siteText} numberOfLines={1}>
         {selectedSite.name}
       </Text>
-      <TouchableOpacity style={styles.changeButton} onPress={onChangePress}>
-        <Text style={styles.changeText}>Change Station</Text>
-      </TouchableOpacity>
+      {enableEdit && (
+        <TouchableOpacity style={styles.changeButton} onPress={onChangePress}>
+          <Text style={styles.changeText}>Change Station</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

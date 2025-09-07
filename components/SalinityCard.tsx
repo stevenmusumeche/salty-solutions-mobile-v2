@@ -23,15 +23,19 @@ export const SalinityCard: React.FC<Props> = ({ location, sites }) => {
   const router = useRouter();
   const { selectedSites, actions } = useSiteSelectionContext();
 
-  // Get selected site from context, fallback to first site if none selected  
-  const selectedSite = selectedSites.salinity && sites.find(s => s.id === selectedSites.salinity?.id) 
-    ? selectedSites.salinity 
-    : sites.length ? sites[0] : undefined;
+  // Get selected site from context, fallback to first site if none selected
+  const selectedSite =
+    selectedSites.salinity &&
+    sites.find((s) => s.id === selectedSites.salinity?.id)
+      ? selectedSites.salinity
+      : sites.length
+      ? sites[0]
+      : undefined;
 
   // Initialize context with default site if none selected
   useEffect(() => {
     if (!selectedSites.salinity && sites.length > 0) {
-      actions.setSelectedSite('salinity', sites[0]);
+      actions.setSelectedSite("salinity", sites[0]);
     }
   }, [sites, selectedSites.salinity, actions]);
 
@@ -89,6 +93,7 @@ export const SalinityCard: React.FC<Props> = ({ location, sites }) => {
         <View style={styles.usgsWrapper}>
           <SiteDisplay
             selectedSite={selectedSite}
+            enableEdit={sites.length > 1}
             onChangePress={() => {
               router.push({
                 pathname: "/site-selector-modal",

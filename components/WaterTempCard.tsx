@@ -1,17 +1,17 @@
+import { useWaterTemperatureData } from "@/hooks/useWaterTemperatureData";
+import { DataSite, LocationDetail } from "@/types";
 import { subHours } from "date-fns";
+import { useRouter } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
+import { useSiteSelectionContext } from "../context/SiteSelectionContext";
 import BigBlue from "./BigBlue";
-import LoaderBlock from "./LoaderBlock";
-import NoData from "./NoData";
-import { DataSite, LocationDetail } from "@/types";
+import { CardChart } from "./CardChart";
 import { ConditionCard } from "./ConditionCard";
 import { ErrorIcon } from "./FullScreenError";
-import { CardChart } from "./CardChart";
-import { useRouter } from "expo-router";
-import { useWaterTemperatureData } from "@/hooks/useWaterTemperatureData";
+import LoaderBlock from "./LoaderBlock";
+import NoData from "./NoData";
 import { SiteDisplay } from "./SiteDisplay";
-import { useSiteSelectionContext } from "../context/SiteSelectionContext";
 
 interface Props {
   location: LocationDetail;
@@ -24,32 +24,35 @@ export const WaterTempCard: React.FC<Props> = ({ location, sites }) => {
   const { selectedSites, actions } = useSiteSelectionContext();
 
   // Get selected site from context, fallback to first site if none selected
-  const selectedSite = selectedSites['water-temp'] && sites.find(s => s.id === selectedSites['water-temp']?.id)
-    ? selectedSites['water-temp']
-    : sites.length ? sites[0] : undefined;
+  const selectedSite =
+    selectedSites["water-temp"] &&
+    sites.find((s) => s.id === selectedSites["water-temp"]?.id)
+      ? selectedSites["water-temp"]
+      : sites.length
+      ? sites[0]
+      : undefined;
 
   // Initialize context with default site if none selected
   useEffect(() => {
-    if (!selectedSites['water-temp'] && sites.length > 0) {
-      actions.setSelectedSite('water-temp', sites[0]);
+    if (!selectedSites["water-temp"] && sites.length > 0) {
+      actions.setSelectedSite("water-temp", sites[0]);
     }
   }, [sites, selectedSites, actions]);
 
   const date = useMemo(() => new Date(), []);
-  const { curValue, curDetail, loading, error } =
-    useWaterTemperatureData({
-      locationId: location.id,
-      startDate: subHours(date, 48),
-      endDate: date,
-      usgsSiteId:
-        selectedSite && selectedSite.__typename === "UsgsSite"
-          ? selectedSite.id
-          : undefined,
-      noaaStationId:
-        selectedSite && selectedSite.__typename === "TidePreditionStation"
-          ? selectedSite.id
-          : undefined,
-    });
+  const { curValue, curDetail, loading, error } = useWaterTemperatureData({
+    locationId: location.id,
+    startDate: subHours(date, 48),
+    endDate: date,
+    usgsSiteId:
+      selectedSite && selectedSite.__typename === "UsgsSite"
+        ? selectedSite.id
+        : undefined,
+    noaaStationId:
+      selectedSite && selectedSite.__typename === "TidePreditionStation"
+        ? selectedSite.id
+        : undefined,
+  });
 
   if (loading) {
     return (
@@ -97,13 +100,14 @@ export const WaterTempCard: React.FC<Props> = ({ location, sites }) => {
         <View style={styles.usgsWrapper}>
           <SiteDisplay
             selectedSite={selectedSite}
+            enableEdit={sites.length > 1}
             onChangePress={() => {
               router.push({
                 pathname: "/site-selector-modal",
                 params: {
                   sites: JSON.stringify(sites),
                   selectedId: selectedSite.id,
-                  componentType: 'water-temp',
+                  componentType: "water-temp",
                 },
               });
             }}
