@@ -1,6 +1,6 @@
 import { startOfDay } from "date-fns";
 import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { gray } from "../../constants/colors";
 import {
   SolunarDetailFieldsFragment,
@@ -17,6 +17,8 @@ interface Props {
   date: Date;
   /** Array of solunar data for multiple days */
   solunarData: SolunarDetailFieldsFragment[];
+  /** Whether the user has premium access */
+  isPremium: boolean;
 }
 
 /**
@@ -24,7 +26,12 @@ interface Props {
  * for fishing conditions. Shows nautical dawn/dusk, sunrise/sunset times, major/minor
  * feeding periods, and a star-based solunar score rating.
  */
-const ForecastSun: React.FC<Props> = ({ sunData, date, solunarData }) => {
+const ForecastSun: React.FC<Props> = ({
+  sunData,
+  date,
+  solunarData,
+  isPremium,
+}) => {
   // Filter sun data to find the entry matching the selected date
   const curDaySunData: SunDetailFieldsFragment = useMemo(
     () =>
@@ -56,8 +63,16 @@ const ForecastSun: React.FC<Props> = ({ sunData, date, solunarData }) => {
       </View>
       {/* Solunar feeding periods row: Major and Minor periods */}
       <View style={styles.rowWrapper}>
-        <FeedingPeriod type="Major" periods={curDaySolunarData.majorPeriods} />
-        <FeedingPeriod type="Minor" periods={curDaySolunarData.minorPeriods} />
+        <FeedingPeriod
+          type="Major"
+          periods={curDaySolunarData.majorPeriods}
+          isPremium={isPremium}
+        />
+        <FeedingPeriod
+          type="Minor"
+          periods={curDaySolunarData.minorPeriods}
+          isPremium={isPremium}
+        />
       </View>
 
       {/* Sun times row: nautical dawn, sunrise, sunset, nautical dusk */}
@@ -76,6 +91,14 @@ const ForecastSun: React.FC<Props> = ({ sunData, date, solunarData }) => {
           value={new Date(curDaySunData.nauticalDusk)}
         />
       </View>
+      {!isPremium && (
+        <TouchableOpacity
+          style={styles.premiumButton}
+          onPress={() => alert("Premium subscription required")}
+        >
+          <Text style={styles.premiumButtonText}>Upgrade to premium</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -107,5 +130,22 @@ const styles = StyleSheet.create({
     color: gray[600],
     fontSize: 10,
     letterSpacing: -0.1,
+  },
+  premiumButton: {
+    alignSelf: "center",
+    marginTop: 10,
+    width: "100%",
+  },
+  premiumButtonText: {
+    backgroundColor: gray[700],
+    color: "white",
+    textAlign: "center",
+    marginTop: 7,
+    borderRadius: 8,
+    fontSize: 16,
+    fontWeight: "600",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    width: "100%",
   },
 });

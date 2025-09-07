@@ -76,6 +76,7 @@ const ForecastCard: React.FC<Props> = ({
               sunData={sunData}
               date={date}
               solunarData={solunarData}
+              isPremium={user.entitledToPremium}
             />
             <ForecastText day={datum.day} night={datum.night} />
           </View>

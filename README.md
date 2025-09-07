@@ -8,6 +8,14 @@ This project was bootstrapped with `create-expo-app`
 
 `npm run ios`
 
+### Continuous Native Generation
+
+This app uses Expo's CNG, which is desribed here: <https://docs.expo.dev/workflow/continuous-native-generation/>
+
+When certain changes are made to the project, you may get errors when running the app.  You can try removing the native projects (ios and android directories) and rebuilding them by using this command.
+
+`npx expo prebuild --clean`
+
 ### Use Expo Go
 
 `npm run start`

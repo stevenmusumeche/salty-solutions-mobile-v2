@@ -1,3 +1,4 @@
+import { BlurView } from "@react-native-community/blur";
 import { format } from "date-fns";
 import React, { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -9,26 +10,39 @@ interface Props {
   type: "Major" | "Minor";
   /** Array of period objects with start/end times */
   periods: SolunarPeriodFieldsFragment[];
+  /** Whether the user has premium access */
+  isPremium: boolean;
 }
 
 /**
  * FeedingPeriod component displays feeding periods (Major or Minor)
  * with start/end times aligned in columns for better readability
  */
-const FeedingPeriod: FC<Props> = ({ type, periods }) => (
+const FeedingPeriod: FC<Props> = ({ type, periods, isPremium }) => (
   <View style={styles.container}>
-    {periods.map((period) => (
-      // Three-column layout: start time | dash | end time for vertical alignment
-      <View key={period.start} style={styles.periodRow}>
-        <Text style={[styles.time, styles.startTime, { fontSize: 16 }]}>
-          {format(new Date(period.start), "h:mmaaaaa")}
-        </Text>
-        <Text style={[styles.time, styles.dash, { fontSize: 16 }]}>-</Text>
-        <Text style={[styles.time, styles.endTime, { fontSize: 16 }]}>
-          {format(new Date(period.end), "h:mmaaaaa")}
-        </Text>
-      </View>
-    ))}
+    <View
+      style={isPremium ? styles.timesContainer : styles.timesContainerWithBlur}
+    >
+      {periods.map((period) => (
+        // Three-column layout: start time | dash | end time for vertical alignment
+        <View key={period.start} style={styles.periodRow}>
+          <Text style={[styles.time, styles.startTime, { fontSize: 16 }]}>
+            {format(new Date(period.start), "h:mmaaaaa")}
+          </Text>
+          <Text style={[styles.time, styles.dash, { fontSize: 16 }]}>-</Text>
+          <Text style={[styles.time, styles.endTime, { fontSize: 16 }]}>
+            {format(new Date(period.end), "h:mmaaaaa")}
+          </Text>
+        </View>
+      ))}
+      {!isPremium && (
+        <BlurView
+          style={styles.timesOverlay}
+          blurType="light"
+          blurAmount={3}
+        ></BlurView>
+      )}
+    </View>
     <Text style={styles.label}>{type} Feeding Periods</Text>
   </View>
 );
@@ -38,6 +52,13 @@ export default FeedingPeriod;
 const styles = StyleSheet.create({
   container: {
     width: "50%",
+  },
+  timesContainer: {
+    position: "relative",
+  },
+  timesContainerWithBlur: {
+    position: "relative",
+    paddingBlock: 3,
   },
   periodRow: {
     flexDirection: "row",
@@ -65,5 +86,15 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: gray[600],
     fontSize: 10,
+  },
+  timesOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
   },
 });

@@ -36,14 +36,12 @@ const TideChartLegend: React.FC<TideChartLegendProps> = ({
           </Text>
         </View>
       )}
-      <View style={styles.chartLabelInnerWrapper}>
-        <ChartLabelSwatch color={blue.solunar} />
-        <Text style={styles.chartLabelText}>
-          {showFeedingPeriods
-            ? "Solunar Feeding Periods"
-            : "Feeding Periods (Premium Required)"}
-        </Text>
-      </View>
+      {showFeedingPeriods && (
+        <View style={styles.chartLabelInnerWrapper}>
+          <ChartLabelSwatch color={blue.solunar} />
+          <Text style={styles.chartLabelText}>Solunar Feeding Periods</Text>
+        </View>
+      )}
     </View>
   );
 
