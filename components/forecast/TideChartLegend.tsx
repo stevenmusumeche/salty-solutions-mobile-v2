@@ -8,6 +8,7 @@ interface TideChartLegendProps {
   observationStationName?: string;
   showObserved?: boolean;
   onChangePress?: () => void;
+  showFeedingPeriods?: boolean;
 }
 
 const TideChartLegend: React.FC<TideChartLegendProps> = ({
@@ -15,6 +16,7 @@ const TideChartLegend: React.FC<TideChartLegendProps> = ({
   observationStationName,
   showObserved = true,
   onChangePress,
+  showFeedingPeriods = true,
 }) => {
   const legendContent = (
     <View
@@ -36,7 +38,11 @@ const TideChartLegend: React.FC<TideChartLegendProps> = ({
       )}
       <View style={styles.chartLabelInnerWrapper}>
         <ChartLabelSwatch color={blue.solunar} />
-        <Text style={styles.chartLabelText}>Solunar Feeding Periods</Text>
+        <Text style={styles.chartLabelText}>
+          {showFeedingPeriods
+            ? "Solunar Feeding Periods"
+            : "Feeding Periods (Premium Required)"}
+        </Text>
       </View>
     </View>
   );

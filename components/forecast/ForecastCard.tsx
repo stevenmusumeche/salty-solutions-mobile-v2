@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { white } from "../../constants/colors";
+import { useUserContext } from "../../context/UserContext";
 import {
   CombinedForecastV2DetailFragment,
   SolunarDetailFieldsFragment,
@@ -44,7 +45,7 @@ const ForecastCard: React.FC<Props> = ({
   solunarData,
 }) => {
   const date = new Date(dateString);
-
+  const { user } = useUserContext();
   const { width } = useWindowDimensions();
 
   return (
@@ -64,10 +65,12 @@ const ForecastCard: React.FC<Props> = ({
               date={date}
               sunData={sunData}
               solunarData={solunarData}
+              showFeedingPeriods={user.entitledToPremium}
             />
             <TideChartLegend
               tideStationName={tideStationName}
               showObserved={false}
+              showFeedingPeriods={user.entitledToPremium}
             />
             <ForecastSun
               sunData={sunData}

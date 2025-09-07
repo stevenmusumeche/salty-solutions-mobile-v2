@@ -122,6 +122,7 @@ const TideCard: React.FC<TideCardProps> = ({
         date={date}
         waterHeightData={waterHeightData}
         height={200}
+        showFeedingPeriods={user.entitledToPremium}
       />
 
       <View style={styles.legendContainer}>
@@ -130,6 +131,7 @@ const TideCard: React.FC<TideCardProps> = ({
           observationStationName={waterHeightSiteName}
           showObserved={true}
           onChangePress={() => setIsModalVisible(true)}
+          showFeedingPeriods={user.entitledToPremium}
         />
       </View>
 
