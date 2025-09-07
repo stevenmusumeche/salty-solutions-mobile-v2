@@ -22,7 +22,6 @@ export interface TPurchaseContext {
   premiumSubscription?: SubscriptionProduct;
   purchasing: boolean;
   initiatePurchase: (product: SubscriptionProduct) => Promise<void>;
-  purchaseResultMessage: string; // temporary: remove after testing
 }
 
 export const PurchaseContext = createContext<TPurchaseContext>(
@@ -49,8 +48,6 @@ export const PurchaseContextProvider: React.FC<{
   const [isProcessing, setIsProcessing] = useState(false);
   // after a purchase is successful in the app store, we have to validate the receipt and record the purchase. This stores the state of that.
   const [isPostProcessing, setIsPostProcessing] = useState(false);
-  // temporary for debugging. todo remove this
-  const [purchaseResultMessage, setPurchaseResultMessage] = useState("");
 
   const {
     connected,
@@ -74,15 +71,6 @@ export const PurchaseContextProvider: React.FC<{
           throw new Error("invariant: error finding product for purchase");
         }
         setIsProcessing(false);
-        setPurchaseResultMessage(
-          `✅ Purchase successful (${purchase.platform})\n` +
-            `Product: ${purchase.productId}\n` +
-            `Transaction ID: ${purchase.transactionId || "N/A"}\n` +
-            `Date: ${new Date(
-              purchase.transactionDate
-            ).toLocaleDateString()}\n` +
-            `Receipt: ${purchase.transactionReceipt?.substring(0, 50)}...`
-        );
         setIsPostProcessing(true);
 
         console.info("Completing purchase on server");
@@ -124,8 +112,6 @@ export const PurchaseContextProvider: React.FC<{
         return;
       }
       console.error("onPurchaseError called", error);
-
-      setPurchaseResultMessage(`❌ Purchase failed: ${error.message}`);
     },
 
     onSyncError: (error) => {
@@ -148,7 +134,6 @@ export const PurchaseContextProvider: React.FC<{
         product.platform
       );
       setIsProcessing(true);
-      setPurchaseResultMessage("Processing purchase...");
 
       console.info("Requesting purchase with app store");
       await requestPurchase({
@@ -175,15 +160,8 @@ export const PurchaseContextProvider: React.FC<{
         (s) => s.id === IAP_PRODUCT_ID_V1
       ),
       purchasing: isProcessing || isPostProcessing,
-      purchaseResultMessage,
     }),
-    [
-      initiatePurchase,
-      subscriptions,
-      isProcessing,
-      isPostProcessing,
-      purchaseResultMessage,
-    ]
+    [initiatePurchase, subscriptions, isProcessing, isPostProcessing]
   );
 
   return (
