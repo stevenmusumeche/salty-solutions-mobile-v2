@@ -57,50 +57,99 @@ export const PurchaseContextProvider: React.FC<{
     finishTransaction,
   } = useIAP({
     onPurchaseSuccess: async (purchase) => {
+      const timestamp = new Date().toISOString();
       try {
-        console.info(
-          "onPurchaseSuccess called",
-          purchase.id,
-          purchase.transactionId
-        );
+        const { id, transactionId, productId, platform } = purchase;
+        console.info(`[${timestamp} ${id}] onPurchaseSuccess called`, {
+          id,
+          transactionId,
+          productId,
+          transactionReasonIOS:
+            platform === "ios" && purchase.transactionReasonIOS,
+        });
+
+        // Check if this is an iOS renewal transaction - skip server processing but still finish
+        if (
+          purchase.platform === "ios" &&
+          purchase.transactionReasonIOS !== "PURCHASE"
+        ) {
+          console.info(
+            `[${timestamp} ${id}] Skipping non-purchase transaction: ${purchase.transactionId}`
+          );
+          console.info(
+            `[${timestamp} ${id}] Finishing non-purchase transaction with app store`
+          );
+          const finishResult = await finishTransaction({ purchase });
+          console.info(
+            `[${timestamp} ${id}] Finished non-purchase transaction result:`,
+            finishResult
+          );
+          return;
+        }
 
         const productBeingPurchased = subscriptions.find(
           (sub) => sub.id === purchase.productId
         );
         if (!productBeingPurchased) {
-          throw new Error("invariant: error finding product for purchase");
+          console.error(
+            `[${timestamp} ${id}] Error: Product not found for productId: ${purchase.productId}`
+          );
+          return;
         }
+
         setIsProcessing(false);
         setIsPostProcessing(true);
 
-        console.info("Completing purchase on server");
+        console.info(
+          `[${timestamp} ${id}] Starting completePurchaseOnServer call`
+        );
         const recordResponse = await completePurchaseOnServer(
           purchase,
           productBeingPurchased,
           user,
           completePurchaseV2
         );
+        console.info(
+          `[${timestamp} ${id}] completePurchaseOnServer response:`,
+          {
+            isSuccess: recordResponse.isSuccess,
+          }
+        );
 
         if (!recordResponse.isSuccess) {
-          console.log(recordResponse);
-          console.error("Error completing purchase");
+          console.error(
+            `[${timestamp} ${id}] Error completing purchase on server:`,
+            recordResponse
+          );
           return;
         }
 
         // After successful server validation and recording, finish the transaction with the app stores
-        console.info("Finishing transaction with app store");
+        console.info(
+          `[${timestamp} ${id}] Starting finishTransaction with app store`
+        );
         const finishResult = await finishTransaction({ purchase });
-        console.info("Finished transaction", finishResult);
+        console.info(
+          `[${timestamp} ${id}] Finished transaction result:`,
+          finishResult
+        );
         userActions.onPurchaseComplete(recordResponse.user);
       } catch (error) {
-        console.error("Unknown error in onPurchaseSuccess", error);
+        console.error(
+          `[${timestamp}] Unknown error in onPurchaseSuccess:`,
+          error
+        );
       } finally {
+        console.info(
+          `[${timestamp}] onPurchaseSuccess cleanup - setting processing states to false`
+        );
         setIsProcessing(false);
         setIsPostProcessing(false);
       }
     },
 
     onPurchaseError: (error) => {
+      const timestamp = new Date().toISOString();
       setIsProcessing(false);
 
       if (
@@ -108,34 +157,40 @@ export const PurchaseContextProvider: React.FC<{
         error.code === ErrorCode.E_DEFERRED_PAYMENT ||
         error.code === "E_ALREADY_OWNED"
       ) {
-        // no issue, normal user behavior
+        console.info(
+          `[${timestamp}] Purchase cancelled/deferred/already owned:`,
+          error.code
+        );
         return;
       }
-      console.error("onPurchaseError called", error);
+      console.error(`[${timestamp}] onPurchaseError called:`, error);
     },
 
     onSyncError: (error) => {
-      console.error("onSyncError called", error);
+      const timestamp = new Date().toISOString();
+      console.error(`[${timestamp}] onSyncError called:`, error);
     },
   });
 
   // Load subscriptions when component mounts
   useEffect(() => {
-    if (!connected) return;
+    const timestamp = new Date().toISOString();
+    console.info(
+      `[${timestamp}] IAP connected, requesting products:`,
+      IAP_PRODUCT_IDS
+    );
     requestProducts({ skus: IAP_PRODUCT_IDS, type: "subs" });
   }, [connected, requestProducts]);
 
   const initiatePurchase = useCallback(
     async (product: SubscriptionProduct) => {
+      const timestamp = new Date().toISOString();
       console.info(
-        "Initiating purchase for ",
-        product.id,
-        product.displayName,
-        product.platform
+        `[${timestamp}] Initiating purchase for ${product.id} - ${product.displayName} (${product.platform})`
       );
       setIsProcessing(true);
 
-      console.info("Requesting purchase with app store");
+      console.info(`[${timestamp}] Requesting purchase with app store`);
       await requestPurchase({
         request: {
           ios: {
@@ -185,6 +240,11 @@ async function completePurchaseOnServer(
     }
   | { isSuccess: false }
 > {
+  const timestamp = new Date().toISOString();
+  console.info(
+    `[${timestamp}] completePurchaseOnServer called for transaction: ${purchase.transactionId}`
+  );
+
   try {
     if (!product.price) {
       throw new Error("invariant, no price");
@@ -199,6 +259,9 @@ async function completePurchaseOnServer(
       throw new Error("invariant, user not logged in");
     }
 
+    console.info(
+      `[${timestamp}] Making GraphQL mutation call to completePurchaseV2`
+    );
     const response = await completePurchaseV2Mutation({
       variables: {
         input: {
@@ -213,19 +276,26 @@ async function completePurchaseOnServer(
         headers: { authorization: `Bearer ${user.idToken}` },
       },
     });
+    console.info(
+      `[${timestamp}] GraphQL mutation completed, response received`
+    );
 
     if (response.data?.completePurchaseV2) {
+      console.info(
+        `[${timestamp}] Server response: isComplete = ${response.data.completePurchaseV2.isComplete}`
+      );
       return {
         isSuccess: response.data.completePurchaseV2.isComplete,
         user: response.data.completePurchaseV2.user!,
       };
     }
 
+    console.warn(`[${timestamp}] No data in response from completePurchaseV2`);
     return {
       isSuccess: false,
     };
   } catch (error) {
-    console.error("Error completing purchase on server:", error);
+    console.error(`[${timestamp}] Error completing purchase on server:`, error);
     return {
       isSuccess: false,
     };
