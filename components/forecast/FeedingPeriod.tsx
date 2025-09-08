@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import React, { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { gray } from "../../constants/colors";
 import { SolunarPeriodFieldsFragment } from "../../graphql/generated";
 
@@ -20,47 +20,27 @@ interface Props {
 const FeedingPeriod: FC<Props> = ({ type, periods, isPremium }) => (
   <View style={styles.container}>
     <View style={styles.timesContainer}>
-      {periods.map((period) => (
-        // Three-column layout: start time | dash | end time for vertical alignment
-        <View key={period.start} style={styles.periodRow}>
-          <View style={styles.startTime}>
-            <Text
-              style={[
-                styles.time,
-                { fontSize: 16 },
-                !isPremium && styles.blurredText,
-              ]}
-            >
-              {" "}
-              {format(new Date(period.start), "h:mmaaaaa")}{" "}
+      {isPremium ? (
+        periods.map((period) => (
+          // Three-column layout: start time | dash | end time for vertical alignment
+          <View key={period.start} style={styles.periodRow}>
+            <Text style={[styles.time, styles.startTime, { fontSize: 16 }]}>
+              {format(new Date(period.start), "h:mmaaaaa")}
+            </Text>
+            <Text style={[styles.time, styles.dash, { fontSize: 16 }]}>-</Text>
+            <Text style={[styles.time, styles.endTime, { fontSize: 16 }]}>
+              {format(new Date(period.end), "h:mmaaaaa")}
             </Text>
           </View>
-          <View style={styles.dash}>
-            <Text
-              style={[
-                styles.time,
-                { fontSize: 16 },
-                !isPremium && styles.blurredText,
-              ]}
-            >
-              {" "}
-              -{" "}
-            </Text>
-          </View>
-          <View style={styles.endTime}>
-            <Text
-              style={[
-                styles.time,
-                { fontSize: 16 },
-                !isPremium && styles.blurredText,
-              ]}
-            >
-              {" "}
-              {format(new Date(period.end), "h:mmaaaaa")}{" "}
-            </Text>
-          </View>
+        ))
+      ) : (
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={require("../../assets/images/feeding-times-blur-1.png")}
+            style={styles.blurImage}
+          />
         </View>
-      ))}
+      )}
     </View>
     <Text style={styles.label}>{type} Feeding Periods</Text>
   </View>
@@ -71,16 +51,13 @@ export default FeedingPeriod;
 const styles = StyleSheet.create({
   container: {
     width: "50%",
-    overflow: "visible",
   },
   timesContainer: {
     position: "relative",
-    overflow: "visible",
   },
   periodRow: {
     flexDirection: "row",
     alignItems: "center",
-    overflow: "visible",
   },
   time: {
     textAlign: "center",
@@ -88,15 +65,15 @@ const styles = StyleSheet.create({
   },
   startTime: {
     flex: 1,
-    alignItems: "flex-end",
+    textAlign: "right",
   },
   dash: {
-    width: 10,
-    alignItems: "center",
+    width: 20,
+    textAlign: "center",
   },
   endTime: {
     flex: 1,
-    alignItems: "flex-start",
+    textAlign: "left",
   },
   label: {
     marginTop: 2,
@@ -105,11 +82,9 @@ const styles = StyleSheet.create({
     color: gray[600],
     fontSize: 10,
   },
-  blurredText: {
-    color: "transparent",
-    textShadowColor: "rgba(0, 0, 0, 0.8)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
-    paddingBlock: 2,
+  blurImage: {
+    width: 150,
+    height: 45,
+    resizeMode: "contain",
   },
 });
