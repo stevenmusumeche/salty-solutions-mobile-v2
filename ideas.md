@@ -7,5 +7,4 @@
 Issues
 
 - missing data on now screen
-- loading UI on satellite screen
 - some locations don't have marine forecast?

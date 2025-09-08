@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { gray } from "../../constants/colors";
-import LoaderBlock from "../LoaderBlock";
-import { styles as cardStyles } from "./ForecastCard";
+import { gray } from "../constants/colors";
+import LoaderBlock from "./LoaderBlock";
+import { styles as cardStyles } from "./forecast/ForecastCard";
 
-const ForecastLoader: React.FC = () => (
+const LoaderWithHeader: React.FC = () => (
   <>
     <View style={styles.headerShimmer}>
       <LoaderBlock styles={styles.loaderBlockHeader} />
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForecastLoader;
+export default LoaderWithHeader;

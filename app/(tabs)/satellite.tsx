@@ -23,7 +23,7 @@ import PagerView, {
 } from "react-native-pager-view";
 
 import BrandButton from "@/components/BrandButton";
-import LoaderBlock from "@/components/LoaderBlock";
+import LoaderWithHeader from "@/components/LoaderWithHeader";
 import PagerHeader from "@/components/PagerHeader";
 import Teaser from "@/components/Teaser";
 import { gray, white } from "@/constants/colors";
@@ -129,14 +129,7 @@ export default function SatelliteScreen() {
   }
 
   if (loading || !modisMapData?.location) {
-    return (
-      <View style={styles.container}>
-        <LoaderBlock styles={{ ...styles.loaderBlock, height: 70 }} />
-        <LoaderBlock styles={{ ...styles.loaderBlock, height: 50 }} />
-        <LoaderBlock styles={{ ...styles.loaderBlock, height: 400 }} />
-        <LoaderBlock styles={{ ...styles.loaderBlock, height: 70 }} />
-      </View>
-    );
+    return <LoaderWithHeader />;
   }
 
   if (!maps.length) {
@@ -229,11 +222,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 20,
     pointerEvents: "none",
-  },
-  loaderBlock: {
-    backgroundColor: gray[400],
-    width: "100%",
-    marginBottom: 20,
   },
   instructionText: {
     fontSize: 14,

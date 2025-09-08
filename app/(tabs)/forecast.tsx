@@ -15,7 +15,7 @@ import ForecastCard, {
   TeaserForecastCard,
 } from "../../components/forecast/ForecastCard";
 import ForecastHeader from "../../components/forecast/ForecastHeader";
-import ForecastLoader from "../../components/forecast/ForecastLoader";
+import LoaderWithHeader from "../../components/LoaderWithHeader";
 import { useLocationContext } from "../../context/LocationContext";
 import { useUserContext } from "../../context/UserContext";
 import { useForecastData } from "../../hooks/useForecastData";
@@ -119,7 +119,7 @@ const ForecastScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ForecastLoader />
+        <LoaderWithHeader />
       </View>
     );
   }
