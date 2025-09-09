@@ -8,6 +8,30 @@ This project was bootstrapped with `create-expo-app`
 
 `npm run ios`
 
+You can also choose which device to run it on by passing the device flag:
+
+```bash
+# See devices available:
+xcrun simctl list devices
+
+# Run with a specific device
+npm run ios -- --device "iPhone 16 Pro Max"
+```
+
+### Run in Android Emulator
+
+`npm run android`
+
+You can also choose which device to run it on by passing the device flag:
+
+```bash
+# See devices available:
+emulator -list-avds
+
+# Run with a specific device
+npm run android -- --device "Pixel_9_Pro
+```
+
 ### Continuous Native Generation
 
 This app uses Expo's CNG, which is desribed here: <https://docs.expo.dev/workflow/continuous-native-generation/>
