@@ -70,14 +70,14 @@ const SolunarFeedingPeriodsOverlay: React.FC<
                 <Fish
                   transform={[
                     { translateX: centerPoint.x - 13 },
-                    { translateY: centerPoint.y + 6 },
+                    { translateY: centerPoint.y + 2 },
                     { scale: 0.3 },
                   ]}
                 />
                 <Fish
                   transform={[
                     { translateX: centerPoint.x - 13 },
-                    { translateY: centerPoint.y + 14 },
+                    { translateY: centerPoint.y + 10 },
                     { scale: 0.3 },
                   ]}
                 />
@@ -86,7 +86,7 @@ const SolunarFeedingPeriodsOverlay: React.FC<
               <Fish
                 transform={[
                   { translateX: centerPoint.x - 8 },
-                  { translateY: centerPoint.y + 8 },
+                  { translateY: centerPoint.y + 4 },
                   { scale: 0.2 },
                 ]}
               />
