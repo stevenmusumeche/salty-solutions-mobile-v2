@@ -11,7 +11,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.musumeche.salty.solutions",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
