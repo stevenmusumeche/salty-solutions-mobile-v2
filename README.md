@@ -79,7 +79,7 @@ EXPO_NO_CAPABILITY_SYNC=1 eas build --platform ios --profile production
 EXPO_NO_CAPABILITY_SYNC=1 eas build --platform android --profile production
 ```
 
-### Submitted to App Store
+### Submitting to App Store
 
 1. Build a standalone production build (see above)
 2. Submit the build to the App Store with `eas submit --platform ios`
