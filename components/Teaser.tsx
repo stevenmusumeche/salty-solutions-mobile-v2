@@ -1,7 +1,7 @@
 import { gray, white } from "@/constants/colors";
 import { usePurchaseContext } from "@/context/PurchaseContext";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BrandButton from "./BrandButton";
 
 interface Props {
@@ -52,6 +52,15 @@ const Teaser: React.FC<Props> = ({
           disabled={purchasing}
         />
         <Text style={styles.buttonSubtitle}>{buttonSubtitle}</Text>
+        <View style={styles.legalLinks}>
+          <TouchableOpacity onPress={() => Linking.openURL("https://salty.solutions/privacy")}>
+            <Text style={styles.linkText}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <Text style={styles.linkSeparator}> • </Text>
+          <TouchableOpacity onPress={() => Linking.openURL("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")}>
+            <Text style={styles.linkText}>Terms of Service</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -88,5 +97,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     fontSize: 14,
+  },
+  legalLinks: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 12,
+  },
+  linkText: {
+    color: gray[600],
+    fontSize: 12,
+    textDecorationLine: "underline",
+  },
+  linkSeparator: {
+    color: gray[600],
+    fontSize: 12,
   },
 });

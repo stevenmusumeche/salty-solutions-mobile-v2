@@ -1,11 +1,13 @@
 import DevSettings from "@/components/DevSettings";
 import { gray, red, white } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
+import { useSendFeedbackMutation } from "@/graphql/generated";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import * as Application from "expo-application";
 import Constants from "expo-constants";
 import React from "react";
 import {
+  Alert,
   Linking,
   Platform,
   ScrollView,
@@ -17,6 +19,79 @@ import {
 
 export default function AboutScreen() {
   const { actions, user } = useUserContext();
+  const [sendFeedback] = useSendFeedbackMutation();
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete Account",
+          style: "destructive",
+          onPress: confirmDeleteAccount,
+        },
+      ]
+    );
+  };
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      "Final Confirmation",
+      "This will permanently delete your account and all associated data. Are you absolutely sure?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes, Delete Forever",
+          style: "destructive",
+          onPress: performAccountDeletion,
+        },
+      ]
+    );
+  };
+
+  const performAccountDeletion = async () => {
+    try {
+      // Send feedback to notify about account deletion request
+      await sendFeedback({
+        variables: {
+          input: {
+            fromName: "Salty Solutions",
+            fromEmail: "no-reply@salty.solutions",
+            subject: "Account Deletion Request",
+            message: `Account deletion requested from mobile app:
+            
+User ID: ${"id" in user ? user.id : "Not available"}
+Name: ${"name" in user ? user.name || "Not provided" : "Not provided"}
+Email: ${"email" in user ? user.email || "Not provided" : "Not provided"}
+Premium Status: ${user.entitledToPremium ? "Active" : "Inactive"}`,
+          },
+        },
+      });
+
+      // Clear all local data and logout
+      actions.logout();
+
+      Alert.alert(
+        "Account Deletion Requested",
+        "Your account deletion request has been submitted. You have been logged out and your account will be deleted shortly.",
+        [{ text: "OK" }]
+      );
+    } catch {
+      Alert.alert(
+        "Error",
+        "There was an error processing your account deletion request. Please try again.",
+        [{ text: "OK" }]
+      );
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -71,15 +146,31 @@ export default function AboutScreen() {
           I hope you find it useful - please contact me with any suggestions or
           comments.
         </Paragraph>
-        <TouchableOpacity
-          style={styles.privacyButton}
-          onPress={() => Linking.openURL("https://salty.solutions/privacy")}
-        >
-          <Text style={styles.privacyButtonText}>Privacy Policy</Text>
-        </TouchableOpacity>
+        <View style={styles.legalLinks}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL("https://salty.solutions/privacy")}
+          >
+            <Text style={styles.linkText}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <Text style={styles.linkSeparator}> • </Text>
+          <TouchableOpacity
+            onPress={() =>
+              Linking.openURL(
+                "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+              )
+            }
+          >
+            <Text style={styles.linkText}>Terms of Service</Text>
+          </TouchableOpacity>
+          <Text style={styles.linkSeparator}> • </Text>
+          <TouchableOpacity onPress={handleDeleteAccount}>
+            <Text style={styles.linkText}>Delete Account</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.versionText}>
-          Native: v{Application.nativeApplicationVersion || "?"} ({Application.nativeBuildVersion || "?"})
-          {"\n"}Config: v{Constants.expoConfig?.version || "?"}
+          Native: v{Application.nativeApplicationVersion || "?"} (
+          {Application.nativeBuildVersion || "?"}){"\n"}Config: v
+          {Constants.expoConfig?.version || "?"}
         </Text>
       </View>
 
@@ -170,18 +261,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-  privacyButton: {
-    backgroundColor: gray[700],
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+  legalLinks: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
     marginBottom: 15,
   },
-  privacyButtonText: {
-    color: white,
-    fontSize: 16,
-    textAlign: "center",
+  linkText: {
+    color: gray[600],
+    fontSize: 14,
+    textDecorationLine: "underline",
+  },
+  linkSeparator: {
+    color: gray[600],
+    fontSize: 14,
   },
   versionText: {
     color: gray[500],

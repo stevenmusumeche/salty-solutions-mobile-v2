@@ -712,6 +712,13 @@ export type SalinityMapQueryVariables = Exact<{
 
 export type SalinityMapQuery = { __typename?: 'Query', location?: { __typename?: 'Location', id: string, salinityMap: string } | null };
 
+export type SendFeedbackMutationVariables = Exact<{
+  input: SendFeedbackInput;
+}>;
+
+
+export type SendFeedbackMutation = { __typename?: 'Mutation', sendFeedback: { __typename?: 'SendFeedbackResponse', success: boolean } };
+
 export type TideQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
   tideStationId: Scalars['ID']['input'];
@@ -1300,6 +1307,39 @@ export type SalinityMapQueryHookResult = ReturnType<typeof useSalinityMapQuery>;
 export type SalinityMapLazyQueryHookResult = ReturnType<typeof useSalinityMapLazyQuery>;
 export type SalinityMapSuspenseQueryHookResult = ReturnType<typeof useSalinityMapSuspenseQuery>;
 export type SalinityMapQueryResult = Apollo.QueryResult<SalinityMapQuery, SalinityMapQueryVariables>;
+export const SendFeedbackDocument = gql`
+    mutation SendFeedback($input: SendFeedbackInput!) {
+  sendFeedback(input: $input) {
+    success
+  }
+}
+    `;
+export type SendFeedbackMutationFn = Apollo.MutationFunction<SendFeedbackMutation, SendFeedbackMutationVariables>;
+
+/**
+ * __useSendFeedbackMutation__
+ *
+ * To run a mutation, you first call `useSendFeedbackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendFeedbackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendFeedbackMutation, { data, loading, error }] = useSendFeedbackMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendFeedbackMutation(baseOptions?: Apollo.MutationHookOptions<SendFeedbackMutation, SendFeedbackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendFeedbackMutation, SendFeedbackMutationVariables>(SendFeedbackDocument, options);
+      }
+export type SendFeedbackMutationHookResult = ReturnType<typeof useSendFeedbackMutation>;
+export type SendFeedbackMutationResult = Apollo.MutationResult<SendFeedbackMutation>;
+export type SendFeedbackMutationOptions = Apollo.BaseMutationOptions<SendFeedbackMutation, SendFeedbackMutationVariables>;
 export const TideDocument = gql`
     query Tide($locationId: ID!, $tideStationId: ID!, $usgsSiteId: ID, $includeUsgs: Boolean!, $noaaStationId: ID, $includeNoaa: Boolean!, $startDate: String!, $endDate: String!) {
   tidePreditionStation(stationId: $tideStationId) {
