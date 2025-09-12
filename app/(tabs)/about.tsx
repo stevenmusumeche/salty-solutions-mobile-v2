@@ -1,5 +1,6 @@
 import DevSettings from "@/components/DevSettings";
-import { gray, red, white } from "@/constants/colors";
+import UserAccount from "@/components/UserAccount";
+import { gray, white } from "@/constants/colors";
 import { useUserContext } from "@/context/UserContext";
 import { useSendFeedbackMutation } from "@/graphql/generated";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -18,7 +19,7 @@ import {
 } from "react-native";
 
 export default function AboutScreen() {
-  const { actions, user } = useUserContext();
+  const { user, actions } = useUserContext();
   const [sendFeedback] = useSendFeedbackMutation();
 
   const handleDeleteAccount = () => {
@@ -95,23 +96,7 @@ Premium Status: ${user.entitledToPremium ? "Active" : "Inactive"}`,
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.header}>Your Account</Text>
-        {user.isLoggedIn && (
-          <View>
-            <Paragraph>You&apos;re logged in as {user.name}!</Paragraph>
-            <Paragraph>
-              Premium Status: {user.entitledToPremium ? "Active" : "Inactive"}
-            </Paragraph>
-            <TouchableOpacity
-              style={styles.logoutButton}
-              onPress={actions.logout}
-            >
-              <Text style={styles.buttonText}>Logout from Salty Solutions</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+      <UserAccount />
       {/* Development settings - only shows in dev builds */}
       <DevSettings />
 
@@ -236,30 +221,13 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     marginBottom: 15,
-    // color: white,
     fontWeight: "600",
   },
   when: {
     fontWeight: "500",
-    // color: white,
   },
   paragraph: {
     marginBottom: 15,
-    // color: gray[300],
-    // lineHeight: 20,
-  },
-  logoutButton: {
-    backgroundColor: red["700"],
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: white,
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
   },
   legalLinks: {
     flexDirection: "row",

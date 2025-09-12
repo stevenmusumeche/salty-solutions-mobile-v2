@@ -73,6 +73,13 @@ export default function AuthenticatedApp() {
                   title: "Select Observation Site",
                 }}
               />
+              <Stack.Screen
+                name="contact-modal"
+                options={{
+                  ...modalScreenOptions,
+                  title: "Contact Support",
+                }}
+              />
             </Stack>
             <StatusBar style="light" />
           </GestureHandlerRootView>
